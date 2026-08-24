@@ -1,0 +1,48 @@
+import { assertProductionConfig } from "../../src/lib/env.server";
+
+interface SecurityEvent {
+  url: URL;
+  req: { method: string; headers: Headers };
+}
+
+const CSP = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "script-src 'self' 'unsafe-inline' https://grok.com",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  "connect-src 'self' https:",
+  "frame-src 'none'",
+  "form-action 'self'",
+].join("; ");
+
+function secure(response: Response, isHttps: boolean) {
+  const headers = new Headers(response.headers);
+  headers.set("content-security-policy", CSP);
+  headers.set("cross-origin-opener-policy", "same-origin-allow-popups");
+  headers.set("permissions-policy", "camera=(), microphone=(), geolocation=(), payment=(self)");
+  headers.set("referrer-policy", "strict-origin-when-cross-origin");
+  headers.set("x-content-type-options", "nosniff");
+  headers.set("x-frame-options", "SAMEORIGIN");
+  if (isHttps) headers.set("strict-transport-security", "max-age=31536000; includeSubDomains");
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
+export default async function securityMiddleware(
+  event: SecurityEvent,
+  next: () => unknown | Promise<unknown>,
+) {
+  try {
+    assertProductionConfig();
+  } catch (error) {
+    console.error("[config] production configuration rejected", error);
+    return secure(Response.json({ error: "Service configuration is incomplete" }, { status: 503 }), true);
+  }
+
+  const result = await next();
+  if (!(result instanceof Response)) return result;
+  const proto = event.req.headers.get("x-forwarded-proto") ?? event.url.protocol.replace(":", "");
+  return secure(result, proto === "https");
+}

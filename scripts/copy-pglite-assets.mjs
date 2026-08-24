@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /** Nitro's Vercel output looks for pglite.data next to the bundled pglite mjs. */
 import { copyFileSync, existsSync, mkdirSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 
 const srcDir = join(process.cwd(), "node_modules/@electric-sql/pglite/dist");
 const destDir = join(

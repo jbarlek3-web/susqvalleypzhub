@@ -25,6 +25,7 @@ import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WorkspaceRouteImport } from './routes/workspace'
 import { Route as ZoningRouteImport } from './routes/zoning'
+import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ParcelsIdRouteImport } from './routes/parcels.$id'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
@@ -109,6 +110,11 @@ const ZoningRoute = ZoningRouteImport.update({
   path: '/zoning',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ParcelsIdRoute = ParcelsIdRouteImport.update({
   id: '/parcels/$id',
   path: '/parcels/$id',
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/workspace': typeof WorkspaceRoute
   '/zoning': typeof ZoningRoute
+  '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/workspace': typeof WorkspaceRoute
   '/zoning': typeof ZoningRoute
+  '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
@@ -185,6 +193,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/workspace': typeof WorkspaceRoute
   '/zoning': typeof ZoningRoute
+  '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/workspace'
     | '/zoning'
+    | '/api/health'
     | '/parcels/$id'
     | '/api/auth/$'
     | '/api/stripe/webhook'
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/workspace'
     | '/zoning'
+    | '/api/health'
     | '/parcels/$id'
     | '/api/auth/$'
     | '/api/stripe/webhook'
@@ -250,6 +261,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/workspace'
     | '/zoning'
+    | '/api/health'
     | '/parcels/$id'
     | '/api/auth/$'
     | '/api/stripe/webhook'
@@ -272,6 +284,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   WorkspaceRoute: typeof WorkspaceRoute
   ZoningRoute: typeof ZoningRoute
+  ApiHealthRoute: typeof ApiHealthRoute
   ParcelsIdRoute: typeof ParcelsIdRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
@@ -391,6 +404,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ZoningRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/parcels/$id': {
       id: '/parcels/$id'
       path: '/parcels/$id'
@@ -432,6 +452,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   WorkspaceRoute: WorkspaceRoute,
   ZoningRoute: ZoningRoute,
+  ApiHealthRoute: ApiHealthRoute,
   ParcelsIdRoute: ParcelsIdRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,

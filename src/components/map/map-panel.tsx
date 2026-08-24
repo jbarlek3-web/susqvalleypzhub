@@ -29,6 +29,7 @@ import type { County, LayerId } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { lookupYorkAddress } from "@/lib/york-lookup";
 import { dimLabel, prettyMuni } from "@/lib/data/york-zoning";
+import { useCurrentUserState } from "@/lib/auth/use-current-user";
 
 const LAYER_ITEMS: { id: LayerId; label: string; hint?: string; icon: typeof Layers }[] = [
   { id: "parcels", label: "Parcel Boundaries", hint: "York, Dauphin, Cumberland, Lancaster · zoom in", icon: Landmark },
@@ -54,6 +55,7 @@ const LAYER_ITEMS: { id: LayerId; label: string; hint?: string; icon: typeof Lay
 ];
 
 export function MapPanel() {
+  const { user, isPending } = useCurrentUserState();
   const county = useHub((s) => s.county);
   const setCounty = useHub((s) => s.setCounty);
   const layers = useHub((s) => s.layers);
@@ -83,6 +85,12 @@ export function MapPanel() {
   const clearLookup = useHub((s) => s.clearLookup);
 
   async function runLookup(value: string) {
+    if (isPending) return;
+    if (!user) {
+      toast.message("Sign in to use live parcel lookup");
+      window.location.assign("/login");
+      return;
+    }
     const q = value.trim();
     if (q.length < 4) {
       toast.error("Enter a York County street address");

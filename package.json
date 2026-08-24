@@ -7,14 +7,16 @@
     "nf3": "0.3.17"
   },
   "scripts": {
-    "dev": "node scripts/with-app-env.mjs vite dev --host 0.0.0.0 --port 8080",
-    "build": "node scripts/with-app-env.mjs vite build && node scripts/copy-pglite-assets.mjs && npm run db:migrate",
+    "dev": "node scripts/with-app-env.mjs node node_modules/vite/bin/vite.js dev --host 0.0.0.0 --port 8080",
+    "build": "node scripts/with-app-env.mjs node node_modules/vite/bin/vite.js build && node scripts/copy-pglite-assets.mjs",
     "db:migrate": "node scripts/migrate.mjs",
-    "build:dev": "node scripts/with-app-env.mjs vite build --mode development",
-    "preview": "node scripts/with-app-env.mjs vite preview",
+    "deploy:migrate": "npm run db:migrate",
+    "build:dev": "node scripts/with-app-env.mjs node node_modules/vite/bin/vite.js build --mode development",
+    "preview": "node scripts/with-app-env.mjs node node_modules/vite/bin/vite.js preview",
     "typecheck": "tsc --noEmit",
     "check:auth": "node scripts/check-auth-invariant.mjs",
-    "test": "node --test 'scripts/**/*.test.mjs'",
+    "scan:secrets": "node scripts/scan-secrets.mjs",
+    "test": "node --test scripts/*.test.mjs && node --experimental-strip-types --test src/lib/*.test.ts",
     "lint": "eslint .",
     "format": "prettier --write ."
   },

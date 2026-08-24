@@ -19,6 +19,7 @@ import { PREVIEW_MS, useHub } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { getEntitlement } from "@/lib/billing";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { SignedIn, SignedOut, UserButton } from "@/lib/auth/gates";
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -48,7 +49,6 @@ export function AppShell({
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const unread = useHub((s) => s.alerts.filter((a) => a.unread).length);
   const isPro = useHub((s) => s.isPro);
-  const profile = useHub((s) => s.profile);
   const setPro = useHub((s) => s.setPro);
   const { user } = useCurrentUserState();
   const previewStartedAt = useHub((s) => s.previewStartedAt);
@@ -156,11 +156,16 @@ export function AppShell({
                 <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-destructive" />
               )}
             </Link>
-            <Link to="/login">
-              <Button variant="nav" size="sm" className="hidden sm:inline-flex">
-                {profile ? `${profile.firstName}` : "Sign In"}
-              </Button>
-            </Link>
+            <SignedOut>
+              <Link to="/login">
+                <Button variant="nav" size="sm" className="hidden sm:inline-flex">Sign In</Button>
+              </Link>
+            </SignedOut>
+            <SignedIn>
+              <div className="hidden rounded-lg bg-on-primary/10 px-2 py-1 text-on-primary sm:block">
+                <UserButton />
+              </div>
+            </SignedIn>
           </div>
         </div>
       </header>

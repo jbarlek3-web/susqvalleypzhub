@@ -1,8 +1,6 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
 import { getSql } from "@/lib/db";
 import { STRIPE } from "@/lib/stripe";
-
-const SIGN_TOLERANCE_SEC = 300;
+import { verifyStripeSignature } from "@/lib/stripe-signature";
 
 type StripeObject = Record<string, unknown>;
 
@@ -41,34 +39,6 @@ function webhookSecret() {
 
 export function isStripeWebhookConfigured() {
   return webhookSecret().length > 0;
-}
-
-function parseSignatureHeader(header: string) {
-  const timestamp = header
-    .split(",")
-    .map((part) => part.trim())
-    .find((part) => part.startsWith("t="))
-    ?.slice(2);
-  const signatures = header
-    .split(",")
-    .map((part) => part.trim())
-    .filter((part) => part.startsWith("v1="))
-    .map((part) => part.slice(3));
-  return { timestamp, signatures };
-}
-
-export function verifyStripeSignature(payload: string, header: string, secret: string) {
-  const { timestamp, signatures } = parseSignatureHeader(header);
-  if (!timestamp || signatures.length === 0) throw new Error("Missing Stripe signature");
-  const age = Math.abs(Date.now() / 1000 - Number(timestamp));
-  if (!Number.isFinite(age) || age > SIGN_TOLERANCE_SEC) throw new Error("Stripe timestamp expired");
-  const expected = createHmac("sha256", secret).update(`${timestamp}.${payload}`).digest("hex");
-  const expectedBuf = Buffer.from(expected, "utf8");
-  const match = signatures.some((sig) => {
-    const got = Buffer.from(sig, "utf8");
-    return got.length === expectedBuf.length && timingSafeEqual(got, expectedBuf);
-  });
-  if (!match) throw new Error("Stripe signature mismatch");
 }
 
 function subscriptionStatus(raw: string | null) {
@@ -137,6 +107,10 @@ async function upsertEntitlement(row: Entitlement) {
     `;
     if (updated.length) return;
   }
+  // Subscription and invoice events can arrive before their checkout event.
+  // Never create an unowned entitlement; Stripe will retry and the checkout
+  // event carries the verified app user metadata needed to establish ownership.
+  if (!row.userId) return;
   await sql`
     insert into stripe_entitlements (
       user_id, checkout_session_id, subscription_id, customer_id, product_id, status, current_period_end
@@ -155,7 +129,7 @@ async function applyEvent(event: StripeEvent) {
     case "checkout.session.completed":
     case "checkout.session.async_payment_succeeded": {
       const paid = obj.payment_status === "paid" || obj.status === "complete" || obj.mode === "subscription";
-      if (!paid) return;
+      if (!paid || !userId) return;
       await upsertEntitlement({
         userId,
         checkoutSessionId: asString(obj.id),
@@ -214,7 +188,12 @@ export async function handleStripeWebhook(request: Request) {
   if (!secret) {
     return Response.json({ error: "Webhook secret is not configured" }, { status: 503 });
   }
-  const payload = await request.text();
+  const declaredLength = Number(request.headers.get("content-length") ?? "0");
+  if (Number.isFinite(declaredLength) && declaredLength > 1_000_000) {
+    return Response.json({ error: "Payload too large" }, { status: 413 });
+  }
+  const payload = await readLimitedText(request, 1_000_000);
+  if (payload === null) return Response.json({ error: "Payload too large" }, { status: 413 });
   const header = request.headers.get("stripe-signature") ?? "";
   try {
     verifyStripeSignature(payload, header, secret);
@@ -242,6 +221,29 @@ export async function handleStripeWebhook(request: Request) {
     }
   }
   return Response.json({ received: true });
+}
+
+async function readLimitedText(request: Request, maxBytes: number) {
+  if (!request.body) return "";
+  const reader = request.body.getReader();
+  const decoder = new TextDecoder();
+  let bytes = 0;
+  let text = "";
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      bytes += value.byteLength;
+      if (bytes > maxBytes) {
+        await reader.cancel();
+        return null;
+      }
+      text += decoder.decode(value, { stream: true });
+    }
+    return text + decoder.decode();
+  } finally {
+    reader.releaseLock();
+  }
 }
 
 export async function lookupPaidSession(sessionId: string, userId: string) {
