@@ -6,7 +6,7 @@ import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DOCUMENTS } from "@/lib/data/catalog";
-import { PREVIEW_MS, useHub } from "@/lib/store";
+import { useHub } from "@/lib/store";
 import type { PlanningDoc } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -31,8 +31,7 @@ function Documents() {
   const [expandAll, setExpandAll] = useState(true);
   const [openKeys, setOpenKeys] = useState<Set<string>>(new Set());
   const isPro = useHub((s) => s.isPro);
-  const previewStartedAt = useHub((s) => s.previewStartedAt);
-  const canExport = isPro || (previewStartedAt != null && Date.now() - previewStartedAt < PREVIEW_MS);
+  const canExport = isPro;
 
   const countyOptions = useMemo(() => {
     const counts = new Map<string, number>();

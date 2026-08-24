@@ -24,7 +24,7 @@ import { Switch } from "@/components/ui/switch";
 import { ZONE_LEGEND } from "@/lib/data/zoning";
 import { PARCELS } from "@/lib/data/parcels";
 import { COUNTIES } from "@/lib/data/catalog";
-import { PREVIEW_MS, useHub } from "@/lib/store";
+import { useHub } from "@/lib/store";
 import type { County, LayerId } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { lookupYorkAddress } from "@/lib/york-lookup";
@@ -70,8 +70,7 @@ export function MapPanel() {
   const setBatchName = useHub((s) => s.setBatchName);
   const saveBatchAsProject = useHub((s) => s.saveBatchAsProject);
   const isPro = useHub((s) => s.isPro);
-  const previewStartedAt = useHub((s) => s.previewStartedAt);
-  const canExport = isPro || (previewStartedAt != null && Date.now() - previewStartedAt < PREVIEW_MS);
+  const canExport = isPro;
   const selected = PARCELS.filter((p) => selectedIds.includes(p.id));
   const primary = selected[0];
   const [minAc, setMinAc] = useState("");

@@ -62,6 +62,7 @@ type State = {
   alertFreq: "Immediate" | "Daily Digest" | "Weekly";
   startPreview: () => void;
   subscribe: (profile: Profile) => void;
+  setPro: (isPro: boolean) => void;
   signOut: () => void;
   setCounty: (c: County | "all") => void;
   toggleLayer: (id: LayerId) => void;
@@ -90,7 +91,7 @@ type State = {
 export const useHub = create<State>()(
   persist(
     (set, get) => ({
-      previewStartedAt: Date.now(),
+      previewStartedAt: null,
       isPro: false,
       profile: null,
       county: "all",
@@ -112,6 +113,7 @@ export const useHub = create<State>()(
       alertFreq: "Daily Digest",
       startPreview: () => set({ previewStartedAt: Date.now() }),
       subscribe: (profile) => set({ isPro: true, profile }),
+      setPro: (isPro) => set({ isPro }),
       signOut: () => set({ isPro: false, profile: null }),
       setCounty: (county) => set({ county }),
       toggleLayer: (id) =>
@@ -209,7 +211,7 @@ export const useHub = create<State>()(
         if (!t || get().isPro) return false;
         return Date.now() - t >= PREVIEW_MS;
       },
-      canExport: () => get().isPro || get().previewActive(),
+      canExport: () => get().isPro,
     }),
     { name: "svph-hub", skipHydration: true },
   ),

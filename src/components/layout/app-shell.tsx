@@ -17,6 +17,8 @@ import { DOCUMENTS } from "@/lib/data/catalog";
 import { ZONING_CODES as CODES } from "@/lib/data/zoning";
 import { PREVIEW_MS, useHub } from "@/lib/store";
 import { cn } from "@/lib/utils";
+import { getEntitlement } from "@/lib/billing";
+import { useCurrentUserState } from "@/lib/auth/use-current-user";
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -47,6 +49,8 @@ export function AppShell({
   const unread = useHub((s) => s.alerts.filter((a) => a.unread).length);
   const isPro = useHub((s) => s.isPro);
   const profile = useHub((s) => s.profile);
+  const setPro = useHub((s) => s.setPro);
+  const { user } = useCurrentUserState();
   const previewStartedAt = useHub((s) => s.previewStartedAt);
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
@@ -57,6 +61,12 @@ export function AppShell({
     const id = setInterval(() => tick((n) => n + 1), 15000);
     return () => clearInterval(id);
   }, []);
+  useEffect(() => {
+    if (!user) { setPro(false); return; }
+    let active = true;
+    void getEntitlement().then((value) => { if (active) setPro(value.isPro); }).catch(() => { if (active) setPro(false); });
+    return () => { active = false; };
+  }, [user, setPro]);
   const previewActive =
     !isPro && previewStartedAt != null && Date.now() - previewStartedAt < PREVIEW_MS;
   const previewExpired =
@@ -146,7 +156,7 @@ export function AppShell({
                 <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-destructive" />
               )}
             </Link>
-            <Link to="/access">
+            <Link to="/login">
               <Button variant="nav" size="sm" className="hidden sm:inline-flex">
                 {profile ? `${profile.firstName}` : "Sign In"}
               </Button>
@@ -372,8 +382,11 @@ export function SiteFooter() {
           </ul>
         </div>
         <div className="flex items-end">
-          <img src="/logo.png" alt="" className="h-8 w-8 rounded-sm object-cover opacity-50 grayscale" />
+          <img src="/sbph-logo.jpg" alt="Susquehanna Valley Planning Hub" className="w-full max-w-56 rounded-md object-cover" />
         </div>
+      </div>
+      <div className="border-t border-outline-variant bg-surface px-4 py-5 text-center text-xs leading-relaxed text-muted-foreground">
+        Susquehanna Valley Planning Hub is an independent entity within the greater Field ACQ family. It is not affiliated with, endorsed by, or operated by any Pennsylvania municipality, county, or state agency. Questions or concerns may be sent to <a className="font-medium underline" href="mailto:admin@fieldacq.com">admin@fieldacq.com</a>; we aim to respond within 24–48 hours.
       </div>
       <div className="border-t border-outline-variant py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
         © 2026 Susquehanna Valley Planning Hub. All Rights Reserved.
