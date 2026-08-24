@@ -1,0 +1,116 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "leaflet/dist/leaflet.css";
+
+@theme {
+  --color-primary: #002046;
+  --color-primary-container: #1b365d;
+  --color-on-primary: #ffffff;
+  --color-primary-fixed: #d6e3ff;
+  --color-on-primary-fixed: #001b3d;
+
+  --color-secondary: #466649;
+  --color-secondary-container: #c7ecc7;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #2f4e33;
+
+  --color-surface: #f8f9fa;
+  --color-surface-low: #f3f4f5;
+  --color-surface-container: #edeeef;
+  --color-surface-high: #e7e8e9;
+  --color-surface-highest: #e1e3e4;
+  --color-on-surface: #191c1d;
+  --color-on-surface-variant: #44474e;
+
+  --color-background: #f8f9fa;
+  --color-foreground: #191c1d;
+  --color-card: #ffffff;
+  --color-card-foreground: #191c1d;
+  --color-muted: #edeeef;
+  --color-muted-foreground: #44474e;
+  --color-border: #c4c6cf;
+  --color-outline: #74777f;
+  --color-outline-variant: #c4c6cf;
+  --color-ring: #1b365d;
+  --color-accent: #466649;
+  --color-accent-foreground: #ffffff;
+  --color-destructive: #ba1a1a;
+  --color-destructive-foreground: #ffffff;
+  --color-input: #c4c6cf;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #191c1d;
+  --color-gold: #c4a35a;
+  --color-zone-c: #c62828;
+  --color-zone-r: #1565c0;
+  --color-zone-i: #6a1b9a;
+  --color-zone-a: #2e7d32;
+  --color-zone-mu: #ef6c00;
+  --color-zone-tod: #00838f;
+  --color-flood: #1565c0;
+  --color-slope: #6d4c41;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius: 8px;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html,
+  body,
+  #app {
+    min-height: 100%;
+  }
+
+  body {
+    background: var(--color-surface);
+    color: var(--color-on-surface);
+    font-family: var(--font-sans);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}
+
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: #d7dde3;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgb(0 32 70 / 0.16);
+}
+
+.leaflet-popup-content {
+  margin: 10px 12px;
+  font-size: 13px;
+}
