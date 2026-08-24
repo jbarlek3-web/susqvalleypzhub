@@ -166,9 +166,9 @@ function Home() {
           </p>
           <ul className="mt-4 space-y-2 text-sm">
             {[
-              "Unlimited parcel data exports and historical queries.",
-              "Advanced cross-county zoning comparison tools.",
-              "Automated email alerts for zoning code amendments.",
+              "High-volume live York parcel and zoning lookups.",
+              "AI-assisted parcel feasibility briefs.",
+              "Guided Pro print and export workflow.",
             ].map((t) => (
               <li key={t} className="flex gap-2">
                 <CheckCircle2 className="mt-0.5 size-4 text-secondary" /> {t}

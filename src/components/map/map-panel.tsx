@@ -30,6 +30,7 @@ import { cn } from "@/lib/utils";
 import { lookupYorkAddress } from "@/lib/york-lookup";
 import { dimLabel, prettyMuni } from "@/lib/data/york-zoning";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { authorizeProAction } from "@/lib/pro-actions";
 
 const LAYER_ITEMS: { id: LayerId; label: string; hint?: string; icon: typeof Layers }[] = [
   { id: "parcels", label: "Parcel Boundaries", hint: "York, Dauphin, Cumberland, Lancaster · zoom in", icon: Landmark },
@@ -434,10 +435,12 @@ export function MapPanel() {
               variant="outline"
               onClick={() => {
                 if (!canExport) {
-                  toast.error("Preview expired. Subscribe to export.");
+                  toast.error("Subscribe to Pro to use guided export.");
                   return;
                 }
-                window.print();
+                void authorizeProAction()
+                  .then(() => window.print())
+                  .catch(() => toast.error("Pro access could not be verified. Please sign in again."));
               }}
             >
               Export selected (PDF)

@@ -46,9 +46,9 @@ function Subscription() {
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-secondary">Professional access</p>
           <h1 className="mt-2 text-3xl font-semibold">Research freely. Pay when the work becomes actionable.</h1>
-          <p className="mt-3 text-muted-foreground">Free members can explore the regional map, review representative parcel records, and preview zoning coverage. Pro unlocks the work products that save hours.</p>
+          <p className="mt-3 text-muted-foreground">Free members can explore the regional map, public planning sources, and up to three live York address lookups per day. Pro raises the live-research limit and unlocks AI feasibility analysis.</p>
           <ul className="mt-6 space-y-3 text-sm">
-            {["Unlimited parcel and zoning detail", "PDF, CSV, and GeoJSON exports", "Saved projects and cross-device workspace", "SALDO downloads and amendment alerts"].map((item) => <li key={item} className="flex gap-2"><CheckCircle2 className="mt-0.5 size-4 text-secondary" />{item}</li>)}
+            {["Up to 120 live address lookups per minute", "AI-assisted parcel feasibility briefs", "Pro export and print workflow", "Stripe self-service billing portal"].map((item) => <li key={item} className="flex gap-2"><CheckCircle2 className="mt-0.5 size-4 text-secondary" />{item}</li>)}
           </ul>
         </div>
         <Card>

@@ -15,7 +15,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { PARCELS, searchParcels } from "@/lib/data/parcels";
 import { DOCUMENTS } from "@/lib/data/catalog";
 import { ZONING_CODES as CODES } from "@/lib/data/zoning";
-import { PREVIEW_MS, useHub } from "@/lib/store";
+import { useHub } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { getEntitlement } from "@/lib/billing";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
@@ -48,18 +48,13 @@ export function AppShell({
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const unread = useHub((s) => s.alerts.filter((a) => a.unread).length);
-  const isPro = useHub((s) => s.isPro);
   const setPro = useHub((s) => s.setPro);
   const { user } = useCurrentUserState();
-  const previewStartedAt = useHub((s) => s.previewStartedAt);
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
-  const [, tick] = useState(0);
   useEffect(() => {
     void useHub.persist.rehydrate();
-    const id = setInterval(() => tick((n) => n + 1), 15000);
-    return () => clearInterval(id);
   }, []);
   useEffect(() => {
     if (!user) { setPro(false); return; }
@@ -67,11 +62,6 @@ export function AppShell({
     void getEntitlement().then((value) => { if (active) setPro(value.isPro); }).catch(() => { if (active) setPro(false); });
     return () => { active = false; };
   }, [user, setPro]);
-  const previewActive =
-    !isPro && previewStartedAt != null && Date.now() - previewStartedAt < PREVIEW_MS;
-  const previewExpired =
-    !isPro && previewStartedAt != null && Date.now() - previewStartedAt >= PREVIEW_MS;
-
   const hits = useMemo(() => {
     if (q.trim().length < 2) return { parcels: [] as typeof PARCELS, docs: [] as typeof DOCUMENTS, codes: [] as typeof CODES };
     const parcels = searchParcels(q).slice(0, 5);
@@ -170,28 +160,6 @@ export function AppShell({
         </div>
       </header>
 
-      {(previewActive || previewExpired) && !isPro && (
-        <div
-          className={cn(
-            "fixed inset-x-0 top-16 z-30 flex items-center justify-center gap-3 px-3 py-1.5 text-xs font-semibold md:top-20",
-            previewExpired
-              ? "bg-destructive text-on-primary"
-              : "bg-secondary text-on-secondary",
-          )}
-        >
-          {previewExpired ? (
-            <>
-              Preview expired
-              <Link to="/subscription" className="underline">
-                Upgrade to Pro
-              </Link>
-            </>
-          ) : (
-            "Preview Mode Active — 5-minute trial"
-          )}
-        </div>
-      )}
-
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="bg-primary p-0 text-on-primary">
           <div className="flex items-center gap-2 border-b border-on-primary/10 px-4 py-5">
@@ -216,7 +184,6 @@ export function AppShell({
       <main
         className={cn(
           fullBleed ? "pt-16 md:pt-20" : "mx-auto max-w-[1400px] px-3 pb-16 pt-20 md:px-6 md:pt-24",
-          (previewActive || previewExpired) && !isPro && (fullBleed ? "pt-24 md:pt-28" : "pt-24 md:pt-28"),
         )}
       >
         {children}

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DOCUMENTS } from "@/lib/data/catalog";
 import { useHub } from "@/lib/store";
+import { authorizeProAction } from "@/lib/pro-actions";
 import type { PlanningDoc } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -273,13 +274,17 @@ function DocRow({
 
 function downloadDoc(d: PlanningDoc, canExport: boolean) {
   if (!canExport) {
-    toast.error("Preview expired. Subscribe to download.");
+    toast.error("Subscribe to Pro to use guided downloads.");
     return;
   }
-  const a = document.createElement("a");
-  a.href = d.url;
-  a.target = "_blank";
-  a.rel = "noreferrer";
-  a.click();
-  toast.success("Opening original document");
+  void authorizeProAction()
+    .then(() => {
+      const a = document.createElement("a");
+      a.href = d.url;
+      a.target = "_blank";
+      a.rel = "noreferrer";
+      a.click();
+      toast.success("Opening original document");
+    })
+    .catch(() => toast.error("Pro access could not be verified. Please sign in again."));
 }

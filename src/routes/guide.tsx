@@ -40,8 +40,8 @@ function Guide() {
           Dashboard.
         </Step>
         <Step n={5} t="Data Export">
-          Export PDF reports and document packets. Pro unlocks unlimited downloads after the 5-minute
-          preview.
+          Pro members can use the guided print/export workflow. Public-source documents remain
+          available from their originating agencies.
         </Step>
         <Step n={6} t="Acquisition toolkit">
           Run lot yield and residual offer math, screen a tract, walk York County SALDO (sketch to

@@ -12,8 +12,6 @@ import type {
   TeamComment,
 } from "@/lib/types";
 
-export const PREVIEW_MS = 5 * 60 * 1000;
-
 const DEFAULT_LAYERS: Record<LayerId, boolean> = {
   zoning: true,
   flood: false,
@@ -40,7 +38,6 @@ const DEFAULT_LAYERS: Record<LayerId, boolean> = {
 };
 
 type State = {
-  previewStartedAt: number | null;
   isPro: boolean;
   profile: Profile | null;
   county: County | "all";
@@ -60,7 +57,6 @@ type State = {
   savedIds: string[];
   alertCounties: Record<County, boolean>;
   alertFreq: "Immediate" | "Daily Digest" | "Weekly";
-  startPreview: () => void;
   subscribe: (profile: Profile) => void;
   setPro: (isPro: boolean) => void;
   signOut: () => void;
@@ -83,15 +79,12 @@ type State = {
   markAlertsRead: () => void;
   setAlertCounty: (c: County, on: boolean) => void;
   setAlertFreq: (f: State["alertFreq"]) => void;
-  previewActive: () => boolean;
-  previewExpired: () => boolean;
   canExport: () => boolean;
 };
 
 export const useHub = create<State>()(
   persist(
     (set, get) => ({
-      previewStartedAt: null,
       isPro: false,
       profile: null,
       county: "all",
@@ -111,7 +104,6 @@ export const useHub = create<State>()(
       savedIds: ["p-1042"],
       alertCounties: { York: true, Cumberland: true, Dauphin: false, Lancaster: true },
       alertFreq: "Daily Digest",
-      startPreview: () => set({ previewStartedAt: Date.now() }),
       subscribe: (profile) => set({ isPro: true, profile }),
       setPro: (isPro) => set({ isPro }),
       signOut: () => set({ isPro: false, profile: null }),
@@ -201,19 +193,19 @@ export const useHub = create<State>()(
       setAlertCounty: (c, on) =>
         set({ alertCounties: { ...get().alertCounties, [c]: on } }),
       setAlertFreq: (alertFreq) => set({ alertFreq }),
-      previewActive: () => {
-        const t = get().previewStartedAt;
-        if (!t || get().isPro) return false;
-        return Date.now() - t < PREVIEW_MS;
-      },
-      previewExpired: () => {
-        const t = get().previewStartedAt;
-        if (!t || get().isPro) return false;
-        return Date.now() - t >= PREVIEW_MS;
-      },
       canExport: () => get().isPro,
     }),
-    { name: "svph-hub", skipHydration: true },
+    {
+      name: "svph-hub",
+      skipHydration: true,
+      // Entitlements are authoritative on the server and must never be restored
+      // from user-editable browser storage.
+      merge: (persisted, current) => ({
+        ...current,
+        ...(persisted as Partial<State>),
+        isPro: false,
+      }),
+    },
   ),
 );
 
