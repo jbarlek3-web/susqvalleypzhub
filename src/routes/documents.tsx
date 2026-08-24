@@ -6,7 +6,8 @@ import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DOCUMENTS } from "@/lib/data/catalog";
-import { PREVIEW_MS, useHub } from "@/lib/store";
+import { useHub } from "@/lib/store";
+import { authorizeProAction } from "@/lib/pro-actions";
 import type { PlanningDoc } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -31,8 +32,7 @@ function Documents() {
   const [expandAll, setExpandAll] = useState(true);
   const [openKeys, setOpenKeys] = useState<Set<string>>(new Set());
   const isPro = useHub((s) => s.isPro);
-  const previewStartedAt = useHub((s) => s.previewStartedAt);
-  const canExport = isPro || (previewStartedAt != null && Date.now() - previewStartedAt < PREVIEW_MS);
+  const canExport = isPro;
 
   const countyOptions = useMemo(() => {
     const counts = new Map<string, number>();
@@ -274,13 +274,17 @@ function DocRow({
 
 function downloadDoc(d: PlanningDoc, canExport: boolean) {
   if (!canExport) {
-    toast.error("Preview expired. Subscribe to download.");
+    toast.error("Subscribe to Pro to use guided downloads.");
     return;
   }
-  const a = document.createElement("a");
-  a.href = d.url;
-  a.target = "_blank";
-  a.rel = "noreferrer";
-  a.click();
-  toast.success("Opening original document");
+  void authorizeProAction()
+    .then(() => {
+      const a = document.createElement("a");
+      a.href = d.url;
+      a.target = "_blank";
+      a.rel = "noreferrer";
+      a.click();
+      toast.success("Opening original document");
+    })
+    .catch(() => toast.error("Pro access could not be verified. Please sign in again."));
 }

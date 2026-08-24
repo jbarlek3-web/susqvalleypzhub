@@ -24,11 +24,13 @@ import { Switch } from "@/components/ui/switch";
 import { ZONE_LEGEND } from "@/lib/data/zoning";
 import { PARCELS } from "@/lib/data/parcels";
 import { COUNTIES } from "@/lib/data/catalog";
-import { PREVIEW_MS, useHub } from "@/lib/store";
+import { useHub } from "@/lib/store";
 import type { County, LayerId } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { lookupYorkAddress } from "@/lib/york-lookup";
 import { dimLabel, prettyMuni } from "@/lib/data/york-zoning";
+import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { authorizeProAction } from "@/lib/pro-actions";
 
 const LAYER_ITEMS: { id: LayerId; label: string; hint?: string; icon: typeof Layers }[] = [
   { id: "parcels", label: "Parcel Boundaries", hint: "York, Dauphin, Cumberland, Lancaster · zoom in", icon: Landmark },
@@ -54,6 +56,7 @@ const LAYER_ITEMS: { id: LayerId; label: string; hint?: string; icon: typeof Lay
 ];
 
 export function MapPanel() {
+  const { user, isPending } = useCurrentUserState();
   const county = useHub((s) => s.county);
   const setCounty = useHub((s) => s.setCounty);
   const layers = useHub((s) => s.layers);
@@ -70,8 +73,7 @@ export function MapPanel() {
   const setBatchName = useHub((s) => s.setBatchName);
   const saveBatchAsProject = useHub((s) => s.saveBatchAsProject);
   const isPro = useHub((s) => s.isPro);
-  const previewStartedAt = useHub((s) => s.previewStartedAt);
-  const canExport = isPro || (previewStartedAt != null && Date.now() - previewStartedAt < PREVIEW_MS);
+  const canExport = isPro;
   const selected = PARCELS.filter((p) => selectedIds.includes(p.id));
   const primary = selected[0];
   const [minAc, setMinAc] = useState("");
@@ -84,6 +86,12 @@ export function MapPanel() {
   const clearLookup = useHub((s) => s.clearLookup);
 
   async function runLookup(value: string) {
+    if (isPending) return;
+    if (!user) {
+      toast.message("Sign in to use live parcel lookup");
+      window.location.assign("/login");
+      return;
+    }
     const q = value.trim();
     if (q.length < 4) {
       toast.error("Enter a York County street address");
@@ -427,10 +435,12 @@ export function MapPanel() {
               variant="outline"
               onClick={() => {
                 if (!canExport) {
-                  toast.error("Preview expired. Subscribe to export.");
+                  toast.error("Subscribe to Pro to use guided export.");
                   return;
                 }
-                window.print();
+                void authorizeProAction()
+                  .then(() => window.print())
+                  .catch(() => toast.error("Pro access could not be verified. Please sign in again."));
               }}
             >
               Export selected (PDF)

@@ -15,8 +15,11 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { PARCELS, searchParcels } from "@/lib/data/parcels";
 import { DOCUMENTS } from "@/lib/data/catalog";
 import { ZONING_CODES as CODES } from "@/lib/data/zoning";
-import { PREVIEW_MS, useHub } from "@/lib/store";
+import { useHub } from "@/lib/store";
 import { cn } from "@/lib/utils";
+import { getEntitlement } from "@/lib/billing";
+import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { SignedIn, SignedOut, UserButton } from "@/lib/auth/gates";
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -45,23 +48,20 @@ export function AppShell({
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const unread = useHub((s) => s.alerts.filter((a) => a.unread).length);
-  const isPro = useHub((s) => s.isPro);
-  const profile = useHub((s) => s.profile);
-  const previewStartedAt = useHub((s) => s.previewStartedAt);
+  const setPro = useHub((s) => s.setPro);
+  const { user } = useCurrentUserState();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
-  const [, tick] = useState(0);
   useEffect(() => {
     void useHub.persist.rehydrate();
-    const id = setInterval(() => tick((n) => n + 1), 15000);
-    return () => clearInterval(id);
   }, []);
-  const previewActive =
-    !isPro && previewStartedAt != null && Date.now() - previewStartedAt < PREVIEW_MS;
-  const previewExpired =
-    !isPro && previewStartedAt != null && Date.now() - previewStartedAt >= PREVIEW_MS;
-
+  useEffect(() => {
+    if (!user) { setPro(false); return; }
+    let active = true;
+    void getEntitlement().then((value) => { if (active) setPro(value.isPro); }).catch(() => { if (active) setPro(false); });
+    return () => { active = false; };
+  }, [user, setPro]);
   const hits = useMemo(() => {
     if (q.trim().length < 2) return { parcels: [] as typeof PARCELS, docs: [] as typeof DOCUMENTS, codes: [] as typeof CODES };
     const parcels = searchParcels(q).slice(0, 5);
@@ -146,36 +146,19 @@ export function AppShell({
                 <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-destructive" />
               )}
             </Link>
-            <Link to="/access">
-              <Button variant="nav" size="sm" className="hidden sm:inline-flex">
-                {profile ? `${profile.firstName}` : "Sign In"}
-              </Button>
-            </Link>
+            <SignedOut>
+              <Link to="/login">
+                <Button variant="nav" size="sm" className="hidden sm:inline-flex">Sign In</Button>
+              </Link>
+            </SignedOut>
+            <SignedIn>
+              <div className="hidden rounded-lg bg-on-primary/10 px-2 py-1 text-on-primary sm:block">
+                <UserButton />
+              </div>
+            </SignedIn>
           </div>
         </div>
       </header>
-
-      {(previewActive || previewExpired) && !isPro && (
-        <div
-          className={cn(
-            "fixed inset-x-0 top-16 z-30 flex items-center justify-center gap-3 px-3 py-1.5 text-xs font-semibold md:top-20",
-            previewExpired
-              ? "bg-destructive text-on-primary"
-              : "bg-secondary text-on-secondary",
-          )}
-        >
-          {previewExpired ? (
-            <>
-              Preview expired
-              <Link to="/subscription" className="underline">
-                Upgrade to Pro
-              </Link>
-            </>
-          ) : (
-            "Preview Mode Active — 5-minute trial"
-          )}
-        </div>
-      )}
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="bg-primary p-0 text-on-primary">
@@ -201,7 +184,6 @@ export function AppShell({
       <main
         className={cn(
           fullBleed ? "pt-16 md:pt-20" : "mx-auto max-w-[1400px] px-3 pb-16 pt-20 md:px-6 md:pt-24",
-          (previewActive || previewExpired) && !isPro && (fullBleed ? "pt-24 md:pt-28" : "pt-24 md:pt-28"),
         )}
       >
         {children}
@@ -372,8 +354,11 @@ export function SiteFooter() {
           </ul>
         </div>
         <div className="flex items-end">
-          <img src="/logo.png" alt="" className="h-8 w-8 rounded-sm object-cover opacity-50 grayscale" />
+          <img src="/sbph-logo.jpg" alt="Susquehanna Valley Planning Hub" className="w-full max-w-56 rounded-md object-cover" />
         </div>
+      </div>
+      <div className="border-t border-outline-variant bg-surface px-4 py-5 text-center text-xs leading-relaxed text-muted-foreground">
+        Susquehanna Valley Planning Hub is an independent entity within the greater Field ACQ family. It is not affiliated with, endorsed by, or operated by any Pennsylvania municipality, county, or state agency. Questions or concerns may be sent to <a className="font-medium underline" href="mailto:admin@fieldacq.com">admin@fieldacq.com</a>; we aim to respond within 24–48 hours.
       </div>
       <div className="border-t border-outline-variant py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
         © 2026 Susquehanna Valley Planning Hub. All Rights Reserved.

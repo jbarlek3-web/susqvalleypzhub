@@ -9,6 +9,7 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
     // `src/lib/db.ts` imports scripts/migration-plan.mjs; checkJs types the
     // implementation itself instead of a hand-written declaration beside it.
     "allowJs": true,

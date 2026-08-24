@@ -141,7 +141,13 @@ const grokUserInfoUrl = `${issuerBase}/api/auth/oauth2/userinfo`;
 // schema from `migrations/auth/0001_auth.sql`, copied into `migrations/` when
 // the app turns sign-in on.
 const database = databaseUrl
-  ? new Pool({ connectionString: databaseUrl })
+  ? new Pool({
+      connectionString: databaseUrl,
+      max: 3,
+      idleTimeoutMillis: 10_000,
+      connectionTimeoutMillis: 5_000,
+      allowExitOnIdle: true,
+    })
   : { dialect: pgliteDialect(() => getPglite()), type: "postgres" as const };
 
 /** Session token cookie name — also read by the live-preview popup completion page. */
@@ -218,6 +224,10 @@ export const auth = betterAuth({
   // `http://localhost`, so local dev still works.)
   advanced: {
     useSecureCookies: false,
+    // Vercel overwrites this header with the public client address, avoiding
+    // spoofable forwarding chains while keeping Better Auth's abuse limits
+    // partitioned per client instead of collapsing everyone into one bucket.
+    ipAddress: { ipAddressHeaders: ["x-vercel-forwarded-for"] },
     defaultCookieAttributes: { secure: true, sameSite: "lax", path: "/" },
     cookies: {
       session_token: { name: SESSION_TOKEN_COOKIE },

@@ -16,7 +16,6 @@ function Notifications() {
   const setCounty = useHub((s) => s.setAlertCounty);
   const freq = useHub((s) => s.alertFreq);
   const setFreq = useHub((s) => s.setAlertFreq);
-  const profile = useHub((s) => s.profile);
   return (
     <AppShell>
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -92,7 +91,7 @@ function Notifications() {
               </ul>
             </div>
             <p className="text-xs text-muted-foreground">
-              Email delivery active for {profile?.email ?? "planner@susquehanna.gov"}.
+              Preferences currently control the in-app alert feed. Email delivery is not yet active.
             </p>
           </CardContent>
         </Card>

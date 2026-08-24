@@ -1,8 +1,6 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
 import { getSql } from "@/lib/db";
 import { STRIPE } from "@/lib/stripe";
-
-const SIGN_TOLERANCE_SEC = 300;
+import { verifyStripeSignature } from "@/lib/stripe-signature";
 
 type StripeObject = Record<string, unknown>;
 
@@ -13,6 +11,7 @@ type StripeEvent = {
 };
 
 type Entitlement = {
+  userId: string | null;
   checkoutSessionId: string | null;
   subscriptionId: string | null;
   customerId: string | null;
@@ -35,42 +34,11 @@ function asUnixIso(value: unknown) {
 }
 
 function webhookSecret() {
-  return (
-    process.env.STRIPE_WEBHOOK_SECRET?.trim() ||
-    "whsec_ztXDedEXH0ZLYXlI7ymsddNkWRqvKNeU"
-  );
+  return process.env.STRIPE_WEBHOOK_SECRET?.trim() ?? "";
 }
 
 export function isStripeWebhookConfigured() {
   return webhookSecret().length > 0;
-}
-
-function parseSignatureHeader(header: string) {
-  const timestamp = header
-    .split(",")
-    .map((part) => part.trim())
-    .find((part) => part.startsWith("t="))
-    ?.slice(2);
-  const signatures = header
-    .split(",")
-    .map((part) => part.trim())
-    .filter((part) => part.startsWith("v1="))
-    .map((part) => part.slice(3));
-  return { timestamp, signatures };
-}
-
-export function verifyStripeSignature(payload: string, header: string, secret: string) {
-  const { timestamp, signatures } = parseSignatureHeader(header);
-  if (!timestamp || signatures.length === 0) throw new Error("Missing Stripe signature");
-  const age = Math.abs(Date.now() / 1000 - Number(timestamp));
-  if (!Number.isFinite(age) || age > SIGN_TOLERANCE_SEC) throw new Error("Stripe timestamp expired");
-  const expected = createHmac("sha256", secret).update(`${timestamp}.${payload}`).digest("hex");
-  const expectedBuf = Buffer.from(expected, "utf8");
-  const match = signatures.some((sig) => {
-    const got = Buffer.from(sig, "utf8");
-    return got.length === expectedBuf.length && timingSafeEqual(got, expectedBuf);
-  });
-  if (!match) throw new Error("Stripe signature mismatch");
 }
 
 function subscriptionStatus(raw: string | null) {
@@ -90,8 +58,25 @@ async function recordEvent(id: string, type: string) {
   return inserted.length > 0;
 }
 
+async function releaseEvent(id: string) {
+  const sql = await getSql();
+  await sql`delete from stripe_events where id = ${id}`;
+}
+
 async function upsertEntitlement(row: Entitlement) {
   const sql = await getSql();
+  if (row.userId) {
+    const updated = await sql<{ id: number }>`
+      update stripe_entitlements set
+        checkout_session_id = coalesce(${row.checkoutSessionId}, checkout_session_id),
+        subscription_id = coalesce(${row.subscriptionId}, subscription_id),
+        customer_id = coalesce(${row.customerId}, customer_id),
+        product_id = coalesce(${row.productId}, product_id), status = ${row.status},
+        current_period_end = coalesce(${row.currentPeriodEnd}, current_period_end), updated_at = now()
+      where user_id = ${row.userId} returning id
+    `;
+    if (updated.length) return;
+  }
   if (row.checkoutSessionId) {
     const updated = await sql<{ id: number }>`
       update stripe_entitlements
@@ -122,11 +107,15 @@ async function upsertEntitlement(row: Entitlement) {
     `;
     if (updated.length) return;
   }
+  // Subscription and invoice events can arrive before their checkout event.
+  // Never create an unowned entitlement; Stripe will retry and the checkout
+  // event carries the verified app user metadata needed to establish ownership.
+  if (!row.userId) return;
   await sql`
     insert into stripe_entitlements (
-      checkout_session_id, subscription_id, customer_id, product_id, status, current_period_end
+      user_id, checkout_session_id, subscription_id, customer_id, product_id, status, current_period_end
     ) values (
-      ${row.checkoutSessionId}, ${row.subscriptionId}, ${row.customerId}, ${row.productId},
+      ${row.userId}, ${row.checkoutSessionId}, ${row.subscriptionId}, ${row.customerId}, ${row.productId},
       ${row.status}, ${row.currentPeriodEnd}
     )
   `;
@@ -134,12 +123,15 @@ async function upsertEntitlement(row: Entitlement) {
 
 async function applyEvent(event: StripeEvent) {
   const obj = event.data.object;
+  const metadata = obj.metadata && typeof obj.metadata === "object" ? obj.metadata as Record<string, unknown> : {};
+  const userId = asString(metadata.user_id) ?? asString(obj.client_reference_id);
   switch (event.type) {
     case "checkout.session.completed":
     case "checkout.session.async_payment_succeeded": {
       const paid = obj.payment_status === "paid" || obj.status === "complete" || obj.mode === "subscription";
-      if (!paid) return;
+      if (!paid || !userId) return;
       await upsertEntitlement({
+        userId,
         checkoutSessionId: asString(obj.id),
         subscriptionId: asString(obj.subscription),
         customerId: asString(obj.customer),
@@ -152,6 +144,7 @@ async function applyEvent(event: StripeEvent) {
     case "customer.subscription.updated":
     case "customer.subscription.deleted": {
       await upsertEntitlement({
+        userId,
         checkoutSessionId: null,
         subscriptionId: asString(obj.id),
         customerId: asString(obj.customer),
@@ -163,6 +156,7 @@ async function applyEvent(event: StripeEvent) {
     }
     case "invoice.paid": {
       await upsertEntitlement({
+        userId,
         checkoutSessionId: asString(obj.checkout_session),
         subscriptionId: asString(obj.subscription),
         customerId: asString(obj.customer),
@@ -174,6 +168,7 @@ async function applyEvent(event: StripeEvent) {
     }
     case "invoice.payment_failed": {
       await upsertEntitlement({
+        userId,
         checkoutSessionId: asString(obj.checkout_session),
         subscriptionId: asString(obj.subscription),
         customerId: asString(obj.customer),
@@ -193,7 +188,12 @@ export async function handleStripeWebhook(request: Request) {
   if (!secret) {
     return Response.json({ error: "Webhook secret is not configured" }, { status: 503 });
   }
-  const payload = await request.text();
+  const declaredLength = Number(request.headers.get("content-length") ?? "0");
+  if (Number.isFinite(declaredLength) && declaredLength > 1_000_000) {
+    return Response.json({ error: "Payload too large" }, { status: 413 });
+  }
+  const payload = await readLimitedText(request, 1_000_000);
+  if (payload === null) return Response.json({ error: "Payload too large" }, { status: 413 });
   const header = request.headers.get("stripe-signature") ?? "";
   try {
     verifyStripeSignature(payload, header, secret);
@@ -210,15 +210,47 @@ export async function handleStripeWebhook(request: Request) {
     return Response.json({ error: "Invalid event" }, { status: 400 });
   }
   const fresh = await recordEvent(event.id, event.type);
-  if (fresh) await applyEvent(event);
+  if (fresh) {
+    try {
+      await applyEvent(event);
+    } catch (error) {
+      // Allow Stripe's retry to process the event if fulfillment failed after
+      // the idempotency receipt was inserted.
+      await releaseEvent(event.id);
+      throw error;
+    }
+  }
   return Response.json({ received: true });
 }
 
-export async function lookupPaidSession(sessionId: string) {
+async function readLimitedText(request: Request, maxBytes: number) {
+  if (!request.body) return "";
+  const reader = request.body.getReader();
+  const decoder = new TextDecoder();
+  let bytes = 0;
+  let text = "";
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      bytes += value.byteLength;
+      if (bytes > maxBytes) {
+        await reader.cancel();
+        return null;
+      }
+      text += decoder.decode(value, { stream: true });
+    }
+    return text + decoder.decode();
+  } finally {
+    reader.releaseLock();
+  }
+}
+
+export async function lookupPaidSession(sessionId: string, userId: string) {
   const sql = await getSql();
   const rows = await sql<{ status: string }>`
     select status from stripe_entitlements
-    where checkout_session_id = ${sessionId}
+    where checkout_session_id = ${sessionId} and user_id = ${userId}
     limit 1
   `;
   return rows[0]?.status === "active";

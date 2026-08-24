@@ -19,6 +19,7 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { lookupYorkAddress } from "@/lib/york-lookup";
+import { useCurrentUserState } from "@/lib/auth/use-current-user";
 
 export const Route = createFileRoute("/")({ component: Home });
 
@@ -28,6 +29,7 @@ function Home() {
   const setLookupBusy = useHub((s) => s.setLookupBusy);
   const setLookupResult = useHub((s) => s.setLookupResult);
   const nav = useNavigate();
+  const { user, isPending } = useCurrentUserState();
 
   return (
     <AppShell>
@@ -51,6 +53,11 @@ function Home() {
             className="mx-auto mt-8 flex max-w-xl flex-col gap-2 sm:flex-row"
             onSubmit={(e) => {
               e.preventDefault();
+              if (isPending) return;
+              if (!user) {
+                nav({ to: "/login" });
+                return;
+              }
               setQuery(q);
               if (q.trim().length >= 4) {
                 setLookupBusy(true);
@@ -159,9 +166,9 @@ function Home() {
           </p>
           <ul className="mt-4 space-y-2 text-sm">
             {[
-              "Unlimited parcel data exports and historical queries.",
-              "Advanced cross-county zoning comparison tools.",
-              "Automated email alerts for zoning code amendments.",
+              "High-volume live York parcel and zoning lookups.",
+              "AI-assisted parcel feasibility briefs.",
+              "Guided Pro print and export workflow.",
             ].map((t) => (
               <li key={t} className="flex gap-2">
                 <CheckCircle2 className="mt-0.5 size-4 text-secondary" /> {t}

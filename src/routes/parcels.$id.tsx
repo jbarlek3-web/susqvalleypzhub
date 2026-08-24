@@ -10,6 +10,7 @@ import { RENO_2026 } from "@/lib/data/catalog";
 import { getParcel } from "@/lib/data/parcels";
 import { analyzeParcel } from "@/lib/grok-analyze";
 import { useHub } from "@/lib/store";
+import { authorizeProAction } from "@/lib/pro-actions";
 import { formatFullMoney } from "@/lib/utils";
 
 export const Route = createFileRoute("/parcels/$id")({ component: ParcelReport });
@@ -76,7 +77,9 @@ function ParcelReport() {
                 toast.error("Subscribe to export PDF reports.");
                 return;
               }
-              window.print();
+              void authorizeProAction()
+                .then(() => window.print())
+                .catch(() => toast.error("Pro access could not be verified. Please sign in again."));
             }}
           >
             <Download className="size-3.5" /> PDF Report

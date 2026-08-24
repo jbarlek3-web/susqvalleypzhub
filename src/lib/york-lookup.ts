@@ -1,6 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { findDistrict, prettyMuni, type YorkZoningDistrict } from "@/lib/data/york-zoning";
+import { authMiddleware } from "@/lib/auth/middleware";
+import { entitlementForUser } from "@/lib/entitlement.server";
+import { consumeRateLimit } from "@/lib/rate-limit.server";
 
 const CENSUS = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress";
 const PARCELS = "https://arcweb1.ycpc.org/server/rest/services/OPEN_DATA/Parcels/FeatureServer/0/query";
@@ -34,7 +37,7 @@ export type YorkLookup = {
 
 async function jsonOrNull(url: string) {
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: AbortSignal.timeout(8_000) });
     if (!res.ok) return null;
     return (await res.json()) as Record<string, unknown>;
   } catch {
@@ -54,10 +57,18 @@ function pointGeom(lng: number, lat: number) {
 }
 
 export const lookupYorkAddress = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
   .validator((input: unknown) =>
     z.object({ q: z.string().min(4).max(160) }).parse(input),
   )
-  .handler(async ({ data }): Promise<{ ok: true; result: YorkLookup } | { ok: false; error: string }> => {
+  .handler(async ({ data, context }): Promise<{ ok: true; result: YorkLookup } | { ok: false; error: string }> => {
+    const entitlement = await entitlementForUser(context.userId);
+    await consumeRateLimit({
+      action: "parcel-lookup",
+      subject: context.userId,
+      max: entitlement.isPro ? 120 : 3,
+      windowSeconds: entitlement.isPro ? 60 : 86_400,
+    });
     const q = data.q.trim();
     const withState = /,\s*PA\b/i.test(q) || /\bPennsylvania\b/i.test(q) ? q : `${q}, PA`;
     const geoUrl = `${CENSUS}?address=${encodeURIComponent(withState)}&benchmark=Public_AR_Current&vintage=Current_Current&format=json`;

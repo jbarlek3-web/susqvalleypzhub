@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PARCELS } from "@/lib/data/parcels";
 import { useHub } from "@/lib/store";
+import { authorizeProAction } from "@/lib/pro-actions";
 import type { ProjectStatus } from "@/lib/types";
 import { formatAcres } from "@/lib/utils";
 
@@ -101,8 +102,12 @@ function Dashboard() {
                       toast.error("Subscribe to export reports.");
                       return;
                     }
-                    toast.success("Preparing PDF export…");
-                    window.print();
+                    void authorizeProAction()
+                      .then(() => {
+                        toast.success("Preparing PDF export…");
+                        window.print();
+                      })
+                      .catch(() => toast.error("Pro access could not be verified. Please sign in again."));
                   }}
                 >
                   <FileDown className="size-3.5" /> Export

@@ -60,8 +60,8 @@ test("an explicit process-env override wins over the file", () => {
   assert.equal(merged.PATH, "/usr/bin");
 });
 
-test("the template ships auth off", () => {
-  assert.deepEqual(readAppEnv(projectRoot()), { VITE_AUTH_ENABLED: "false" });
+test("this account-enabled app ships auth on", () => {
+  assert.deepEqual(readAppEnv(projectRoot()), { VITE_AUTH_ENABLED: "true" });
 });
 
 test("vite loadEnv resolves the wrapped value", () => {
@@ -85,7 +85,7 @@ test("the wrapped command runs with the app env applied", async () => {
     "-e",
     PRINT_FLAG,
   ]);
-  assert.equal(stdout, "false");
+  assert.equal(stdout, "true");
 });
 
 test("the wrapped command sees an explicit override, not the file value", async () => {
@@ -118,7 +118,7 @@ test("a signal-killed command is never reported as success", async () => {
   );
 });
 
-test("the CLI still runs when invoked through a symlinked path", async () => {
+test("the CLI still runs when invoked through a symlinked path", { skip: process.platform === "win32" }, async () => {
   // node realpaths import.meta.url but not process.argv[1], so a raw comparison
   // turns the wrapper into a no-op that exits 0 without starting anything.
   const link = join(mkdtempSync(join(tmpdir(), "app-env-link-")), "scripts");
@@ -129,5 +129,5 @@ test("the CLI still runs when invoked through a symlinked path", async () => {
     "-e",
     PRINT_FLAG,
   ]);
-  assert.equal(stdout, "false");
+  assert.equal(stdout, "true");
 });

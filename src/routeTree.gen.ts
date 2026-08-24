@@ -16,6 +16,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as GuideRouteImport } from './routes/guide'
 import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as MinutesRouteImport } from './routes/minutes'
 import { Route as NotificationsRouteImport } from './routes/notifications'
@@ -24,7 +25,9 @@ import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WorkspaceRouteImport } from './routes/workspace'
 import { Route as ZoningRouteImport } from './routes/zoning'
+import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ParcelsIdRouteImport } from './routes/parcels.$id'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 
 const IndexRoute = IndexRouteImport.update({
@@ -60,6 +63,11 @@ const GuideRoute = GuideRouteImport.update({
 const InsightsRoute = InsightsRouteImport.update({
   id: '/insights',
   path: '/insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapRoute = MapRouteImport.update({
@@ -102,9 +110,19 @@ const ZoningRoute = ZoningRouteImport.update({
   path: '/zoning',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ParcelsIdRoute = ParcelsIdRouteImport.update({
   id: '/parcels/$id',
   path: '/parcels/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
@@ -121,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/documents': typeof DocumentsRoute
   '/guide': typeof GuideRoute
   '/insights': typeof InsightsRoute
+  '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/minutes': typeof MinutesRoute
   '/notifications': typeof NotificationsRoute
@@ -129,7 +148,9 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/workspace': typeof WorkspaceRoute
   '/zoning': typeof ZoningRoute
+  '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -140,6 +161,7 @@ export interface FileRoutesByTo {
   '/documents': typeof DocumentsRoute
   '/guide': typeof GuideRoute
   '/insights': typeof InsightsRoute
+  '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/minutes': typeof MinutesRoute
   '/notifications': typeof NotificationsRoute
@@ -148,7 +170,9 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/workspace': typeof WorkspaceRoute
   '/zoning': typeof ZoningRoute
+  '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
 }
 export interface FileRoutesById {
@@ -160,6 +184,7 @@ export interface FileRoutesById {
   '/documents': typeof DocumentsRoute
   '/guide': typeof GuideRoute
   '/insights': typeof InsightsRoute
+  '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/minutes': typeof MinutesRoute
   '/notifications': typeof NotificationsRoute
@@ -168,7 +193,9 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/workspace': typeof WorkspaceRoute
   '/zoning': typeof ZoningRoute
+  '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
 }
 export interface FileRouteTypes {
@@ -181,6 +208,7 @@ export interface FileRouteTypes {
     | '/documents'
     | '/guide'
     | '/insights'
+    | '/login'
     | '/map'
     | '/minutes'
     | '/notifications'
@@ -189,7 +217,9 @@ export interface FileRouteTypes {
     | '/terms'
     | '/workspace'
     | '/zoning'
+    | '/api/health'
     | '/parcels/$id'
+    | '/api/auth/$'
     | '/api/stripe/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -200,6 +230,7 @@ export interface FileRouteTypes {
     | '/documents'
     | '/guide'
     | '/insights'
+    | '/login'
     | '/map'
     | '/minutes'
     | '/notifications'
@@ -208,7 +239,9 @@ export interface FileRouteTypes {
     | '/terms'
     | '/workspace'
     | '/zoning'
+    | '/api/health'
     | '/parcels/$id'
+    | '/api/auth/$'
     | '/api/stripe/webhook'
   id:
     | '__root__'
@@ -219,6 +252,7 @@ export interface FileRouteTypes {
     | '/documents'
     | '/guide'
     | '/insights'
+    | '/login'
     | '/map'
     | '/minutes'
     | '/notifications'
@@ -227,7 +261,9 @@ export interface FileRouteTypes {
     | '/terms'
     | '/workspace'
     | '/zoning'
+    | '/api/health'
     | '/parcels/$id'
+    | '/api/auth/$'
     | '/api/stripe/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -239,6 +275,7 @@ export interface RootRouteChildren {
   DocumentsRoute: typeof DocumentsRoute
   GuideRoute: typeof GuideRoute
   InsightsRoute: typeof InsightsRoute
+  LoginRoute: typeof LoginRoute
   MapRoute: typeof MapRoute
   MinutesRoute: typeof MinutesRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -247,7 +284,9 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   WorkspaceRoute: typeof WorkspaceRoute
   ZoningRoute: typeof ZoningRoute
+  ApiHealthRoute: typeof ApiHealthRoute
   ParcelsIdRoute: typeof ParcelsIdRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
 }
 
@@ -300,6 +339,13 @@ declare module '@tanstack/react-router' {
       path: '/insights'
       fullPath: '/insights'
       preLoaderRoute: typeof InsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/map': {
@@ -358,11 +404,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ZoningRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/parcels/$id': {
       id: '/parcels/$id'
       path: '/parcels/$id'
       fullPath: '/parcels/$id'
       preLoaderRoute: typeof ParcelsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/stripe/webhook': {
@@ -383,6 +443,7 @@ const rootRouteChildren: RootRouteChildren = {
   DocumentsRoute: DocumentsRoute,
   GuideRoute: GuideRoute,
   InsightsRoute: InsightsRoute,
+  LoginRoute: LoginRoute,
   MapRoute: MapRoute,
   MinutesRoute: MinutesRoute,
   NotificationsRoute: NotificationsRoute,
@@ -391,7 +452,9 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   WorkspaceRoute: WorkspaceRoute,
   ZoningRoute: ZoningRoute,
+  ApiHealthRoute: ApiHealthRoute,
   ParcelsIdRoute: ParcelsIdRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport

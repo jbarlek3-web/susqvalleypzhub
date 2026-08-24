@@ -1,5 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { authMiddleware } from "@/lib/auth/middleware";
+import { requirePro } from "@/lib/entitlement.server";
+import { consumeRateLimit } from "@/lib/rate-limit.server";
 
 const Input = z.object({
   address: z.string().max(120),
@@ -12,9 +15,12 @@ const Input = z.object({
 });
 
 export const analyzeParcel = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
   .validator((input: unknown) => Input.parse(input))
-  .handler(async ({ data }) => {
-    const apiKey = process.env.XAI_API_KEY;
+  .handler(async ({ data, context }) => {
+    await requirePro(context.userId);
+    await consumeRateLimit({ action: "parcel-ai", subject: context.userId, max: 20, windowSeconds: 3_600 });
+    const apiKey = process.env.XAI_API_KEY?.trim();
     if (!apiKey) return { ok: false as const, error: "AI is not available in this environment." };
 
     const prompt = `You are a senior Pennsylvania land-use analyst for the Susquehanna Valley (York, Cumberland, Dauphin, Lancaster). Be concise, practical, and cite typical MPC / municipal practice. Do not invent parcel-specific ordinance text as if quoted.
@@ -42,6 +48,7 @@ Return:
         max_tokens: 700,
         messages: [{ role: "user", content: prompt }],
       }),
+      signal: AbortSignal.timeout(20_000),
     });
     if (!res.ok) return { ok: false as const, error: `xAI API error ${res.status}` };
     const body = (await res.json()) as {
