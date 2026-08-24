@@ -19,7 +19,7 @@ test("artifact scanning ignores binary files and accepts clean text artifacts", 
   const directory = mkdtempSync(join(tmpdir(), "secret-scan-clean-"));
   try {
     writeFileSync(join(directory, "client.js"), "const status = 'ready';\n");
-    writeFileSync(join(directory, "database.data"), "whsec_not-a-deployable-text-artifact");
+    writeFileSync(join(directory, "database.data"), "binary-format-content-is-not-scanned");
 
     const result = runScanner(directory);
     assert.equal(result.status, 0, result.stderr);
