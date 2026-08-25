@@ -20,6 +20,10 @@ const CSP = [
 
 function secure(response: Response, isHttps: boolean) {
   const headers = new Headers(response.headers);
+  // Every response reaching this middleware is dynamically generated and may
+  // contain account state. Static assets bypass the server through Vercel's
+  // filesystem route and keep their immutable cache policy.
+  headers.set("cache-control", "no-store");
   headers.set("content-security-policy", CSP);
   headers.set("cross-origin-opener-policy", "same-origin-allow-popups");
   headers.set("permissions-policy", "camera=(), microphone=(), geolocation=(), payment=(self)");
