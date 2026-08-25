@@ -21,13 +21,13 @@ import { Route as MapRouteImport } from './routes/map'
 import { Route as MinutesRouteImport } from './routes/minutes'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WorkspaceRouteImport } from './routes/workspace'
 import { Route as ZoningRouteImport } from './routes/zoning'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ParcelsIdRouteImport } from './routes/parcels.$id'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 
 const IndexRoute = IndexRouteImport.update({
@@ -90,6 +90,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SignUpRoute = SignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SubscriptionRoute = SubscriptionRouteImport.update({
   id: '/subscription',
   path: '/subscription',
@@ -120,11 +125,6 @@ const ParcelsIdRoute = ParcelsIdRouteImport.update({
   path: '/parcels/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
   id: '/api/stripe/webhook',
   path: '/api/stripe/webhook',
@@ -144,13 +144,13 @@ export interface FileRoutesByFullPath {
   '/minutes': typeof MinutesRoute
   '/notifications': typeof NotificationsRoute
   '/privacy': typeof PrivacyRoute
+  '/sign-up': typeof SignUpRoute
   '/subscription': typeof SubscriptionRoute
   '/terms': typeof TermsRoute
   '/workspace': typeof WorkspaceRoute
   '/zoning': typeof ZoningRoute
   '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -166,13 +166,13 @@ export interface FileRoutesByTo {
   '/minutes': typeof MinutesRoute
   '/notifications': typeof NotificationsRoute
   '/privacy': typeof PrivacyRoute
+  '/sign-up': typeof SignUpRoute
   '/subscription': typeof SubscriptionRoute
   '/terms': typeof TermsRoute
   '/workspace': typeof WorkspaceRoute
   '/zoning': typeof ZoningRoute
   '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
 }
 export interface FileRoutesById {
@@ -189,13 +189,13 @@ export interface FileRoutesById {
   '/minutes': typeof MinutesRoute
   '/notifications': typeof NotificationsRoute
   '/privacy': typeof PrivacyRoute
+  '/sign-up': typeof SignUpRoute
   '/subscription': typeof SubscriptionRoute
   '/terms': typeof TermsRoute
   '/workspace': typeof WorkspaceRoute
   '/zoning': typeof ZoningRoute
   '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
 }
 export interface FileRouteTypes {
@@ -213,13 +213,13 @@ export interface FileRouteTypes {
     | '/minutes'
     | '/notifications'
     | '/privacy'
+    | '/sign-up'
     | '/subscription'
     | '/terms'
     | '/workspace'
     | '/zoning'
     | '/api/health'
     | '/parcels/$id'
-    | '/api/auth/$'
     | '/api/stripe/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -235,13 +235,13 @@ export interface FileRouteTypes {
     | '/minutes'
     | '/notifications'
     | '/privacy'
+    | '/sign-up'
     | '/subscription'
     | '/terms'
     | '/workspace'
     | '/zoning'
     | '/api/health'
     | '/parcels/$id'
-    | '/api/auth/$'
     | '/api/stripe/webhook'
   id:
     | '__root__'
@@ -257,13 +257,13 @@ export interface FileRouteTypes {
     | '/minutes'
     | '/notifications'
     | '/privacy'
+    | '/sign-up'
     | '/subscription'
     | '/terms'
     | '/workspace'
     | '/zoning'
     | '/api/health'
     | '/parcels/$id'
-    | '/api/auth/$'
     | '/api/stripe/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -280,13 +280,13 @@ export interface RootRouteChildren {
   MinutesRoute: typeof MinutesRoute
   NotificationsRoute: typeof NotificationsRoute
   PrivacyRoute: typeof PrivacyRoute
+  SignUpRoute: typeof SignUpRoute
   SubscriptionRoute: typeof SubscriptionRoute
   TermsRoute: typeof TermsRoute
   WorkspaceRoute: typeof WorkspaceRoute
   ZoningRoute: typeof ZoningRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ParcelsIdRoute: typeof ParcelsIdRoute
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
 }
 
@@ -376,6 +376,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sign-up': {
+      id: '/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/subscription': {
       id: '/subscription'
       path: '/subscription'
@@ -418,13 +425,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ParcelsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/stripe/webhook': {
       id: '/api/stripe/webhook'
       path: '/api/stripe/webhook'
@@ -448,13 +448,13 @@ const rootRouteChildren: RootRouteChildren = {
   MinutesRoute: MinutesRoute,
   NotificationsRoute: NotificationsRoute,
   PrivacyRoute: PrivacyRoute,
+  SignUpRoute: SignUpRoute,
   SubscriptionRoute: SubscriptionRoute,
   TermsRoute: TermsRoute,
   WorkspaceRoute: WorkspaceRoute,
   ZoningRoute: ZoningRoute,
   ApiHealthRoute: ApiHealthRoute,
   ParcelsIdRoute: ParcelsIdRoute,
-  ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport
@@ -462,10 +462,11 @@ export const routeTree = rootRouteImport
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
+import type { startInstance } from './start.ts'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }

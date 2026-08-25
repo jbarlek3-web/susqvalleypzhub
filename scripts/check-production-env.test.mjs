@@ -6,17 +6,14 @@ import { fileURLToPath } from "node:url";
 const checker = fileURLToPath(new URL("./check-production-env.mjs", import.meta.url));
 const validProduction = {
   APP_URL: "https://planning.example.com",
-  BETTER_AUTH_URL: "https://planning.example.com",
-  BETTER_AUTH_SECRET: "auth-secret-value-that-must-not-be-logged",
+  CLERK_SECRET_KEY: "sk_live_private",
   DATABASE_URL: "postgresql://private-database-value",
-  GROK_AUTH_CLIENT_ID: "private-client-id",
-  GROK_AUTH_CLIENT_SECRET: "private-client-secret",
-  GROK_AUTH_ISSUER: "https://identity.example.com",
   RATE_LIMIT_SALT: "private-rate-limit-salt",
   STRIPE_PRICE_ID: "price_private",
   STRIPE_RESTRICTED_KEY: ["rk", "test", "private"].join("_"),
   STRIPE_WEBHOOK_SECRET: ["whsec", "private"].join("_"),
   VERCEL_ENV: "production",
+  VITE_CLERK_PUBLISHABLE_KEY: "pk_live_private",
 };
 
 function run(overrides = {}) {
