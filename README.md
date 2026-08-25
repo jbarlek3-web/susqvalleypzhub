@@ -12,7 +12,7 @@
 8. Run the production database migrations with `npm run deploy:migrate`, then deploy the hardened branch.
 9. In Stripe test mode, verify Checkout, signed webhook delivery, Pro access, and Customer Portal before enabling live payments.
 
-Production fails closed with HTTP 503 when required configuration is missing or invalid. Operational security, incident response, and rollback instructions are in [`SECURITY.md`](SECURITY.md).
+Production builds stop early and list missing variable names without printing their values. The runtime also fails closed with HTTP 503 if configuration later becomes missing or invalid. Operational security, incident response, and rollback instructions are in [`SECURITY.md`](SECURITY.md).
 
 ### Stripe webhook endpoint
 

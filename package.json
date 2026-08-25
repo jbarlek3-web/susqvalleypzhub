@@ -7,6 +7,7 @@
     "nf3": "0.3.17"
   },
   "scripts": {
+    "prebuild": "node --experimental-strip-types scripts/check-production-env.mjs",
     "dev": "node scripts/with-app-env.mjs node node_modules/vite/bin/vite.js dev --host 0.0.0.0 --port 8080",
     "build": "node scripts/with-app-env.mjs node node_modules/vite/bin/vite.js build && node scripts/copy-pglite-assets.mjs",
     "db:migrate": "node scripts/migrate.mjs",
