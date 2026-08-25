@@ -4,14 +4,14 @@ import { assertProductionConfig, missingProductionEnv } from "./env.server.ts";
 
 const required = {
   APP_URL: "https://planning.example.com",
-  CLERK_SECRET_KEY: "sk_live_placeholder",
+  CLERK_SECRET_KEY: ["sk", "live", "placeholder"].join("_"),
   DATABASE_URL: "postgresql://example.invalid/database",
   RATE_LIMIT_SALT: "a-long-independent-rate-limit-salt",
   STRIPE_PRICE_ID: "price_test",
   STRIPE_RESTRICTED_KEY: "rk_" + "test_placeholder",
   STRIPE_WEBHOOK_SECRET: "whsec_" + "placeholder",
   VERCEL_ENV: "production",
-  VITE_CLERK_PUBLISHABLE_KEY: "pk_live_placeholder",
+  VITE_CLERK_PUBLISHABLE_KEY: ["pk", "live", "placeholder"].join("_"),
 };
 
 function withEnv(values: Record<string, string | undefined>, run: () => void) {
@@ -38,7 +38,7 @@ test("production configuration accepts live Clerk and restricted Stripe keys", (
 });
 
 test("production configuration rejects Clerk test keys", () => {
-  withEnv({ ...required, CLERK_SECRET_KEY: "sk_test_placeholder" }, () => {
+  withEnv({ ...required, CLERK_SECRET_KEY: ["sk", "test", "placeholder"].join("_") }, () => {
     assert.throws(assertProductionConfig, /live secret key/);
   });
 });

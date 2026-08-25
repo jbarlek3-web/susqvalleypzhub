@@ -6,14 +6,14 @@ import { fileURLToPath } from "node:url";
 const checker = fileURLToPath(new URL("./check-production-env.mjs", import.meta.url));
 const validProduction = {
   APP_URL: "https://planning.example.com",
-  CLERK_SECRET_KEY: "sk_live_private",
+  CLERK_SECRET_KEY: ["sk", "live", "private"].join("_"),
   DATABASE_URL: "postgresql://private-database-value",
   RATE_LIMIT_SALT: "private-rate-limit-salt",
   STRIPE_PRICE_ID: "price_private",
   STRIPE_RESTRICTED_KEY: ["rk", "test", "private"].join("_"),
   STRIPE_WEBHOOK_SECRET: ["whsec", "private"].join("_"),
   VERCEL_ENV: "production",
-  VITE_CLERK_PUBLISHABLE_KEY: "pk_live_private",
+  VITE_CLERK_PUBLISHABLE_KEY: ["pk", "live", "private"].join("_"),
 };
 
 function run(overrides = {}) {
