@@ -88,7 +88,7 @@ export function AppShell({
             <Menu />
           </Button>
           <Link to="/" className="flex min-w-0 items-center gap-2.5">
-            <img src="/favicon.svg" alt="" className="h-9 w-9 rounded-sm md:h-10 md:w-10" />
+            <img src="/logo-mark.png" alt="" className="h-9 w-9 rounded-full bg-white object-cover md:h-10 md:w-10" />
             <span className="truncate text-base font-semibold tracking-tight md:text-xl">
               Planning Hub
             </span>
@@ -163,7 +163,7 @@ export function AppShell({
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="bg-primary p-0 text-on-primary">
           <div className="flex items-center gap-2 border-b border-on-primary/10 px-4 py-5">
-            <img src="/favicon.svg" alt="" className="h-9 w-9 rounded-sm" />
+            <img src="/logo-mark.png" alt="" className="h-9 w-9 rounded-full bg-white object-cover" />
             <span className="font-semibold">Planning Hub</span>
           </div>
           <nav className="flex flex-col p-2">
@@ -354,7 +354,7 @@ export function SiteFooter() {
           </ul>
         </div>
         <div className="flex items-end">
-          <img src="/sbph-logo.jpg" alt="Susquehanna Valley Planning Hub" className="w-full max-w-56 rounded-md object-cover" />
+          <img src="/logo.png" alt="Susquehanna Valley Planning Hub" className="w-full max-w-56 rounded-full bg-white object-cover" />
         </div>
       </div>
       <div className="border-t border-outline-variant bg-surface px-4 py-5 text-center text-xs leading-relaxed text-muted-foreground">
