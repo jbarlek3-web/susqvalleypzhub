@@ -63,7 +63,7 @@ if (artifactPaths.length > 0) {
 
 const result = spawnSync(
   "git",
-  ["grep", "-l", "-I", "-E", patterns.join("|"), "HEAD", "--", ".", ":!scripts/scan-secrets.mjs"],
+  ["grep", "-l", "-I", "-E", patterns.join("|"), "HEAD", "--", ".", ":!scripts/scan-secrets.mjs", ":!scripts/scan-secrets.test.mjs"],
   { encoding: "utf8", shell: false },
 );
 
