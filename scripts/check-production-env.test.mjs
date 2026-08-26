@@ -33,6 +33,18 @@ test("production builds pass with complete structurally valid configuration", ()
   assert.match(result.stdout, /complete and structurally valid/);
 });
 
+test("production builds accept one exact Clerk administrator email", () => {
+  const result = run({ ADMIN_CLERK_EMAIL: "owner@example.com" });
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test("production builds reject malformed administrator settings", () => {
+  const result = run({ ADMIN_CLERK_EMAIL: "owner@example.com,other@example.com" });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /ADMIN_CLERK_EMAIL/);
+  assert.doesNotMatch(result.stderr, /owner@example\.com/);
+});
+
 test("production builds fail early with missing names but no secret values", () => {
   const result = run({ DATABASE_URL: "", CLERK_SECRET_KEY: "" });
   assert.equal(result.status, 1);

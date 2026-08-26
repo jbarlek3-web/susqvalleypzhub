@@ -1,3 +1,5 @@
+import { configuredAdminEmail } from "./admin-access.ts";
+
 const REQUIRED_PRODUCTION_ENV = [
   "APP_URL",
   "CLERK_SECRET_KEY",
@@ -26,5 +28,11 @@ export function assertProductionConfig() {
   }
   if (!process.env.CLERK_SECRET_KEY!.startsWith("sk_live_")) {
     throw new Error("CLERK_SECRET_KEY must be a Clerk live secret key");
+  }
+  if (
+    process.env.ADMIN_CLERK_EMAIL?.trim() &&
+    !configuredAdminEmail(process.env.ADMIN_CLERK_EMAIL)
+  ) {
+    throw new Error("ADMIN_CLERK_EMAIL must be one valid email address");
   }
 }

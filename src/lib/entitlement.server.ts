@@ -1,29 +1,23 @@
-import { auth } from "@clerk/tanstack-react-start/server";
+import { auth, clerkClient } from "@clerk/tanstack-react-start/server";
 import { PRO_PLAN_KEY } from "@/lib/billing-config";
+import {
+  assertProEntitlement,
+  resolveEntitlement,
+  type EntitlementStatus,
+} from "@/lib/entitlement-policy";
 
-export type EntitlementStatus = {
-  isPro: boolean;
-  status: string;
-  currentPeriodEnd: string | null;
-};
+export type { EntitlementStatus } from "@/lib/entitlement-policy";
 
 export async function currentEntitlement(): Promise<EntitlementStatus> {
   const session = await auth();
-  const isPro = Boolean(session.userId && session.has({ plan: PRO_PLAN_KEY }));
-  return {
-    isPro,
-    status: isPro ? "active" : "locked",
-    currentPeriodEnd: null,
-  };
+  return resolveEntitlement(
+    session,
+    PRO_PLAN_KEY,
+    process.env.ADMIN_CLERK_EMAIL,
+    (userId) => clerkClient().users.getUser(userId),
+  );
 }
 
 export async function requirePro() {
-  const entitlement = await currentEntitlement();
-  if (!entitlement.isPro) {
-    const error = new Error("A Pro subscription is required");
-    error.name = "PaymentRequiredError";
-    Object.assign(error, { status: 402 });
-    throw error;
-  }
-  return entitlement;
+  return assertProEntitlement(await currentEntitlement());
 }
