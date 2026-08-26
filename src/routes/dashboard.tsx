@@ -32,7 +32,9 @@ function Dashboard() {
     <AppShell>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Overview</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+            Overview
+          </p>
           <h1 className="text-2xl font-semibold">Project Dashboard</h1>
           <p className="mt-1 max-w-xl text-sm text-muted-foreground">
             Manage saved property batches, track status, and generate compliance reports for active
@@ -50,7 +52,7 @@ function Dashboard() {
             onClick={() => setStatus(s)}
             className={
               status === s
-                ? "rounded-full bg-primary-container px-3 py-1.5 text-xs font-semibold text-on-primary"
+                ? "rounded-full border border-primary/30 bg-primary-fixed px-3 py-1.5 text-xs font-semibold text-primary"
                 : "rounded-full bg-surface-container px-3 py-1.5 text-xs font-semibold"
             }
           >
@@ -73,20 +75,28 @@ function Dashboard() {
               </div>
               <dl className="mt-4 grid grid-cols-3 gap-2 text-center text-sm">
                 <div>
-                  <dt className="text-[10px] uppercase tracking-wider text-on-surface-variant">Parcels</dt>
+                  <dt className="text-[10px] uppercase tracking-wider text-on-surface-variant">
+                    Parcels
+                  </dt>
                   <dd className="font-mono font-semibold">{p.parcelIds.length}</dd>
                 </div>
                 <div>
-                  <dt className="text-[10px] uppercase tracking-wider text-on-surface-variant">Acreage</dt>
+                  <dt className="text-[10px] uppercase tracking-wider text-on-surface-variant">
+                    Acreage
+                  </dt>
                   <dd className="font-mono font-semibold">{formatAcres(p.acres)} ac</dd>
                 </div>
                 <div>
-                  <dt className="text-[10px] uppercase tracking-wider text-on-surface-variant">Modified</dt>
+                  <dt className="text-[10px] uppercase tracking-wider text-on-surface-variant">
+                    Modified
+                  </dt>
                   <dd className="font-semibold">{p.modified}</dd>
                 </div>
               </dl>
               {p.constraints.length > 0 && (
-                <p className="mt-3 text-xs text-destructive">Constraints: {p.constraints.join(", ")}</p>
+                <p className="mt-3 text-xs text-destructive">
+                  Constraints: {p.constraints.join(", ")}
+                </p>
               )}
               <div className="mt-4 flex gap-2">
                 <Button asChild variant="outline" size="sm">
@@ -107,7 +117,9 @@ function Dashboard() {
                         toast.success("Preparing PDF export…");
                         window.print();
                       })
-                      .catch(() => toast.error("Pro access could not be verified. Please sign in again."));
+                      .catch(() =>
+                        toast.error("Pro access could not be verified. Please sign in again."),
+                      );
                   }}
                 >
                   <FileDown className="size-3.5" /> Export

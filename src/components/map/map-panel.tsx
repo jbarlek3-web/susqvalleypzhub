@@ -33,22 +33,58 @@ import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { authorizeProAction } from "@/lib/pro-actions";
 
 const LAYER_ITEMS: { id: LayerId; label: string; hint?: string; icon: typeof Layers }[] = [
-  { id: "parcels", label: "Parcel Boundaries", hint: "York, Dauphin, Cumberland, Lancaster · zoom in", icon: Landmark },
-  { id: "yorkZoning", label: "York Zoning Districts", hint: "Live YCPC districts · 72 municipalities", icon: Layers },
-  { id: "municipalities", label: "PA Municipalities", hint: "PennDOT municipal boundaries", icon: MapIcon },
+  {
+    id: "parcels",
+    label: "Parcel Boundaries",
+    hint: "York, Dauphin, Cumberland, Lancaster · zoom in",
+    icon: Landmark,
+  },
+  {
+    id: "yorkZoning",
+    label: "York Zoning Districts",
+    hint: "Live YCPC districts · 72 municipalities",
+    icon: Layers,
+  },
+  {
+    id: "municipalities",
+    label: "PA Municipalities",
+    hint: "PennDOT municipal boundaries",
+    icon: MapIcon,
+  },
   { id: "hydro", label: "Hydrography", hint: "USGS NHD streams and waterbodies", icon: Waves },
   { id: "soils", label: "Soils (SSURGO)", hint: "USDA / PASDA soil map units", icon: Mountain },
   { id: "topo", label: "USGS US Topo", hint: "National Map 7.5-minute topo series", icon: MapIcon },
-  { id: "yorkPasda", label: "York PASDA Overlays", hint: "Streams, zoning, soils, parks, easements", icon: Layers },
+  {
+    id: "yorkPasda",
+    label: "York PASDA Overlays",
+    hint: "Streams, zoning, soils, parks, easements",
+    icon: Layers,
+  },
   { id: "footprints", label: "Building Footprints", icon: Home },
   { id: "zoning", label: "Zoning Overlays", icon: Layers },
   { id: "flood", label: "Floodplain Overlays", icon: Droplets },
-  { id: "inundation", label: "Inundation Vulnerability", hint: "Includes bridge-specific risk scores", icon: Waves },
+  {
+    id: "femaFlood",
+    label: "FEMA Flood Hazard Zones",
+    hint: "Official NFHL · zoom in",
+    icon: Droplets,
+  },
+  {
+    id: "inundation",
+    label: "Inundation Vulnerability",
+    hint: "Includes bridge-specific risk scores",
+    icon: Waves,
+  },
   { id: "slopes", label: "Steep Slope Overlays", icon: Mountain },
   { id: "ev", label: "EV Fast-Charger Density", icon: Plug },
   { id: "traffic", label: "Traffic Volume (AADT)", icon: Car },
   { id: "buggy", label: "Horse-and-Buggy Zones", hint: "Lancaster / York", icon: Car },
-  { id: "improvements", label: "Planned Roadway Improvements", hint: "Projected completion dates", icon: Truck },
+  {
+    id: "improvements",
+    label: "Planned Roadway Improvements",
+    hint: "Projected completion dates",
+    icon: Truck,
+  },
   { id: "logistics", label: "Intermodal Logistics Hubs", icon: Warehouse },
   { id: "bridges", label: "Bridge Clearance Risk", icon: Waves },
   { id: "water", label: "Public Water Mains", icon: Droplets },
@@ -151,7 +187,9 @@ export function MapPanel() {
             </div>
             <div className="font-semibold">{lookup.parcel?.address || lookup.matchedAddress}</div>
             {lookup.parcel?.pidn && (
-              <div className="font-mono text-xs text-muted-foreground">PIDN {lookup.parcel.pidn}</div>
+              <div className="font-mono text-xs text-muted-foreground">
+                PIDN {lookup.parcel.pidn}
+              </div>
             )}
             {lookup.parcel?.owner && <div className="text-xs">{lookup.parcel.owner}</div>}
             {lookup.parcel?.acres != null && (
@@ -165,14 +203,19 @@ export function MapPanel() {
                 <div>{prettyMuni(lookup.zoning.municipality ?? "")}</div>
                 {lookup.district && (
                   <div className="mt-1">
-                    Front {dimLabel(lookup.district.front, "ft")} · Side {dimLabel(lookup.district.side, "ft")}
+                    Front {dimLabel(lookup.district.front, "ft")} · Side{" "}
+                    {dimLabel(lookup.district.side, "ft")}
                     <br />
-                    Min lot {dimLabel(lookup.district.lot, "sf")} · Height {dimLabel(lookup.district.height, "ft")}
+                    Min lot {dimLabel(lookup.district.lot, "sf")} · Height{" "}
+                    {dimLabel(lookup.district.height, "ft")}
                   </div>
                 )}
               </div>
             )}
-            <button className="mt-2 text-[11px] font-semibold text-primary-container" onClick={clearLookup}>
+            <button
+              className="mt-2 text-[11px] font-semibold text-primary-container"
+              onClick={clearLookup}
+            >
               Clear match
             </button>
           </div>
@@ -188,7 +231,7 @@ export function MapPanel() {
               className={cn(
                 "rounded-sm px-2 py-2 text-xs font-semibold",
                 county === c
-                  ? "bg-primary-container text-on-primary"
+                  ? "border border-primary/30 bg-primary-fixed text-primary"
                   : "bg-surface-low text-on-surface hover:bg-surface-container",
               )}
             >
@@ -248,7 +291,7 @@ export function MapPanel() {
                 className={cn(
                   "rounded-sm py-2 text-xs font-semibold",
                   floodFt === n
-                    ? "bg-primary-container text-on-primary"
+                    ? "border border-primary/30 bg-primary-fixed text-primary"
                     : "bg-surface-low",
                 )}
               >
@@ -386,9 +429,7 @@ export function MapPanel() {
             </div>
             <p className="mt-1 text-xs text-muted-foreground">{primary.zoningSummary}</p>
             <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-              <div>
-                Front {primary.setbacks.front} ft
-              </div>
+              <div>Front {primary.setbacks.front} ft</div>
               <div>Side {primary.setbacks.side} ft</div>
               <div>Rear {primary.setbacks.rear} ft</div>
               <div>Max height {primary.maxHeight} ft</div>
@@ -440,7 +481,9 @@ export function MapPanel() {
                 }
                 void authorizeProAction()
                   .then(() => window.print())
-                  .catch(() => toast.error("Pro access could not be verified. Please sign in again."));
+                  .catch(() =>
+                    toast.error("Pro access could not be verified. Please sign in again."),
+                  );
               }}
             >
               Export selected (PDF)
@@ -463,7 +506,9 @@ export function MapToolbar() {
         onClick={() => setSatellite(false)}
         className={cn(
           "flex items-center gap-1 rounded-sm px-2 py-1.5 text-xs font-semibold",
-          !satellite ? "bg-primary-container text-on-primary" : "hover:bg-surface-low",
+          !satellite
+            ? "border border-primary/30 bg-primary-fixed text-primary"
+            : "hover:bg-surface-low",
         )}
       >
         <Grid3x3 className="size-3.5" /> Base
@@ -472,7 +517,9 @@ export function MapToolbar() {
         onClick={() => setSatellite(true)}
         className={cn(
           "flex items-center gap-1 rounded-sm px-2 py-1.5 text-xs font-semibold",
-          satellite ? "bg-primary-container text-on-primary" : "hover:bg-surface-low",
+          satellite
+            ? "border border-primary/30 bg-primary-fixed text-primary"
+            : "hover:bg-surface-low",
         )}
       >
         Satellite
@@ -481,7 +528,9 @@ export function MapToolbar() {
         onClick={() => toggleLayer("parcels")}
         className={cn(
           "flex items-center gap-1 rounded-sm px-2 py-1.5 text-xs font-semibold",
-          (layers.parcels ?? layers.yorkParcels) !== false ? "bg-secondary text-on-secondary" : "hover:bg-surface-low",
+          (layers.parcels ?? layers.yorkParcels) !== false
+            ? "border border-secondary/30 bg-secondary-container text-secondary"
+            : "hover:bg-surface-low",
         )}
       >
         Parcels
@@ -490,7 +539,9 @@ export function MapToolbar() {
         onClick={() => toggleLayer("yorkZoning")}
         className={cn(
           "flex items-center gap-1 rounded-sm px-2 py-1.5 text-xs font-semibold",
-          layers.yorkZoning !== false ? "bg-primary-container text-on-primary" : "hover:bg-surface-low",
+          layers.yorkZoning !== false
+            ? "border border-primary/30 bg-primary-fixed text-primary"
+            : "hover:bg-surface-low",
         )}
       >
         York zoning
@@ -499,7 +550,9 @@ export function MapToolbar() {
         onClick={() => toggleLayer("zoning")}
         className={cn(
           "flex items-center gap-1 rounded-sm px-2 py-1.5 text-xs font-semibold",
-          layers.zoning ? "bg-primary-container text-on-primary" : "hover:bg-surface-low",
+          layers.zoning
+            ? "border border-primary/30 bg-primary-fixed text-primary"
+            : "hover:bg-surface-low",
         )}
       >
         Zoning

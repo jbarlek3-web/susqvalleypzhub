@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Database, ExternalLink, Layers3 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,22 +22,20 @@ import {
   TARGET_MARGIN,
   YCPC_CONTACT,
 } from "@/lib/data/acquisition";
+import { FEASIBILITY_DATA_GROUPS, FEASIBILITY_DATA_SOURCES } from "@/lib/data/feasibility-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/acquire")({ component: Acquire });
 
-const TABS = [
-  "Yield",
-  "Offer",
-  "Screen",
-  "Diligence",
-  "SALDO",
-  "Materials",
-] as const;
+const TABS = ["Yield", "Offer", "Screen", "Diligence", "Data", "SALDO", "Materials"] as const;
 
 function money(n: number) {
   if (!Number.isFinite(n)) return "—";
-  return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+  return n.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  });
 }
 
 function Acquire() {
@@ -59,7 +58,9 @@ function Acquire() {
             onClick={() => setTab(t)}
             className={cn(
               "rounded-sm px-3 py-2 text-xs font-semibold uppercase tracking-wider",
-              tab === t ? "bg-primary-container text-on-primary" : "bg-surface-low hover:bg-surface-container",
+              tab === t
+                ? "border border-primary/30 bg-primary-fixed text-primary"
+                : "bg-surface-low hover:bg-surface-container",
             )}
           >
             {t}
@@ -71,6 +72,7 @@ function Acquire() {
         {tab === "Offer" && <OfferTab />}
         {tab === "Screen" && <ScreenTab />}
         {tab === "Diligence" && <DiligenceTab />}
+        {tab === "Data" && <DataTab />}
         {tab === "SALDO" && <SaldoTab />}
         {tab === "Materials" && <MaterialsTab />}
       </div>
@@ -131,7 +133,12 @@ function YieldTab() {
           <Field label="Gross acres" value={gross} onChange={setGross} suffix="ac" />
           <Field label="ROW / roads" value={row} onChange={setRow} suffix="%" />
           <Field label="Open space" value={open} onChange={setOpen} suffix="%" />
-          <Field label="Wetlands / flood / undevelopable" value={undev} onChange={setUndev} suffix="%" />
+          <Field
+            label="Wetlands / flood / undevelopable"
+            value={undev}
+            onChange={setUndev}
+            suffix="%"
+          />
           <Field label="Stormwater / detention" value={storm} onChange={setStorm} suffix="%" />
           <Field label="Lots per net acre (zoning)" value={dpa} onChange={setDpa} />
           <p className="text-xs text-muted-foreground">
@@ -148,7 +155,7 @@ function YieldTab() {
           <Stat l="Net developable" v={`${netAc.toFixed(2)} ac`} />
           <Stat l="Net lots" v={String(lots)} />
           <Stat l="Gross density" v={`${grossDpa.toFixed(2)} / ac`} />
-          <Stat l="Land leftover" v={`${((row + open + undev + storm)).toFixed(0)}%`} />
+          <Stat l="Land leftover" v={`${(row + open + undev + storm).toFixed(0)}%`} />
           <p className="col-span-2 text-sm text-muted-foreground">
             Next: price the residual on the Offer tab using {lots} lots. Then confirm the district
             min-lot in{" "}
@@ -246,7 +253,10 @@ function ScreenTab() {
         <CardContent className="grid gap-3">
           {SCREENING_CHECKS.map((c) => (
             <label key={c.id} className="flex items-start gap-3 rounded-md bg-surface-low p-3">
-              <Checkbox checked={!!on[c.id]} onCheckedChange={(v) => setOn((s) => ({ ...s, [c.id]: Boolean(v) }))} />
+              <Checkbox
+                checked={!!on[c.id]}
+                onCheckedChange={(v) => setOn((s) => ({ ...s, [c.id]: Boolean(v) }))}
+              />
               <div>
                 <div className="text-sm font-semibold">{c.label}</div>
                 <p className="text-xs text-muted-foreground">{c.hint}</p>
@@ -295,6 +305,95 @@ function DiligenceTab() {
               <p className="text-sm text-muted-foreground">{p.body}</p>
             </div>
           ))}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function DataTab() {
+  return (
+    <div className="grid gap-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Database className="size-5 text-primary-container" /> Developer data register
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm text-muted-foreground">
+          <p>
+            Official GIS, hazard, market, and housing-finance sources used for early feasibility and
+            underwriting research. Live layers appear in the Map workspace; bulk and governed
+            sources open at their authoritative publisher.
+          </p>
+          <p>
+            These sources support screening only. Confirm survey, title, utilities, soils, wetlands,
+            flood status, zoning, environmental conditions, financing, and program eligibility with
+            the appropriate licensed professional or agency.
+          </p>
+        </CardContent>
+      </Card>
+
+      {FEASIBILITY_DATA_GROUPS.map((group) => {
+        const sources = FEASIBILITY_DATA_SOURCES.filter((source) => source.mode === group.mode);
+        return (
+          <section key={group.mode}>
+            <h2 className="text-lg font-semibold">{group.title}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">{group.description}</p>
+            <div className="mt-3 grid gap-3 lg:grid-cols-2">
+              {sources.map((source) => (
+                <Card key={source.id}>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between gap-3">
+                      <CardTitle className="text-base">{source.title}</CardTitle>
+                      <span className="shrink-0 rounded-full bg-surface-low px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
+                        {source.status}
+                      </span>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm">
+                    <p className="font-medium">{source.provider}</p>
+                    <p className="text-muted-foreground">{source.use}</p>
+                    <p className="text-xs text-muted-foreground">{source.detail}</p>
+                    <div className="flex flex-wrap gap-3 pt-1 text-sm font-semibold text-primary-container">
+                      {source.mode === "live-map" ? (
+                        <Link to="/map" className="inline-flex items-center gap-1 underline">
+                          <Layers3 className="size-3.5" /> Open map
+                        </Link>
+                      ) : null}
+                      <a
+                        href={source.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 underline"
+                      >
+                        <ExternalLink className="size-3.5" /> Open source
+                      </a>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        );
+      })}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Specialized analysis tools</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm text-muted-foreground">
+          <p>
+            Bentley OpenRoads/OpenSite, ENVI, ERDAS, QGIS, GRASS, MapInfo, Google Earth, Unity,
+            Unreal Engine, and Open Geospatial Consortium (OGC)-compatible tools can consume the
+            official downloads above for civil design, remote sensing, terrain, visualization, and
+            interoperability workflows.
+          </p>
+          <p>
+            MetroStudy, LandVision, and Zonda are commercial data products. They are not imported or
+            represented as public data because their use requires the customer’s own licence and
+            terms.
+          </p>
         </CardContent>
       </Card>
     </div>
@@ -352,7 +451,12 @@ function SaldoTab() {
             <p>{YCPC_CONTACT.phone}</p>
             <p>{YCPC_CONTACT.email}</p>
             <p className="mt-2 text-muted-foreground">{YCPC_CONTACT.note}</p>
-            <a href={YCPC_CONTACT.url} className="mt-2 inline-block text-primary-container underline" target="_blank" rel="noreferrer">
+            <a
+              href={YCPC_CONTACT.url}
+              className="mt-2 inline-block text-primary-container underline"
+              target="_blank"
+              rel="noreferrer"
+            >
               ycpc.org
             </a>
           </CardContent>
@@ -390,9 +494,7 @@ function MaterialsTab() {
                     <td className="py-2">{m.name}</td>
                     <td>{m.cat}</td>
                     <td>{m.unit}</td>
-                    <td className="text-right font-mono">
-                      ${m.price.toFixed(2)}
-                    </td>
+                    <td className="text-right font-mono">${m.price.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>

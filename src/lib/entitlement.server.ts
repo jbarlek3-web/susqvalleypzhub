@@ -1,4 +1,5 @@
 import { auth } from "@clerk/tanstack-react-start/server";
+import { PRO_PLAN_KEY } from "@/lib/billing-config";
 
 export type EntitlementStatus = {
   isPro: boolean;
@@ -8,10 +9,10 @@ export type EntitlementStatus = {
 
 export async function currentEntitlement(): Promise<EntitlementStatus> {
   const session = await auth();
-  const isPro = Boolean(session.userId && session.has({ plan: "pro" }));
+  const isPro = Boolean(session.userId && session.has({ plan: PRO_PLAN_KEY }));
   return {
     isPro,
-    status: isPro ? "active" : "free",
+    status: isPro ? "active" : "locked",
     currentPeriodEnd: null,
   };
 }

@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { GeoJSON, TileLayer, useMap } from "react-leaflet";
 import { EsriDynamicLayer } from "@/components/map/esri-dynamic-layer";
 import {
+  FEMA_NFHL,
   HYDRO,
   MUNICIPALITIES,
   PARCEL_MIN_ZOOM,
@@ -218,7 +219,12 @@ function MunicipalitiesLayer() {
     if (county === "all") return data;
     return {
       type: "FeatureCollection" as const,
-      features: data.features.filter((f) => MUNICIPALITIES.fipsCounty[String(f.properties.FIPS_COUNT)] === county),
+      features: data.features.filter(
+        (f) =>
+          MUNICIPALITIES.fipsCounty[
+            String(f.properties.fips_count ?? f.properties.FIPS_COUNT ?? "")
+          ] === county,
+      ),
     };
   }, [data, county]);
 
@@ -238,9 +244,11 @@ function MunicipalitiesLayer() {
       }}
       onEachFeature={(feature, layer) => {
         const p = (feature.properties ?? {}) as Record<string, string | number | null>;
-        const cnty = MUNICIPALITIES.fipsCounty[String(p.FIPS_COUNT)] ?? String(p.COUNTY_NAM ?? "PA");
+        const cnty =
+          MUNICIPALITIES.fipsCounty[String(p.fips_count ?? p.FIPS_COUNT ?? "")] ??
+          String(p.fips_name ?? p.COUNTY_NAM ?? "PA");
         layer.bindPopup(
-          `<div class="min-w-40"><div class="text-[10px] font-bold uppercase tracking-wider">Municipality</div><div class="font-semibold">${esc(p.MUNICIPAL1)}</div><div class="text-xs">${esc(p.CLASS_OF_M)} · ${esc(cnty)} County</div></div>`,
+          `<div class="min-w-40"><div class="text-[10px] font-bold uppercase tracking-wider">Municipality</div><div class="font-semibold">${esc(p.municipal1 ?? p.MUNICIPAL1)}</div><div class="text-xs">${esc(p.class_of_m ?? p.CLASS_OF_M)} · ${esc(cnty)} County</div></div>`,
         );
       }}
     />
@@ -253,6 +261,7 @@ export function GisOverlays() {
   const hydro = Boolean(layers.hydro);
   const soils = Boolean(layers.soils);
   const yorkPasda = Boolean(layers.yorkPasda);
+  const femaFlood = Boolean(layers.femaFlood);
 
   return (
     <>
@@ -280,6 +289,14 @@ export function GisOverlays() {
         minZoom={SOILS.minZoom}
         opacity={0.55}
         pane="gis-soils"
+      />
+      <EsriDynamicLayer
+        serviceUrl={FEMA_NFHL.serviceUrl}
+        layerIds={FEMA_NFHL.layerIds}
+        enabled={femaFlood}
+        minZoom={FEMA_NFHL.minZoom}
+        opacity={0.72}
+        pane="gis-fema-flood"
       />
       <EsriDynamicLayer
         serviceUrl={YORK_PASDA.serviceUrl}

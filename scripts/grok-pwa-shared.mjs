@@ -9,6 +9,9 @@ import { join } from "node:path";
 export const DEFAULT_APP_NAME = "Grok App";
 export const OG_SERVICE_URL_DEFAULT = "https://og.grok.me";
 export const OG_SITE_REL_PATH = "src/lib/og/site.json";
+export const PWA_APP_NAME = "Field ACQ Ordinance Aide";
+export const PWA_SHORT_NAME = "Field ACQ Aide";
+export const PWA_ICON_SRC = "/field-acq-ordinance-aide-icon.png";
 
 const SHARE_META_KEYS = new Set([
   "og:title",
@@ -111,9 +114,7 @@ export function publicAppHost(hostHeader) {
  * app — Envoy rewrites it to `*.vercel.app`.
  */
 export function resolvePublicHost(hostHeader) {
-  return (
-    publicAppHost(process.env?.VITE_PUBLIC_HOSTNAME) || publicAppHost(hostHeader)
-  );
+  return publicAppHost(process.env?.VITE_PUBLIC_HOSTNAME) || publicAppHost(hostHeader);
 }
 
 export function isInstallQuery(url) {
@@ -151,29 +152,30 @@ export function stripInstallParams(url) {
   return rest ? `${path}?${rest}` : path;
 }
 
-export function renderInstallPageHtml(template, { host, url } = {}) {
+export function renderInstallPageHtml(template, { host, url, appName = PWA_APP_NAME } = {}) {
   return String(template)
-    .replaceAll("{{APP_NAME}}", escapeHtml(appNameFromHost(host)))
+    .replaceAll("{{APP_NAME}}", escapeHtml(appName || appNameFromHost(host)))
     .replaceAll("{{APP_URL}}", escapeHtml(stripInstallParams(url)));
 }
 
 export function renderWebManifest(hostHeader) {
-  const name = appNameFromHost(hostHeader);
+  const name = PWA_APP_NAME || appNameFromHost(hostHeader);
   return JSON.stringify(
     {
       name,
-      short_name: name,
+      short_name: PWA_SHORT_NAME,
       id: "/",
       start_url: "/",
       scope: "/",
       display: "standalone",
-      background_color: "#000000",
-      theme_color: "#000000",
+      background_color: "#f7f9fb",
+      theme_color: "#ffffff",
       icons: [
         {
-          src: "/logo-mark.png",
-          sizes: "180x180",
+          src: PWA_ICON_SRC,
+          sizes: "1254x1254",
           type: "image/png",
+          purpose: "any maskable",
         },
       ],
     },
@@ -187,7 +189,7 @@ export function grokPwaHeadTags(appName = DEFAULT_APP_NAME) {
     // Standalone display comes from the manifest ("display": "standalone");
     // the legacy *-web-app-capable metas it replaces are deliberately absent.
     ["manifest", '<link rel="manifest" href="/__grok/manifest.webmanifest">'],
-    ["apple-touch-icon", '<link rel="apple-touch-icon" href="/logo-mark.png">'],
+    ["apple-touch-icon", `<link rel="apple-touch-icon" href="${PWA_ICON_SRC}">`],
     [
       "apple-mobile-web-app-title",
       `<meta name="apple-mobile-web-app-title" content="${escapeHtml(appName)}">`,
@@ -323,7 +325,10 @@ export function siteHasCustomCard(site = {}) {
  * Otherwise empty — caller emits the og.grok.me placeholder.
  */
 export function resolveOgCardAsset(site = {}, cwd = process.cwd()) {
-  return ogCardPublicPath(cwd) || (detectCustomOgCard(cwd, site) ? String(site.image ?? "").trim() || "/og.jpg" : "");
+  return (
+    ogCardPublicPath(cwd) ||
+    (detectCustomOgCard(cwd, site) ? String(site.image ?? "").trim() || "/og.jpg" : "")
+  );
 }
 
 /** Stamp `card=custom` when public/og.jpg or public/og.png is on disk. */
@@ -357,9 +362,9 @@ export function grokOgHeadTags({
   if (publicHost) {
     const asset = allowDiskCard
       ? resolveOgCardAsset(site, cwd)
-      : (String(site.card ?? "").toLowerCase() === "custom"
-          ? String(site.image ?? "").trim() || "/og.jpg"
-          : "");
+      : String(site.card ?? "").toLowerCase() === "custom"
+        ? String(site.image ?? "").trim() || "/og.jpg"
+        : "";
     const custom = Boolean(asset);
     let image = custom
       ? `https://${publicHost}${asset.startsWith("/") ? asset : `/${asset}`}`
@@ -408,9 +413,10 @@ function insertBeforeHeadClose(html, snippet) {
 export function normalizeHeadContext(ctx = {}) {
   const cwd = ctx.cwd ?? process.cwd();
   const siteExplicit = ctx.siteExplicit ?? ctx.site !== undefined;
-  const site = ctx.site !== undefined
-    ? { ...ctx.site }
-    : applyCustomCardFromFs(snapshotOgIdentity(cwd).site, cwd);
+  const site =
+    ctx.site !== undefined
+      ? { ...ctx.site }
+      : applyCustomCardFromFs(snapshotOgIdentity(cwd).site, cwd);
   const appName = resolveOgTitle(site, ctx.appName ?? DEFAULT_APP_NAME, ctx.host ?? "");
   return {
     appName,
@@ -426,27 +432,25 @@ export function normalizeHeadContext(ctx = {}) {
 
 export function injectGrokPwaHead(html, ctx = {}) {
   if (typeof html !== "string") return html;
-  const { site, siteExplicit, projectId, creator, creatorId, host, cwd } = normalizeHeadContext(ctx);
+  const { site, siteExplicit, projectId, creator, creatorId, host, cwd } =
+    normalizeHeadContext(ctx);
   const documentTitle = titleFromDocument(html);
-  const appName = resolveOgTitle(
-    site,
-    ctx.appName ?? DEFAULT_APP_NAME,
-    host,
-    documentTitle,
-  );
+  const appName = resolveOgTitle(site, ctx.appName ?? DEFAULT_APP_NAME, host, documentTitle);
   let next = stripShareMetaTags(html);
 
   const missing = grokPwaHeadTags(appName)
     .filter(([key]) => {
       if (key === "manifest") return !next.includes('href="/__grok/manifest.webmanifest"');
-      if (key === "apple-touch-icon") return !next.includes('href="/logo-mark.png"');
+      if (key === "apple-touch-icon") return !next.includes(`href="${PWA_ICON_SRC}"`);
       return !next.includes(`name="${key}"`);
     })
     .map(([, tag]) => tag);
 
   next = insertAfterHeadOpen(
     next,
-    grokOgHeadTags({ host, appName, site, documentTitle, cwd, allowDiskCard: !siteExplicit }).join(""),
+    grokOgHeadTags({ host, appName, site, documentTitle, cwd, allowDiskCard: !siteExplicit }).join(
+      "",
+    ),
   );
 
   if (!next.includes("/grok-app-builder/extensions.js")) {

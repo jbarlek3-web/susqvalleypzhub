@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { SEED_ALERTS, SEED_COMMENTS, SEED_PROJECTS } from "@/lib/data/catalog";
+import { SEED_COMMENTS, SEED_PROJECTS } from "@/lib/data/catalog";
+import { NOTIFICATION_FEED_VERSION, OPERATIONAL_ALERTS } from "@/lib/data/notification-feed";
 import { PARCELS } from "@/lib/data/parcels";
 import type { YorkLookup } from "@/lib/york-lookup";
 import type {
@@ -15,6 +16,7 @@ import type {
 const DEFAULT_LAYERS: Record<LayerId, boolean> = {
   zoning: true,
   flood: false,
+  femaFlood: false,
   slopes: false,
   footprints: true,
   yorkParcels: true,
@@ -54,6 +56,7 @@ type State = {
   projects: Project[];
   comments: TeamComment[];
   alerts: AlertItem[];
+  notificationFeedVersion: number;
   savedIds: string[];
   alertCounties: Record<County, boolean>;
   alertFreq: "Immediate" | "Daily Digest" | "Weekly";
@@ -100,7 +103,8 @@ export const useHub = create<State>()(
       lookupBusy: false,
       projects: SEED_PROJECTS,
       comments: SEED_COMMENTS,
-      alerts: SEED_ALERTS,
+      alerts: OPERATIONAL_ALERTS,
+      notificationFeedVersion: NOTIFICATION_FEED_VERSION,
       savedIds: ["p-1042"],
       alertCounties: { York: true, Cumberland: true, Dauphin: false, Lancaster: true },
       alertFreq: "Daily Digest",
@@ -200,11 +204,19 @@ export const useHub = create<State>()(
       skipHydration: true,
       // Entitlements are authoritative on the server and must never be restored
       // from user-editable browser storage.
-      merge: (persisted, current) => ({
-        ...current,
-        ...(persisted as Partial<State>),
-        isPro: false,
-      }),
+      merge: (persisted, current) => {
+        const stored = (persisted ?? {}) as Partial<State>;
+        const hasCurrentFeed = stored.notificationFeedVersion === NOTIFICATION_FEED_VERSION;
+        return {
+          ...current,
+          ...stored,
+          // The old feed was four invented 2024 alerts. Do not allow it to
+          // survive browser persistence after the source-backed watchlist ships.
+          alerts: hasCurrentFeed && stored.alerts ? stored.alerts : current.alerts,
+          notificationFeedVersion: NOTIFICATION_FEED_VERSION,
+          isPro: false,
+        };
+      },
     },
   ),
 );

@@ -133,17 +133,13 @@ export const PARCEL_SERVICES: ParcelService[] = [
 
 export const MUNICIPALITIES = {
   title: "PA Municipality Boundaries",
-  source: "PennDOT / PASDA",
+  source: "PennDOT via Pennsylvania Open Data",
   url:
-    "https://mapservices.pasda.psu.edu/server/rest/services/pasda/PennDOT/MapServer/10/query?" +
+    "https://data.pa.gov/resource/ednf-5bi6.geojson?" +
     new URLSearchParams({
-      where: "FIPS_COUNT in('133','041','043','071')",
-      outFields: "MUNICIPAL1,CLASS_OF_M,COUNTY_NAM,FIPS_COUNT",
-      returnGeometry: "true",
-      outSR: "4326",
-      maxAllowableOffset: "0.0004",
-      resultRecordCount: "1000",
-      f: "geojson",
+      $select: "municipal1,class_of_m,fips_count,fips_name",
+      $where: "fips_count in('133','041','043','071')",
+      $limit: "1000",
     }).toString(),
   fipsCounty: {
     "041": "Cumberland",
@@ -174,6 +170,14 @@ export const USGS_TOPO = {
   source: "USGS National Map",
   url: "https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",
   maxNativeZoom: 16,
+};
+
+export const FEMA_NFHL = {
+  title: "FEMA Flood Hazard Zones",
+  source: "FEMA National Flood Hazard Layer",
+  serviceUrl: "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+  layerIds: [28],
+  minZoom: 13,
 };
 
 export const YORK_PASDA = {

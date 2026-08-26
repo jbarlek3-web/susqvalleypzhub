@@ -3,37 +3,40 @@
 @import "leaflet/dist/leaflet.css";
 
 @theme {
-  --color-primary: #002046;
-  --color-primary-container: #1b365d;
+  --color-primary: #112847;
+  --color-primary-container: #1a6672;
   --color-on-primary: #ffffff;
-  --color-primary-fixed: #d6e3ff;
-  --color-on-primary-fixed: #001b3d;
+  --color-primary-fixed: #edf9e5;
+  --color-on-primary-fixed: #112847;
 
-  --color-secondary: #466649;
-  --color-secondary-container: #c7ecc7;
+  --color-secondary: #177d84;
+  --color-secondary-container: #e0f8f3;
   --color-on-secondary: #ffffff;
-  --color-on-secondary-container: #2f4e33;
+  --color-on-secondary-container: #123f45;
 
-  --color-surface: #f8f9fa;
-  --color-surface-low: #f3f4f5;
-  --color-surface-container: #edeeef;
-  --color-surface-high: #e7e8e9;
-  --color-surface-highest: #e1e3e4;
-  --color-on-surface: #191c1d;
-  --color-on-surface-variant: #44474e;
+  --color-surface: #ffffff;
+  --color-surface-low: #f7f9fb;
+  --color-surface-container: #f0f4f7;
+  --color-surface-high: #e8eef3;
+  --color-surface-highest: #dfe7ee;
+  --color-on-surface: #16253e;
+  --color-on-surface-variant: #516277;
 
-  --color-background: #f8f9fa;
-  --color-foreground: #191c1d;
+  --color-background: #ffffff;
+  --color-foreground: #16253e;
   --color-card: #ffffff;
-  --color-card-foreground: #191c1d;
-  --color-muted: #edeeef;
-  --color-muted-foreground: #44474e;
-  --color-border: #c4c6cf;
-  --color-outline: #74777f;
-  --color-outline-variant: #c4c6cf;
-  --color-ring: #1b365d;
-  --color-accent: #466649;
-  --color-accent-foreground: #ffffff;
+  --color-card-foreground: #16253e;
+  --color-muted: #f0f4f7;
+  --color-muted-foreground: #516277;
+  --color-border: #c9d5df;
+  --color-outline: #8394a8;
+  --color-outline-variant: #c9d5df;
+  --color-ring: #177d84;
+  --color-accent: #8aee35;
+  --color-accent-foreground: #112847;
+  --color-brand-navy: #112847;
+  --color-brand-teal: #177d84;
+  --color-brand-lime: #8aee35;
   --color-destructive: #ba1a1a;
   --color-destructive-foreground: #ffffff;
   --color-input: #c4c6cf;
@@ -74,7 +77,7 @@
   }
 
   body {
-    background: var(--color-surface);
+    background: var(--color-background);
     color: var(--color-on-surface);
     font-family: var(--font-sans);
   }
@@ -102,7 +105,7 @@
 
 .leaflet-container {
   font-family: var(--font-sans);
-  background: #d7dde3;
+  background: var(--color-surface-high);
 }
 
 .leaflet-popup-content-wrapper {

@@ -1,5 +1,4 @@
 import type {
-  AlertItem,
   MeetingRecord,
   Project,
   TeamComment,
@@ -200,41 +199,6 @@ export const SEED_COMMENTS: TeamComment[] = [
     initials: "MR",
     body: "Setback requirements here look inconsistent with the 2021 municipal variance. Flagging for ZHB file #23-014.",
     at: "2 hrs ago",
-  },
-];
-
-export const SEED_ALERTS: AlertItem[] = [
-  {
-    id: "a1",
-    kind: "zoning",
-    title: "Parcel 44-A3 Rezoned to C-2",
-    body: "York County has approved a rezoning request for parcel 44-A3 from R-1 (Residential) to C-2 (Commercial). Effective immediately.",
-    at: "2 hours ago",
-    unread: true,
-  },
-  {
-    id: "a2",
-    kind: "document",
-    title: "2024 Regional Transportation Plan",
-    body: "The final draft of the 2024 regional transportation plan for Cumberland County is now available in the document library.",
-    at: "Yesterday, 4:30 PM",
-    unread: true,
-  },
-  {
-    id: "a3",
-    kind: "ordinance",
-    title: "Industrial Setback Requirements Adjusted",
-    body: "Dauphin County has updated setback requirements for all newly zoned industrial areas abutting residential zones.",
-    at: "Oct 12, 2024",
-    unread: false,
-  },
-  {
-    id: "a4",
-    kind: "system",
-    title: "GIS Layer Sync Completed",
-    body: "Monthly synchronization of Lancaster County municipal parcel boundaries has been completed successfully.",
-    at: "Oct 10, 2024",
-    unread: false,
   },
 ];
 

@@ -10,9 +10,11 @@ import {
   Search,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
+import { FieldAcqOrdinanceAideLogo } from "@/components/brand/field-acq-ordinance-aide-logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { REGIONAL_DOCUMENT_COVERAGE } from "@/lib/data/regional-document-coverage";
 import { useHub } from "@/lib/store";
 import type { County } from "@/lib/types";
 import { useState } from "react";
@@ -33,21 +35,18 @@ function Home() {
 
   return (
     <AppShell>
-      <section className="relative overflow-hidden rounded-xl bg-primary px-5 py-12 text-on-primary md:px-12 md:py-16">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-20"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 80% 20%, rgb(174 199 247 / 0.4), transparent 40%), linear-gradient(120deg, transparent 40%, rgb(70 102 73 / 0.25))",
-          }}
-        />
+      <section className="relative overflow-hidden rounded-xl border border-outline-variant border-t-4 border-t-brand-lime bg-card px-5 py-12 md:px-12 md:py-16">
         <div className="relative mx-auto max-w-3xl text-center">
+          <FieldAcqOrdinanceAideLogo className="mx-auto h-20 max-w-[300px]" />
+          <p className="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-secondary">
+            Field intelligence for land and ordinance research
+          </p>
           <h1 className="text-3xl font-bold tracking-tight md:text-5xl">
-            The Centralized Hub for Susquehanna Valley Planning & Zoning
+            Make the next acquisition decision with confidence.
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-sm text-on-primary/80 md:text-lg">
-            Access authoritative, up-to-date zoning codes, property maps, and builder documentation
-            across York, Cumberland, Dauphin, and Lancaster counties.
+          <p className="mx-auto mt-4 max-w-2xl text-sm text-muted-foreground md:text-lg">
+            Field ACQ Ordinance Aide brings zoning codes, property maps, and builder documentation
+            together for York, Cumberland, Dauphin, and Lancaster counties.
           </p>
           <form
             className="mx-auto mt-8 flex max-w-xl flex-col gap-2 sm:flex-row"
@@ -82,14 +81,17 @@ function Home() {
                 suppressHydrationWarning
               />
             </div>
-            <Button type="submit" size="lg" className="h-12 bg-on-primary text-primary hover:bg-primary-fixed">
+            <Button type="submit" size="lg" className="h-12">
               Explore Map
             </Button>
           </form>
           <div className="mt-8 grid grid-cols-3 gap-4 text-center">
             <Stat n="72" l="York municipalities" />
-            <Stat n="415" l="Live zoning districts" />
-            <Stat n="2012" l="County SALDO" />
+            <Stat
+              n={REGIONAL_DOCUMENT_COVERAGE.sourceRecords.toLocaleString()}
+              l="Regional source records"
+            />
+            <Stat n={REGIONAL_DOCUMENT_COVERAGE.saldoRecords.toLocaleString()} l="SALDO records" />
           </div>
         </div>
       </section>
@@ -97,15 +99,30 @@ function Home() {
       <section className="mt-10">
         <div className="mb-4 flex items-end justify-between">
           <h2 className="text-xl font-semibold">Covering 4 Counties</h2>
-          <Link to="/insights" className="inline-flex items-center gap-1 text-sm font-medium text-primary-container">
+          <Link
+            to="/insights"
+            className="inline-flex items-center gap-1 text-sm font-medium text-primary-container"
+          >
             View Regional Overview <ArrowRight className="size-4" />
           </Link>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <CountyCard name="York" blurb="Comprehensive zoning & tax parcel records." to="/map" />
-          <CountyCard name="Cumberland" blurb="Development tracking and municipal codes." to="/map" />
-          <CountyCard name="Dauphin" blurb="Interactive parcel layers and historic overlays." to="/map" />
-          <CountyCard name="Lancaster" blurb="Agricultural zoning and urban growth boundaries." to="/map" />
+          <CountyCard
+            name="Cumberland"
+            blurb="Development tracking and municipal codes."
+            to="/map"
+          />
+          <CountyCard
+            name="Dauphin"
+            blurb="Interactive parcel layers and historic overlays."
+            to="/map"
+          />
+          <CountyCard
+            name="Lancaster"
+            blurb="Agricultural zoning and urban growth boundaries."
+            to="/map"
+          />
         </div>
       </section>
 
@@ -113,7 +130,9 @@ function Home() {
         <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
           Platform Capabilities
         </p>
-        <h2 className="mt-1 text-2xl font-semibold">Integrated Tools for Planners, Developers, and Municipalities</h2>
+        <h2 className="mt-1 text-2xl font-semibold">
+          Integrated Tools for Planners, Developers, and Municipalities
+        </h2>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <Feature
             icon={Layers}
@@ -130,7 +149,9 @@ function Home() {
             extra={
               <div className="mt-3 rounded-md bg-surface-low p-3 font-mono text-xs">
                 <div>Sec 402.1 — R-1 Residential</div>
-                <div className="text-on-surface-variant">Max Height: 35ft · Min Lot: 10,000 sqft</div>
+                <div className="text-on-surface-variant">
+                  Max Height: 35ft · Min Lot: 10,000 sqft
+                </div>
               </div>
             }
           />
@@ -162,7 +183,7 @@ function Home() {
           <h2 className="text-2xl font-semibold">Professional Access</h2>
           <p className="mt-2 text-muted-foreground">
             Unlock the full potential of regional data. Join municipal officials, developers, and
-            surveyors who rely on the Hub for integrated land-use intelligence.
+            surveyors who rely on Field ACQ Ordinance Aide for integrated land-use intelligence.
           </p>
           <ul className="mt-4 space-y-2 text-sm">
             {[
@@ -178,7 +199,9 @@ function Home() {
         </div>
         <Card className="border-primary-container/30">
           <CardContent className="p-6">
-            <div className="text-xs font-bold uppercase tracking-wider text-secondary">Most Popular</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-secondary">
+              Most Popular
+            </div>
             <div className="mt-1 text-lg font-semibold">Pro Subscription</div>
             <div className="mt-2 flex items-end gap-1">
               <span className="text-4xl font-bold">$10</span>
@@ -201,8 +224,8 @@ function Home() {
 function Stat({ n, l }: { n: string; l: string }) {
   return (
     <div>
-      <div className="text-2xl font-bold md:text-3xl">{n}</div>
-      <div className="text-xs uppercase tracking-wider text-on-primary/70">{l}</div>
+      <div className="text-2xl font-bold text-primary md:text-3xl">{n}</div>
+      <div className="text-xs uppercase tracking-wider text-on-surface-variant">{l}</div>
     </div>
   );
 }
@@ -244,7 +267,10 @@ function Feature({
       <h3 className="mt-3 text-lg font-semibold">{title}</h3>
       <p className="mt-1 text-sm text-muted-foreground">{body}</p>
       {extra}
-      <Link to={href} className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary-container">
+      <Link
+        to={href}
+        className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary-container"
+      >
         {cta ?? "Open"} <ArrowRight className="size-4" />
       </Link>
     </div>

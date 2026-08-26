@@ -24,15 +24,27 @@ function Insights() {
         <div>
           <h1 className="text-2xl font-semibold">Regional Insights</h1>
           <p className="text-sm text-muted-foreground">
-            Real-time macro analysis for Susquehanna Valley municipalities.
+            Market, risk, and development intelligence for Central Pennsylvania municipalities.
           </p>
         </div>
       </div>
       <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric label="Avg Lot Price / Acre" value="$84.2k" delta="+4.2%" vs="vs region avg $80.8k" up />
+        <Metric
+          label="Avg Lot Price / Acre"
+          value="$84.2k"
+          delta="+4.2%"
+          vs="vs region avg $80.8k"
+          up
+        />
         <Metric label="Active Permits" value="1,248" delta="+12%" vs="week over week" up />
         <Metric label="High-Risk Flood Parcels" value="8.4%" delta="3,420 total" vs="" />
-        <Metric label="Median Days on Market" value="42" delta="−5 days" vs="vs last quarter" up={false} />
+        <Metric
+          label="Median Days on Market"
+          value="42"
+          delta="−5 days"
+          vs="vs last quarter"
+          up={false}
+        />
       </div>
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
@@ -48,9 +60,27 @@ function Insights() {
                 <Tooltip />
                 <Legend />
                 <Line type="monotone" dataKey="York" stroke="#1b365d" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="Cumberland" stroke="#466649" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="Dauphin" stroke="#c62828" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="Lancaster" stroke="#1565c0" strokeWidth={2} dot={false} />
+                <Line
+                  type="monotone"
+                  dataKey="Cumberland"
+                  stroke="#466649"
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="Dauphin"
+                  stroke="#c62828"
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="Lancaster"
+                  stroke="#1565c0"
+                  strokeWidth={2}
+                  dot={false}
+                />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -63,7 +93,9 @@ function Insights() {
             <BarRow label="100-Year Zone" pct={10} color="bg-flood" />
             <BarRow label="500-Year Zone" pct={20} color="bg-flood/50" />
             <BarRow label="No Flood Risk" pct={70} color="bg-secondary" />
-            <p className="pt-2 text-xs text-muted-foreground">Share of active parcels in the 4-county inventory.</p>
+            <p className="pt-2 text-xs text-muted-foreground">
+              Share of active parcels in the 4-county inventory.
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -118,7 +150,9 @@ function Metric({
 }) {
   return (
     <div className="rounded-lg border border-outline-variant bg-card p-4">
-      <div className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{label}</div>
+      <div className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
+        {label}
+      </div>
       <div className="mt-1 text-2xl font-semibold">{value}</div>
       <div className={`text-xs ${up === false ? "text-destructive" : "text-secondary"}`}>
         {delta} {vs}

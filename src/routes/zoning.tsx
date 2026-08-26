@@ -56,9 +56,10 @@ function Zoning() {
     <AppShell>
       <h1 className="text-2xl font-semibold">York County Zoning Districts</h1>
       <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-        {YORK_ZONING_DISTRICTS.length} live districts across {YORK_MUNICIPALITIES.length} municipalities,
-        joined to PASDA dimensional standards (front/side/lot/height/coverage and use matrix). Zero in
-        the GIS layer means “see the ordinance,” not a 0-ft setback. Source: YCPC Open Data + PASDA.
+        {YORK_ZONING_DISTRICTS.length} live districts across {YORK_MUNICIPALITIES.length}{" "}
+        municipalities, joined to PASDA dimensional standards (front/side/lot/height/coverage and
+        use matrix). Zero in the GIS layer means “see the ordinance,” not a 0-ft setback. Source:
+        YCPC Open Data + PASDA.
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
         <Input
@@ -160,7 +161,9 @@ function YorkDistrictCard({ d }: { d: YorkZoningDistrict }) {
   const docs = DOCUMENTS.filter(
     (doc) =>
       doc.county === "York" &&
-      doc.municipality.toLowerCase().includes(muniPretty.replace(/ Township| Borough| City/gi, "").toLowerCase()),
+      doc.municipality
+        .toLowerCase()
+        .includes(muniPretty.replace(/ Township| Borough| City/gi, "").toLowerCase()),
   ).slice(0, 3);
   return (
     <Card>
@@ -197,7 +200,9 @@ function YorkDistrictCard({ d }: { d: YorkZoningDistrict }) {
             <span
               key={f.label}
               className={`rounded-sm px-2 py-0.5 text-[11px] font-semibold ${
-                f.ok ? "bg-secondary text-on-secondary" : "bg-surface-low text-muted-foreground"
+                f.ok
+                  ? "border border-secondary/30 bg-secondary-container text-secondary"
+                  : "bg-surface-low text-muted-foreground"
               }`}
             >
               {f.label}
@@ -210,7 +215,12 @@ function YorkDistrictCard({ d }: { d: YorkZoningDistrict }) {
             <span className="text-muted-foreground">Ordinances: </span>
             {docs.map((doc, i) => (
               <span key={doc.id}>
-                <a href={doc.url} target="_blank" rel="noreferrer" className="text-primary-container underline">
+                <a
+                  href={doc.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary-container underline"
+                >
                   {doc.category}
                 </a>
                 {i < docs.length - 1 ? " · " : ""}
