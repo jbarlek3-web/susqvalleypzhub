@@ -19,7 +19,7 @@ function LoginPage() {
           <h1 className="mt-7 max-w-md text-3xl font-bold tracking-tight md:text-4xl">Turn parcel research into a defensible acquisition decision.</h1>
           <p className="mt-4 max-w-lg text-on-primary/75">Sign in to save your work. Pro members also unlock complete zoning detail, downloads, projects, and alerts.</p>
           <ul className="mt-8 space-y-3 text-sm">
-            {["One account across every device", "Payments handled securely by Stripe", "Your saved work stays private"].map((item) => (
+            {["One account across every device", "Billing managed securely by Clerk", "Your saved work stays private"].map((item) => (
               <li key={item} className="flex items-center gap-2"><Check className="size-4 text-secondary-fixed" />{item}</li>
             ))}
           </ul>

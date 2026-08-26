@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { findDistrict, prettyMuni, type YorkZoningDistrict } from "@/lib/data/york-zoning";
 import { authMiddleware } from "@/lib/auth/middleware";
-import { entitlementForUser } from "@/lib/entitlement.server";
+import { currentEntitlement } from "@/lib/entitlement.server";
 import { consumeRateLimit } from "@/lib/rate-limit.server";
 
 const CENSUS = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress";
@@ -62,7 +62,7 @@ export const lookupYorkAddress = createServerFn({ method: "POST" })
     z.object({ q: z.string().min(4).max(160) }).parse(input),
   )
   .handler(async ({ data, context }): Promise<{ ok: true; result: YorkLookup } | { ok: false; error: string }> => {
-    const entitlement = await entitlementForUser(context.userId);
+    const entitlement = await currentEntitlement();
     await consumeRateLimit({
       action: "parcel-lookup",
       subject: context.userId,

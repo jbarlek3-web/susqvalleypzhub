@@ -9,9 +9,6 @@ const validProduction = {
   CLERK_SECRET_KEY: ["sk", "live", "private"].join("_"),
   DATABASE_URL: "postgresql://private-database-value",
   RATE_LIMIT_SALT: "private-rate-limit-salt",
-  STRIPE_PRICE_ID: "price_private",
-  STRIPE_RESTRICTED_KEY: ["rk", "test", "private"].join("_"),
-  STRIPE_WEBHOOK_SECRET: ["whsec", "private"].join("_"),
   VERCEL_ENV: "production",
   VITE_CLERK_PUBLISHABLE_KEY: ["pk", "live", "private"].join("_"),
 };
@@ -37,10 +34,10 @@ test("production builds pass with complete structurally valid configuration", ()
 });
 
 test("production builds fail early with missing names but no secret values", () => {
-  const result = run({ DATABASE_URL: "", STRIPE_WEBHOOK_SECRET: "" });
+  const result = run({ DATABASE_URL: "", CLERK_SECRET_KEY: "" });
   assert.equal(result.status, 1);
   assert.match(result.stderr, /DATABASE_URL/);
-  assert.match(result.stderr, /STRIPE_WEBHOOK_SECRET/);
+  assert.match(result.stderr, /CLERK_SECRET_KEY/);
   for (const value of Object.values(validProduction)) {
     if (value && value !== "production") assert.doesNotMatch(result.stderr, new RegExp(value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }

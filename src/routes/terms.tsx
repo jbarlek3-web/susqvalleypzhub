@@ -11,7 +11,7 @@ function Terms() {
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Data is provided for planning due diligence and is not a legal survey, title report, or
           municipal determination. Always confirm with the host municipality before filing. Pro
-          subscriptions may be cancelled at the end of a billing cycle and are billed through Stripe. Grok feasibility briefs are
+          subscriptions may be cancelled at the end of a billing cycle and are managed through Clerk Billing. Grok feasibility briefs are
           informational and must not be treated as professional engineering or legal advice.
         </p>
         <h2 className="mt-8 text-xl font-semibold">Independent service disclaimer</h2>

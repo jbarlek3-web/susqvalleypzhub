@@ -13,7 +13,7 @@ function Privacy() {
           information for York, Cumberland, Dauphin, and Lancaster counties. Parcel ownership and
           assessment data originate from county GIS and assessment offices. We do not sell personal
           information. Alert emails are sent only to addresses you provide. Local project notes and
-          comments in this preview remain on your device. Payments are processed by Stripe; card
+          comments in this preview remain on your device. Payments are managed by Clerk Billing; card
           numbers are never stored by Field Acq.
         </p>
       </article>

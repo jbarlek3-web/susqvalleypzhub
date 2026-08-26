@@ -13,6 +13,6 @@ export const authorizeProAction = createServerFn({ method: "POST" })
       max: 60,
       windowSeconds: 60,
     });
-    await requirePro(context.userId);
+    await requirePro();
     return { authorized: true as const };
   });

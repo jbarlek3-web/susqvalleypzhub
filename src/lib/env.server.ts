@@ -3,9 +3,6 @@ const REQUIRED_PRODUCTION_ENV = [
   "CLERK_SECRET_KEY",
   "DATABASE_URL",
   "RATE_LIMIT_SALT",
-  "STRIPE_PRICE_ID",
-  "STRIPE_RESTRICTED_KEY",
-  "STRIPE_WEBHOOK_SECRET",
   "VITE_CLERK_PUBLISHABLE_KEY",
 ] as const;
 
@@ -29,11 +26,5 @@ export function assertProductionConfig() {
   }
   if (!process.env.CLERK_SECRET_KEY!.startsWith("sk_live_")) {
     throw new Error("CLERK_SECRET_KEY must be a Clerk live secret key");
-  }
-  if (!process.env.STRIPE_RESTRICTED_KEY!.startsWith("rk_")) {
-    throw new Error("STRIPE_RESTRICTED_KEY must be a least-privilege restricted key");
-  }
-  if (!process.env.STRIPE_WEBHOOK_SECRET!.startsWith("whsec_")) {
-    throw new Error("STRIPE_WEBHOOK_SECRET has an invalid format");
   }
 }

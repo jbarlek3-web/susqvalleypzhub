@@ -18,7 +18,7 @@ function SignUpPage() {
           </div>
           <h1 className="mt-7 max-w-md text-3xl font-bold tracking-tight md:text-4xl">Create your private research workspace.</h1>
           <ul className="mt-8 space-y-3 text-sm">
-            {["Save and revisit parcel research", "Preview core tools before upgrading", "Payments handled securely by Stripe"].map((item) => (
+            {["Save and revisit parcel research", "Preview core tools before upgrading", "Billing managed securely by Clerk"].map((item) => (
               <li key={item} className="flex items-center gap-2"><Check className="size-4 text-secondary-fixed" />{item}</li>
             ))}
           </ul>

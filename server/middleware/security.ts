@@ -29,7 +29,7 @@ function contentSecurityPolicy() {
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https://fonts.gstatic.com",
-  `connect-src 'self'${clerkSource} https://*.protect.clerk.com:*`,
+  `connect-src 'self'${clerkSource} https://*.protect.clerk.com:* https://arcweb1.ycpc.org https://services2.arcgis.com https://mapservices.pasda.psu.edu https://hydro.nationalmap.gov https://basemap.nationalmap.gov https://server.arcgisonline.com https://*.tile.openstreetmap.org`,
   "worker-src 'self' blob:",
   "frame-src 'self' https://challenges.cloudflare.com https://*.protect.clerk.com",
   "form-action 'self'",

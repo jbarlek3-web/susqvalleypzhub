@@ -1,4 +1,4 @@
-import { getSql } from "@/lib/db";
+import { auth } from "@clerk/tanstack-react-start/server";
 
 export type EntitlementStatus = {
   isPro: boolean;
@@ -6,22 +6,18 @@ export type EntitlementStatus = {
   currentPeriodEnd: string | null;
 };
 
-export async function entitlementForUser(userId: string): Promise<EntitlementStatus> {
-  const sql = await getSql();
-  const rows = await sql<{ status: string; current_period_end: string | null }>`
-    select status, current_period_end from stripe_entitlements
-    where user_id = ${userId} limit 1
-  `;
-  const row = rows[0];
+export async function currentEntitlement(): Promise<EntitlementStatus> {
+  const session = await auth();
+  const isPro = Boolean(session.userId && session.has({ plan: "pro" }));
   return {
-    isPro: row?.status === "active" || row?.status === "trialing",
-    status: row?.status ?? "free",
-    currentPeriodEnd: row?.current_period_end ?? null,
+    isPro,
+    status: isPro ? "active" : "free",
+    currentPeriodEnd: null,
   };
 }
 
-export async function requirePro(userId: string) {
-  const entitlement = await entitlementForUser(userId);
+export async function requirePro() {
+  const entitlement = await currentEntitlement();
   if (!entitlement.isPro) {
     const error = new Error("A Pro subscription is required");
     error.name = "PaymentRequiredError";
