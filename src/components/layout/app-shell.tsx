@@ -354,14 +354,14 @@ export function SiteFooter() {
           </ul>
         </div>
         <div className="flex items-end">
-          <img src="/logo.png" alt="Susquehanna Valley Planning Hub" className="w-full max-w-56 rounded-full bg-white object-cover" />
+          <img src="/logo.png" alt="Susquehanna Valley Planning and Zoning Hub" className="w-full max-w-56 rounded-full bg-white object-cover" />
         </div>
       </div>
       <div className="border-t border-outline-variant bg-surface px-4 py-5 text-center text-xs leading-relaxed text-muted-foreground">
-        Susquehanna Valley Planning Hub is an independent entity within the greater Field ACQ family. It is not affiliated with, endorsed by, or operated by any Pennsylvania municipality, county, or state agency. Questions or concerns may be sent to <a className="font-medium underline" href="mailto:admin@fieldacq.com">admin@fieldacq.com</a>; we aim to respond within 24–48 hours.
+        Susquehanna Valley Planning and Zoning Hub is an independent entity within the greater Field ACQ family. It is not affiliated with, endorsed by, or operated by any Pennsylvania municipality, county, or state agency. Questions or concerns may be sent to <a className="font-medium underline" href="mailto:admin@fieldacq.com">admin@fieldacq.com</a>; we aim to respond within 24–48 hours.
       </div>
       <div className="border-t border-outline-variant py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
-        © 2026 Susquehanna Valley Planning Hub. All Rights Reserved.
+        © 2026 Susquehanna Valley Planning and Zoning Hub. All Rights Reserved.
       </div>
     </footer>
   );

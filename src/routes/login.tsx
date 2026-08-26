@@ -14,7 +14,7 @@ function LoginPage() {
           </Link>
           <div className="mt-16 flex items-center gap-3">
             <span className="grid size-11 place-items-center rounded-xl bg-on-primary/10"><Building2 /></span>
-            <span className="font-semibold">Susquehanna Valley Planning Hub</span>
+            <span className="font-semibold">Susquehanna Valley Planning and Zoning Hub</span>
           </div>
           <h1 className="mt-7 max-w-md text-3xl font-bold tracking-tight md:text-4xl">Turn parcel research into a defensible acquisition decision.</h1>
           <p className="mt-4 max-w-lg text-on-primary/75">Sign in to save your work. Pro members also unlock complete zoning detail, downloads, projects, and alerts.</p>

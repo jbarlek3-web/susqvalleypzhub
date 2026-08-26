@@ -16,7 +16,7 @@ function Terms() {
         </p>
         <h2 className="mt-8 text-xl font-semibold">Independent service disclaimer</h2>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Susquehanna Valley Planning Hub is an independent entity within the greater Field ACQ family. It is not affiliated with, endorsed by, or operated by any Pennsylvania municipality, county, or state agency. Questions or concerns may be emailed to admin@fieldacq.com; we aim to respond within 24–48 hours.
+          Susquehanna Valley Planning and Zoning Hub is an independent entity within the greater Field ACQ family. It is not affiliated with, endorsed by, or operated by any Pennsylvania municipality, county, or state agency. Questions or concerns may be emailed to admin@fieldacq.com; we aim to respond within 24–48 hours.
         </p>
       </article>
     </AppShell>

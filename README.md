@@ -1,4 +1,4 @@
-# Susquehanna Valley Planning Hub
+# Susquehanna Valley Planning and Zoning Hub
 
 ## Deploying securely to Vercel
 
