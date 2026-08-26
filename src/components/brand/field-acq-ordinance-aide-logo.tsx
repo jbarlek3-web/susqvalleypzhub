@@ -5,7 +5,10 @@ export function FieldAcqOrdinanceAideLogo({ className }: { className?: string })
     <img
       alt="Field ACQ Ordinance Aide"
       className={cn("h-auto w-auto object-contain", className)}
-      src="/field-acq-ordinance-aide-logo.png"
+      decoding="async"
+      height={809}
+      src="/field-acq-ordinance-aide-logo-v2.png"
+      width={1942}
     />
   );
 }

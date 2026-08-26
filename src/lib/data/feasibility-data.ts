@@ -139,7 +139,7 @@ export const FEASIBILITY_DATA_SOURCES: FeasibilityDataSource[] = [
   {
     id: "central-pa-market-report-2026-08",
     title: "Central PA Land Development & Investment Market Report (August 2026)",
-    provider: "Susquehanna Valley Market Intelligence",
+    provider: "Field ACQ Market Intelligence",
     mode: "underwriting",
     use: "Four-county market context for residential demand, land values, industrial activity, and entitlement-risk underwriting.",
     detail:
