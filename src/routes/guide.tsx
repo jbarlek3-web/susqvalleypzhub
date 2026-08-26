@@ -10,9 +10,9 @@ function Guide() {
   return (
     <AppShell>
       <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-        Welcome to the Planning Hub
+        Welcome to Field ACQ Ordinance Aide
       </p>
-      <h1 className="mt-1 text-3xl font-semibold">Master the Hub in 5 Steps</h1>
+      <h1 className="mt-1 text-3xl font-semibold">Master Field ACQ Ordinance Aide in 5 Steps</h1>
       <p className="mt-2 max-w-2xl text-muted-foreground">
         Learn how to navigate the interactive property map, analyze site constraints, and generate
         zoning reports for regional development projects.
@@ -45,8 +45,8 @@ function Guide() {
         </Step>
         <Step n={6} t="Acquisition toolkit">
           Run lot yield and residual offer math, screen a tract, walk York County SALDO (sketch to
-          final plat), and pull York Home Depot material prices. Search a York address on the map
-          to load live YCPC parcel and zoning.
+          final plat), and pull York Home Depot material prices. Search a York address on the map to
+          load live YCPC parcel and zoning.
         </Step>
       </ol>
     </AppShell>
@@ -57,7 +57,7 @@ function Step({ n, t, children }: { n: number; t: string; children: ReactNode })
   return (
     <Card>
       <CardContent className="flex gap-4 p-5">
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-container font-semibold text-on-primary">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-primary/35 bg-primary-fixed font-semibold text-primary">
           {n}
         </div>
         <div>

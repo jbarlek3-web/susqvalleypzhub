@@ -8,13 +8,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary-container text-on-primary hover:bg-primary",
-        solid: "bg-primary text-on-primary hover:bg-primary-container",
-        secondary: "bg-secondary text-on-secondary hover:bg-on-secondary-container",
-        outline:
-          "border border-outline-variant bg-card text-on-surface hover:bg-surface-low",
+        default: "border border-primary/35 bg-card text-primary hover:bg-primary-fixed",
+        solid: "border border-primary/45 bg-primary-fixed text-primary hover:bg-surface-low",
+        secondary: "border border-secondary/35 bg-card text-secondary hover:bg-secondary-container",
+        outline: "border border-outline-variant bg-card text-on-surface hover:bg-surface-low",
         ghost: "text-on-surface hover:bg-surface-container",
-        nav: "text-on-primary/80 hover:text-on-primary hover:bg-primary-container",
+        nav: "text-primary hover:bg-primary-fixed",
         destructive: "bg-destructive text-destructive-foreground hover:opacity-90",
         link: "text-primary-container underline-offset-4 hover:underline",
       },
@@ -31,8 +30,7 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 

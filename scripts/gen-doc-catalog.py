@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-"""Build src/lib/data/documents.ts from official ordinance URLs + Drive crawl."""
+"""Build src/lib/data/documents.ts from official, recovered, and Drive sources."""
 from __future__ import annotations
 
 import json
 import re
 from pathlib import Path
 
-ROOT = Path("/workspace")
+ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "src/lib/data/documents.ts"
+SUMMARY_OUT = ROOT / "src/lib/data/regional-document-coverage.ts"
+CORE_COUNTIES = ("York", "Cumberland", "Dauphin", "Lancaster")
 
 SKIP_RE = re.compile(
     r"complaint|right[- ]to[- ]know|right to know|volunteer application|"
@@ -123,7 +125,14 @@ PENN_SKIP = re.compile(
 
 
 def clean_name(name: str) -> str:
-    name = name.replace("Â", "").replace("â", "–").replace("· ", "").strip()
+    name = (
+        name.replace("Â", "")
+        .replace("â", "–")
+        .replace("· ", "")
+        .replace("\ufeff", "")
+        .replace("\u200b", "")
+        .strip()
+    )
     name = re.sub(r"\s+", " ", name)
     if name.lower().endswith(".pdf"):
         name = name[:-4]
@@ -698,15 +707,20 @@ OFFICIAL: list[tuple[str, str, str, str, str, str]] = [
     ("Penn Township (Lancaster) SALDO, Chapter 22", "Penn Township", "Lancaster", "SALDO", "https://ecode360.com/30832282", "2024-01-01"),
     ("Penn Township (Lancaster) SALDO Chapter 22 (PDF)", "Penn Township", "Lancaster", "SALDO", "https://ecode360.com/attachment/PE3692/Chapter%2022%20Subdivision%20and%20Land%20Development.pdf", "2024-01-01"),
     ("West Hempfield Township Code of Ordinances (SALDO chapters)", "West Hempfield Township", "Lancaster", "SALDO", "https://ecode360.com/34201932", "2025-11-06"),
+    # Supplied official municipal / county collections
+    ("York Township Building & Zoning Permit Applications and Fee Schedule", "York Township", "York", "Builder", "https://yorktownshippa.gov/departments/building-and-zoning/", "2026-01-01"),
+    ("York Township Zoning Hearing Board Application Downloads", "York Township", "York", "Builder", "https://yorktownshippa.gov/boards/zhb/", "2026-01-01"),
+    ("Lancaster County SALDO Checklist for Applicants (2024)", "Lancaster County", "Lancaster", "Builder", "https://lancastercountyplanning.org/DocumentCenter/View/5415/Checklist-for-Applicants-2024", "2024-01-24"),
+    ("Lancaster County SALDO Plan Processing Application", "Lancaster County", "Lancaster", "Builder", "https://lancastercountyplanning.org/DocumentCenter/View/38/Application-for-Subdivision-or-LDP-Plan-Processing-REV12021", "2021-01-01"),
 ]
 
 
 def load_drive() -> list[dict]:
     path = ROOT / "scripts/drive-docs.json"
-    docs = json.loads(path.read_text())
+    docs = json.loads(path.read_text(encoding="utf-8"))
     extra = ROOT / "scripts/extra-drive-docs.json"
     if extra.exists():
-        docs.extend(json.loads(extra.read_text()))
+        docs.extend(json.loads(extra.read_text(encoding="utf-8")))
     # de-dupe by Drive file id, keep first
     seen_ids: set[str] = set()
     out: list[dict] = []
@@ -719,6 +733,13 @@ def load_drive() -> list[dict]:
     return out
 
 
+def load_recovered_official() -> list[dict]:
+    docs: list[dict] = []
+    for path in sorted((ROOT / "scripts").glob("recovered-*-official-documents.json")):
+        docs.extend(json.loads(path.read_text(encoding="utf-8")))
+    return docs
+
+
 def ts_escape(s: str) -> str:
     return s.replace("\\", "\\\\").replace('"', '\\"')
 
@@ -726,6 +747,7 @@ def ts_escape(s: str) -> str:
 def main() -> None:
     docs: list[dict] = []
     seen: set[str] = set()
+    seen_content_hashes: set[str] = set()
 
     for i, (name, muni, county, cat, url, updated) in enumerate(OFFICIAL, 1):
         did = f"off-{i:03d}"
@@ -745,36 +767,42 @@ def main() -> None:
         )
         seen.add(name.lower())
 
-    drive = load_drive()
-    for rec in drive:
+    recovered = load_recovered_official()
+    for rec in [*load_drive(), *recovered]:
         name = rec["n"]
-        cat = categorize(name)
+        cat = rec.get("category") or categorize(name)
         if not cat:
             continue
         display = clean_name(name)
         key = display.lower()
         if key in seen:
             continue
+        content_hash = rec.get("contentHash")
+        if content_hash and content_hash in seen_content_hashes:
+            continue
         seen.add(key)
+        if content_hash:
+            seen_content_hashes.add(content_hash)
         fid = rec["id"]
         mime = rec.get("m", "application/pdf")
-        kind = kind_of(name, mime)
-        if kind == "WEB":
+        kind = rec.get("kind") or kind_of(name, mime)
+        if kind == "WEB" and not rec.get("url"):
             continue
-        docs.append(
-            {
-                "id": f"drv-{fid[:16]}",
-                "name": display,
-                "kind": kind,
-                "size": fmt_size(int(rec.get("s") or 0)),
-                "municipality": rec.get("muni") or muni_from(name),
-                "county": rec["c"],
-                "category": cat,
-                "updated": fmt_date(rec.get("d") or ""),
-                "url": rec.get("url") or f"https://drive.google.com/file/d/{fid}/view",
-                "source": "drive",
-            }
-        )
+        doc = {
+            "id": fid if rec.get("source") == "official" else f"drv-{fid[:16]}",
+            "name": display,
+            "kind": kind,
+            "size": rec.get("size") or fmt_size(int(rec.get("s") or 0)),
+            "municipality": rec.get("muni") or muni_from(name),
+            "county": rec["c"],
+            "category": cat,
+            "updated": fmt_date(rec.get("d") or ""),
+            "url": rec.get("url") or f"https://drive.google.com/file/d/{fid}/view",
+            "source": rec.get("source") or "drive",
+        }
+        if rec.get("linkType"):
+            doc["linkType"] = rec["linkType"]
+        docs.append(doc)
 
     # stable sort: county, municipality, category, name
     cat_order = {"Zoning": 0, "SALDO": 1, "Builder": 2, "Codes": 3}
@@ -784,22 +812,40 @@ def main() -> None:
     for d in docs:
         counts[d["category"]] = counts.get(d["category"], 0) + 1
 
+    regional_docs = [d for d in docs if d["county"] in CORE_COUNTIES]
+    regional_saldo = [d for d in regional_docs if d["category"] == "SALDO"]
+    regional_saldo_municipalities = {d["municipality"] for d in regional_saldo}
+
     lines = [
         'import type { PlanningDoc } from "@/lib/types";',
         "",
-        "/** Real municipal planning documents: Drive crawl + official ordinance sources. */",
+        "/** Curated municipal planning documents from official and archived source intake. */",
         "export const DOCUMENTS: PlanningDoc[] = [",
     ]
     for d in docs:
         lines.append("  {")
-        for k in ("id", "name", "kind", "size", "municipality", "county", "category", "updated", "url", "source"):
+        for k in ("id", "name", "kind", "size", "municipality", "county", "category", "updated", "url", "source", "linkType"):
+            if k not in d:
+                continue
             v = d[k]
             lines.append(f'    {k}: "{ts_escape(str(v))}",')
         lines.append("  },")
     lines.append("];")
     lines.append("")
-    OUT.write_text("\n".join(lines) + "\n")
+    OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    summary_lines = [
+        "/** Generated by scripts/gen-doc-catalog.py. Do not edit by hand. */",
+        "export const REGIONAL_DOCUMENT_COVERAGE = {",
+        f"  sourceRecords: {len(regional_docs)},",
+        f"  saldoRecords: {len(regional_saldo)},",
+        f"  saldoMunicipalities: {len(regional_saldo_municipalities)},",
+        f"  counties: {list(CORE_COUNTIES)!r} as const,",
+        "} as const;",
+        "",
+    ]
+    SUMMARY_OUT.write_text("\n".join(summary_lines), encoding="utf-8")
     print(f"wrote {len(docs)} docs -> {OUT}")
+    print(f"wrote regional coverage -> {SUMMARY_OUT}")
     print(counts)
 
 

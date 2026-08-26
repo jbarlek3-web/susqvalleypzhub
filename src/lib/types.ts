@@ -18,6 +18,7 @@ export type FloodZone = "X" | "X500" | "AE" | "A" | "VE";
 export type LayerId =
   | "zoning"
   | "flood"
+  | "femaFlood"
   | "slopes"
   | "footprints"
   | "yorkParcels"
@@ -107,6 +108,8 @@ export type PlanningDoc = {
   updated: string;
   url: string;
   source: "drive" | "official";
+  /** The official page hosts or describes the record but is not the file itself. */
+  linkType?: "source-page";
 };
 
 export type MeetingRecord = {
@@ -139,11 +142,19 @@ export type TeamComment = {
 
 export type AlertItem = {
   id: string;
-  kind: "zoning" | "document" | "ordinance" | "system";
+  kind: "zoning" | "document" | "ordinance" | "system" | "diligence";
   title: string;
   body: string;
   at: string;
   unread: boolean;
+  county?: County;
+  municipality?: string;
+  /** Human-readable provenance for the source record. */
+  source: string;
+  /** Direct source record when the catalog has retained one. */
+  actionUrl?: string;
+  actionLabel: string;
+  priority: "action" | "watch" | "info";
 };
 
 export type Profile = {

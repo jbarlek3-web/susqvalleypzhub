@@ -1,11 +1,12 @@
 import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
+import { SubscriptionAccessGate } from "@/components/auth/subscription-access-gate";
 import { Toaster } from "sonner";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import appCss from "../styles.css?url";
 
-const APP_NAME = "Susquehanna Valley Planning and Zoning Hub";
+const APP_NAME = "Field ACQ Ordinance Aide";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -16,15 +17,15 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "Centralized regional planning, zoning, and property data for York, Cumberland, Dauphin, and Lancaster counties.",
+          "Central Pennsylvania parcel, zoning, ordinance, and entitlement intelligence for field acquisition teams.",
       },
-      { name: "theme-color", content: "#1b365d" },
+      { name: "theme-color", content: "#ffffff" },
     ],
     links: [
-      { rel: "icon", type: "image/png", href: "/logo-mark.png" },
+      { rel: "icon", type: "image/png", href: "/field-acq-ordinance-aide-icon.png" },
       { rel: "stylesheet", href: appCss },
       { rel: "manifest", href: "/__grok/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/logo-mark.png" },
+      { rel: "apple-touch-icon", sizes: "1254x1254", href: "/field-acq-ordinance-aide-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -41,7 +42,9 @@ export const Route = createRootRoute({
       <body>
         <PreviewHostBridge />
         <AuthProvider>
-          <Outlet />
+          <SubscriptionAccessGate>
+            <Outlet />
+          </SubscriptionAccessGate>
           <Toaster richColors position="bottom-right" />
         </AuthProvider>
         <Scripts />

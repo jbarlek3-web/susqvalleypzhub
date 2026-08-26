@@ -1,5 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronDown, Download, ExternalLink, FileText, FolderOpen, LayoutList, Rows3 } from "lucide-react";
+import {
+  ChevronDown,
+  Download,
+  ExternalLink,
+  FileText,
+  FolderOpen,
+  LayoutList,
+  Rows3,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/layout/app-shell";
@@ -99,9 +107,10 @@ function Documents() {
     <AppShell>
       <h1 className="text-2xl font-semibold">Document Library</h1>
       <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-        Official zoning ordinances, SALDO, building applications, and codes — live municipal PDFs and
-        code books, plus the recovered archive. Every counted file is listed below and opens the original
-        source.
+        Official zoning ordinances, SALDO, building applications, and codes — live municipal PDFs
+        and code books, plus the recovered archive. Each record opens its direct document or, where
+        a public file URL could not be retained, the verified official planning or municipal source
+        page.
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
         <Input
@@ -134,7 +143,7 @@ function Documents() {
             }}
             className={
               cat === c
-                ? "rounded-full bg-primary-container px-3 py-1.5 text-xs font-semibold text-on-primary"
+                ? "rounded-full border border-primary/30 bg-primary-fixed px-3 py-1.5 text-xs font-semibold text-primary"
                 : "rounded-full bg-surface-container px-3 py-1.5 text-xs font-semibold"
             }
           >
@@ -177,7 +186,9 @@ function Documents() {
         <div className="mt-6 rounded-lg border border-dashed border-outline-variant bg-card px-5 py-10 text-center">
           <FolderOpen className="mx-auto size-8 text-on-surface-variant" />
           <p className="mt-2 text-sm font-medium">No documents in this view</p>
-          <p className="mt-1 text-xs text-muted-foreground">Try another category, county, or search.</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Try another category, county, or search.
+          </p>
         </div>
       ) : view === "list" ? (
         <ul className="mt-4 divide-y divide-outline-variant overflow-hidden rounded-lg border border-outline-variant bg-card">
@@ -222,13 +233,13 @@ function Documents() {
         </div>
       )}
 
-      <div className="mt-8 rounded-lg bg-primary px-5 py-6 text-on-primary">
+      <div className="mt-8 rounded-lg border border-primary/25 bg-primary-fixed px-5 py-6">
         <h2 className="text-lg font-semibold">Need access to municipal GIS data?</h2>
-        <p className="mt-1 max-w-xl text-sm text-on-primary/80">
-          The Property Map tool integrates directly with these zoning ordinances so you can visualize
-          parcel-level data across York, Cumberland, Dauphin, and Lancaster counties.
+        <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+          The Property Map tool integrates directly with these zoning ordinances so you can
+          visualize parcel-level data across York, Cumberland, Dauphin, and Lancaster counties.
         </p>
-        <Button asChild className="mt-4 bg-on-primary text-primary hover:bg-primary-fixed">
+        <Button asChild className="mt-4">
           <Link to="/map">Open Property Map</Link>
         </Button>
       </div>
@@ -245,6 +256,7 @@ function DocRow({
   canExport: boolean;
   showMuni?: boolean;
 }) {
+  const isSourcePage = d.linkType === "source-page";
   return (
     <li className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-start gap-2">
@@ -254,19 +266,25 @@ function DocRow({
           <div className="text-xs text-muted-foreground">
             {showMuni ? `${d.municipality} · ${d.county} · ` : ""}
             {d.kind} · {d.size} · {d.updated}
-            {d.source === "official" ? " · Official source" : " · Drive archive"}
+            {isSourcePage
+              ? " · Official planning source page"
+              : d.source === "official"
+                ? " · Official source"
+                : " · Drive archive"}
           </div>
         </div>
       </div>
       <div className="flex shrink-0 gap-2 pl-6 sm:pl-0">
         <Button size="sm" variant="outline" asChild>
           <a href={d.url} target="_blank" rel="noreferrer">
-            <ExternalLink className="size-3.5" /> Open
+            <ExternalLink className="size-3.5" /> {isSourcePage ? "Open source" : "Open"}
           </a>
         </Button>
-        <Button size="sm" variant="outline" onClick={() => downloadDoc(d, canExport)}>
-          <Download className="size-3.5" /> Download
-        </Button>
+        {!isSourcePage && (
+          <Button size="sm" variant="outline" onClick={() => downloadDoc(d, canExport)}>
+            <Download className="size-3.5" /> Download
+          </Button>
+        )}
       </div>
     </li>
   );

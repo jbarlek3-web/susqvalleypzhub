@@ -1,16 +1,9 @@
 import type { ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import {
-  Bell,
-  BookOpen,
-  FileText,
-  HelpCircle,
-  Menu,
-  Search,
-  Users,
-} from "lucide-react";
+import { Bell, BookOpen, FileText, HelpCircle, Menu, Search, Users } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { FieldAcqOrdinanceAideLogo } from "@/components/brand/field-acq-ordinance-aide-logo";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { PARCELS, searchParcels } from "@/lib/data/parcels";
 import { DOCUMENTS } from "@/lib/data/catalog";
@@ -57,17 +50,34 @@ export function AppShell({
     void useHub.persist.rehydrate();
   }, []);
   useEffect(() => {
-    if (!user) { setPro(false); return; }
+    if (!user) {
+      setPro(false);
+      return;
+    }
     let active = true;
-    void getEntitlement().then((value) => { if (active) setPro(value.isPro); }).catch(() => { if (active) setPro(false); });
-    return () => { active = false; };
+    void getEntitlement()
+      .then((value) => {
+        if (active) setPro(value.isPro);
+      })
+      .catch(() => {
+        if (active) setPro(false);
+      });
+    return () => {
+      active = false;
+    };
   }, [user, setPro]);
   const hits = useMemo(() => {
-    if (q.trim().length < 2) return { parcels: [] as typeof PARCELS, docs: [] as typeof DOCUMENTS, codes: [] as typeof CODES };
+    if (q.trim().length < 2)
+      return {
+        parcels: [] as typeof PARCELS,
+        docs: [] as typeof DOCUMENTS,
+        codes: [] as typeof CODES,
+      };
     const parcels = searchParcels(q).slice(0, 5);
-    const docs = DOCUMENTS.filter((d) =>
-      d.name.toLowerCase().includes(q.toLowerCase()),
-    ).slice(0, 3);
+    const docs = DOCUMENTS.filter((d) => d.name.toLowerCase().includes(q.toLowerCase())).slice(
+      0,
+      3,
+    );
     const codes = CODES.filter((c) =>
       `${c.section} ${c.municipality}`.toLowerCase().includes(q.toLowerCase()),
     ).slice(0, 3);
@@ -75,8 +85,8 @@ export function AppShell({
   }, [q]);
 
   return (
-    <div className="min-h-dvh bg-surface text-on-surface">
-      <header className="fixed inset-x-0 top-0 z-40 h-16 bg-primary text-on-primary shadow-[0_1px_8px_rgb(0_0_0/0.12)] md:h-20">
+    <div className="min-h-dvh bg-background text-on-surface">
+      <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-outline-variant bg-card/95 text-on-surface shadow-[0_1px_8px_rgb(17_40_71/0.08)] backdrop-blur md:h-20">
         <div className="mx-auto flex h-full max-w-[1400px] items-center gap-3 px-3 md:px-6">
           <Button
             variant="nav"
@@ -87,11 +97,8 @@ export function AppShell({
           >
             <Menu />
           </Button>
-          <Link to="/" className="flex min-w-0 items-center gap-2.5">
-            <img src="/logo-mark.png" alt="" className="h-9 w-9 rounded-full bg-white object-cover md:h-10 md:w-10" />
-            <span className="truncate text-base font-semibold tracking-tight md:text-xl">
-              Planning Hub
-            </span>
+          <Link to="/" className="flex min-w-0 items-center">
+            <FieldAcqOrdinanceAideLogo className="h-10 max-w-[150px] md:h-12 md:max-w-[190px]" />
           </Link>
           <nav className="ml-4 hidden items-center gap-1 lg:flex">
             {NAV.map((n) => {
@@ -103,8 +110,8 @@ export function AppShell({
                   className={cn(
                     "rounded-sm px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors",
                     active
-                      ? "border-b-2 border-on-primary pb-0.5 text-on-primary"
-                      : "text-on-primary/75 hover:text-on-primary",
+                      ? "border-b-2 border-brand-lime pb-0.5 text-primary"
+                      : "text-on-surface-variant hover:text-primary",
                   )}
                 >
                   {n.label}
@@ -114,7 +121,7 @@ export function AppShell({
           </nav>
           <div className="ml-auto flex items-center gap-1">
             <div className="relative hidden md:block">
-              <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-on-primary/60" />
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-on-surface-variant" />
               <input
                 value={q}
                 onChange={(e) => {
@@ -125,7 +132,7 @@ export function AppShell({
                 placeholder="Address, APN, owner…"
                 autoComplete="off"
                 suppressHydrationWarning
-                className="h-9 w-48 rounded-md border-0 bg-primary-container pl-8 pr-3 text-sm text-on-primary placeholder:text-on-primary/50 focus:w-64 focus:outline-none focus:ring-2 focus:ring-on-primary/30 lg:w-56"
+                className="h-9 w-48 rounded-md border border-outline-variant bg-surface-low pl-8 pr-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:w-64 focus:outline-none focus:ring-2 focus:ring-secondary/30 lg:w-56"
               />
               {searchOpen && q.trim().length >= 2 && hits && (
                 <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-md border border-outline-variant bg-card p-2 text-on-surface shadow-xl">
@@ -134,12 +141,22 @@ export function AppShell({
               )}
             </div>
             <Link to="/guide" className="hidden md:block">
-              <Button variant="nav" size="icon" aria-label="Help">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-primary hover:bg-primary-fixed"
+                aria-label="Help"
+              >
                 <HelpCircle />
               </Button>
             </Link>
             <Link to="/notifications" className="relative">
-              <Button variant="nav" size="icon" aria-label="Notifications">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-primary hover:bg-primary-fixed"
+                aria-label="Notifications"
+              >
                 <Bell />
               </Button>
               {unread > 0 && (
@@ -148,11 +165,17 @@ export function AppShell({
             </Link>
             <SignedOut>
               <Link to="/login">
-                <Button variant="nav" size="sm" className="hidden sm:inline-flex">Sign In</Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hidden text-primary hover:bg-primary-fixed sm:inline-flex"
+                >
+                  Sign In
+                </Button>
               </Link>
             </SignedOut>
             <SignedIn>
-              <div className="hidden rounded-lg bg-on-primary/10 px-2 py-1 text-on-primary sm:block">
+              <div className="hidden rounded-lg border border-outline-variant bg-surface-low px-2 py-1 text-on-surface sm:block">
                 <UserButton />
               </div>
             </SignedIn>
@@ -161,10 +184,9 @@ export function AppShell({
       </header>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="left" className="bg-primary p-0 text-on-primary">
-          <div className="flex items-center gap-2 border-b border-on-primary/10 px-4 py-5">
-            <img src="/logo-mark.png" alt="" className="h-9 w-9 rounded-full bg-white object-cover" />
-            <span className="font-semibold">Planning Hub</span>
+        <SheetContent side="left" className="bg-card p-0 text-on-surface">
+          <div className="flex items-center border-b border-outline-variant px-4 py-5">
+            <FieldAcqOrdinanceAideLogo className="h-11 max-w-[180px]" />
           </div>
           <nav className="flex flex-col p-2">
             {NAV.concat(MORE.map((m) => ({ to: m.to, label: m.label }))).map((n) => (
@@ -172,7 +194,7 @@ export function AppShell({
                 key={n.to}
                 to={n.to}
                 onClick={() => setOpen(false)}
-                className="rounded-md px-3 py-3 text-sm font-medium hover:bg-primary-container"
+                className="rounded-md px-3 py-3 text-sm font-medium hover:bg-primary-fixed hover:text-primary"
               >
                 {n.label}
               </Link>
@@ -260,7 +282,12 @@ export function SiteFooter() {
           </p>
           <ul className="space-y-2 text-sm">
             <li>
-              <a className="hover:text-primary-container" href="https://www.ycpc.org/" target="_blank" rel="noreferrer">
+              <a
+                className="hover:text-primary-container"
+                href="https://www.ycpc.org/"
+                target="_blank"
+                rel="noreferrer"
+              >
                 York County
               </a>
             </li>
@@ -354,14 +381,20 @@ export function SiteFooter() {
           </ul>
         </div>
         <div className="flex items-end">
-          <img src="/logo.png" alt="Susquehanna Valley Planning and Zoning Hub" className="w-full max-w-56 rounded-full bg-white object-cover" />
+          <FieldAcqOrdinanceAideLogo className="w-full max-w-60" />
         </div>
       </div>
       <div className="border-t border-outline-variant bg-surface px-4 py-5 text-center text-xs leading-relaxed text-muted-foreground">
-        Susquehanna Valley Planning and Zoning Hub is an independent entity within the greater Field ACQ family. It is not affiliated with, endorsed by, or operated by any Pennsylvania municipality, county, or state agency. Questions or concerns may be sent to <a className="font-medium underline" href="mailto:admin@fieldacq.com">admin@fieldacq.com</a>; we aim to respond within 24–48 hours.
+        Field ACQ Ordinance Aide is an independent information service. It is not affiliated with,
+        endorsed by, or operated by any Pennsylvania municipality, county, or state agency.
+        Questions or concerns may be sent to{" "}
+        <a className="font-medium underline" href="mailto:admin@fieldacq.com">
+          admin@fieldacq.com
+        </a>
+        ; we aim to respond within 24–48 hours.
       </div>
       <div className="border-t border-outline-variant py-3 text-center text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
-        © 2026 Susquehanna Valley Planning and Zoning Hub. All Rights Reserved.
+        © 2026 Field ACQ Ordinance Aide. All Rights Reserved.
       </div>
     </footer>
   );
@@ -376,18 +409,22 @@ export function StatusBadge({ status }: { status: string }) {
         : status === "Approved"
           ? "approved"
           : "diligence";
-  return <span className={cn("inline-flex")}>{status && <StatusInner v={variant} s={status} />}</span>;
+  return (
+    <span className={cn("inline-flex")}>{status && <StatusInner v={variant} s={status} />}</span>
+  );
 }
 
 function StatusInner({ v, s }: { v: "lead" | "permitting" | "approved" | "diligence"; s: string }) {
   const cls = {
-    lead: "bg-primary-fixed text-on-primary-fixed",
-    permitting: "bg-secondary-container text-on-secondary-container",
-    approved: "bg-secondary text-on-secondary",
-    diligence: "bg-surface-highest text-on-surface",
+    lead: "border border-primary/30 bg-primary-fixed text-primary",
+    permitting: "border border-secondary/30 bg-secondary-container text-secondary",
+    approved: "border border-secondary/30 bg-secondary-container text-secondary",
+    diligence: "border border-outline-variant bg-surface-high text-on-surface",
   }[v];
   return (
-    <span className={cn("rounded-sm px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider", cls)}>
+    <span
+      className={cn("rounded-sm px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider", cls)}
+    >
       {s}
     </span>
   );

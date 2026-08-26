@@ -1,7 +1,11 @@
 node_modules/
+__pycache__/
+*.py[cod]
 .project_id
 .github_repo
 .env
 .env.*
 !.env.example
 .vercel/
+
+.vercel

@@ -46,7 +46,7 @@ function Workspace() {
                 <tr key={m.id} className="border-t border-outline-variant">
                   <td className="py-3">
                     <div className="flex items-center gap-2">
-                      <span className="flex size-8 items-center justify-center rounded-full bg-primary-container text-xs font-bold text-on-primary">
+                      <span className="flex size-8 items-center justify-center rounded-full border border-primary/30 bg-primary-fixed text-xs font-bold text-primary">
                         {initials(m.name)}
                       </span>
                       <div>
@@ -86,8 +86,8 @@ function Workspace() {
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <p>
-              <span className="font-semibold">Marcus Reed</span> commented on Parcel #14-2B — “Setback
-              requirements here look inconsistent with the 2021 municipal variance.”
+              <span className="font-semibold">Marcus Reed</span> commented on Parcel #14-2B —
+              “Setback requirements here look inconsistent with the 2021 municipal variance.”
               <span className="block text-xs text-muted-foreground">2 hrs ago</span>
             </p>
             <p>

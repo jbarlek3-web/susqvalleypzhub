@@ -9,7 +9,7 @@ export function Checkbox({
   return (
     <CheckboxPrimitive.Root
       className={cn(
-        "peer size-4 shrink-0 rounded-xs border border-outline data-[state=checked]:bg-primary-container data-[state=checked]:text-on-primary",
+        "peer size-4 shrink-0 rounded-xs border border-outline data-[state=checked]:border-secondary data-[state=checked]:bg-secondary-container data-[state=checked]:text-secondary",
         className,
       )}
       {...props}
