@@ -3,6 +3,7 @@ import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { SubscriptionAccessGate } from "@/components/auth/subscription-access-gate";
 import { Toaster } from "sonner";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "Field ACQ Ordinance Aide";
@@ -47,6 +48,7 @@ export const Route = createRootRoute({
           <Toaster richColors position="bottom-right" />
         </AuthProvider>
         <Scripts />
+        <SpeedInsights />
       </body>
     </html>
   ),
