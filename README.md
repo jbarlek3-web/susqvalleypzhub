@@ -13,6 +13,8 @@
 9. Run the production database migrations with `npm run deploy:migrate`, then deploy the hardened branch.
 10. Verify sign-up, sign-in, sign-out, Clerk Pricing Table checkout, subscription management, and server-enforced Pro access before enabling live payments.
 
+All application tools require an active Clerk plan with slug `pro`. The public surface is limited to the marketing home page, authentication, pricing, privacy, and terms. There is no free lookup allowance. An optional server-only `OWNER_CLERK_USER_ID` may exempt one exact Clerk user ID; leaving it blank exempts nobody.
+
 Production builds stop early and list missing variable names without printing their values. The runtime also fails closed with HTTP 503 if configuration later becomes missing or invalid. Operational security, incident response, and rollback instructions are in [`SECURITY.md`](SECURITY.md).
 
 ### Local development

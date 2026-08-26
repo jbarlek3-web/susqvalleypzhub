@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, Navigate, useRouterState } from "@tanstack/react-router";
 import {
   Bell,
   BookOpen,
   FileText,
   HelpCircle,
+  Loader2,
   Menu,
   Search,
   Users,
@@ -39,6 +40,8 @@ const MORE = [
   { to: "/acquire", label: "Acquisition Toolkit", icon: FileText },
 ];
 
+const PUBLIC_PATHS = new Set(["/", "/login", "/sign-up", "/subscription", "/privacy", "/terms", "/access"]);
+
 export function AppShell({
   children,
   fullBleed = false,
@@ -49,7 +52,9 @@ export function AppShell({
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const unread = useHub((s) => s.alerts.filter((a) => a.unread).length);
   const setPro = useHub((s) => s.setPro);
-  const { user } = useCurrentUserState();
+  const { user, isPending } = useCurrentUserState();
+  const isPro = useHub((s) => s.isPro);
+  const [accessChecked, setAccessChecked] = useState(false);
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -57,9 +62,13 @@ export function AppShell({
     void useHub.persist.rehydrate();
   }, []);
   useEffect(() => {
-    if (!user) { setPro(false); return; }
+    setAccessChecked(false);
+    if (!user) { setPro(false); setAccessChecked(true); return; }
     let active = true;
-    void getEntitlement().then((value) => { if (active) setPro(value.isPro); }).catch(() => { if (active) setPro(false); });
+    void getEntitlement()
+      .then((value) => { if (active) setPro(value.isPro); })
+      .catch(() => { if (active) setPro(false); })
+      .finally(() => { if (active) setAccessChecked(true); });
     return () => { active = false; };
   }, [user, setPro]);
   const hits = useMemo(() => {
@@ -73,6 +82,16 @@ export function AppShell({
     ).slice(0, 3);
     return { parcels, docs, codes };
   }, [q]);
+
+  const requiresPaidAccess = !PUBLIC_PATHS.has(pathname);
+  if (requiresPaidAccess && isPending) {
+    return <main className="grid min-h-screen place-items-center"><Loader2 className="animate-spin" /></main>;
+  }
+  if (requiresPaidAccess && !user) return <Navigate to="/login" replace />;
+  if (requiresPaidAccess && !accessChecked) {
+    return <main className="grid min-h-screen place-items-center"><Loader2 className="animate-spin" /></main>;
+  }
+  if (requiresPaidAccess && !isPro) return <Navigate to="/subscription" replace />;
 
   return (
     <div className="min-h-dvh bg-surface text-on-surface">
@@ -113,7 +132,7 @@ export function AppShell({
             })}
           </nav>
           <div className="ml-auto flex items-center gap-1">
-            <div className="relative hidden md:block">
+            {isPro && <div className="relative hidden md:block">
               <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-on-primary/60" />
               <input
                 value={q}
@@ -132,7 +151,7 @@ export function AppShell({
                   <SearchResults hits={hits} onPick={() => setSearchOpen(false)} />
                 </div>
               )}
-            </div>
+            </div>}
             <Link to="/guide" className="hidden md:block">
               <Button variant="nav" size="icon" aria-label="Help">
                 <HelpCircle />

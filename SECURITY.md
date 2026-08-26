@@ -9,6 +9,7 @@ Store all sensitive values in the deployment platform's encrypted or sensitive e
 - `APP_URL`
 - `CLERK_SECRET_KEY` (server-only production `sk_live_...` key)
 - `VITE_CLERK_PUBLISHABLE_KEY` (public production `pk_live_...` key)
+- `OWNER_CLERK_USER_ID` (optional server-only owner exemption; exact Clerk `user_...` ID)
 - `DATABASE_URL` (use the provider's pooled endpoint)
 - `RATE_LIMIT_SALT` (independent random value, at least 32 bytes)
 - `XAI_API_KEY` (optional; required only when the Pro AI feature is enabled)

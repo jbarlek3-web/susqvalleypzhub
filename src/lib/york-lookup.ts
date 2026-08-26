@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { findDistrict, prettyMuni, type YorkZoningDistrict } from "@/lib/data/york-zoning";
 import { authMiddleware } from "@/lib/auth/middleware";
-import { currentEntitlement } from "@/lib/entitlement.server";
+import { requirePro } from "@/lib/entitlement.server";
 import { consumeRateLimit } from "@/lib/rate-limit.server";
 
 const CENSUS = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress";
@@ -62,12 +62,12 @@ export const lookupYorkAddress = createServerFn({ method: "POST" })
     z.object({ q: z.string().min(4).max(160) }).parse(input),
   )
   .handler(async ({ data, context }): Promise<{ ok: true; result: YorkLookup } | { ok: false; error: string }> => {
-    const entitlement = await currentEntitlement();
+    await requirePro();
     await consumeRateLimit({
       action: "parcel-lookup",
       subject: context.userId,
-      max: entitlement.isPro ? 120 : 3,
-      windowSeconds: entitlement.isPro ? 60 : 86_400,
+      max: 120,
+      windowSeconds: 60,
     });
     const q = data.q.trim();
     const withState = /,\s*PA\b/i.test(q) || /\bPennsylvania\b/i.test(q) ? q : `${q}, PA`;

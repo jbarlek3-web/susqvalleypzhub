@@ -8,7 +8,9 @@ export type EntitlementStatus = {
 
 export async function currentEntitlement(): Promise<EntitlementStatus> {
   const session = await auth();
-  const isPro = Boolean(session.userId && session.has({ plan: "pro" }));
+  const ownerUserId = process.env.OWNER_CLERK_USER_ID?.trim();
+  const isOwner = Boolean(ownerUserId && session.userId === ownerUserId);
+  const isPro = Boolean(session.userId && (isOwner || session.has({ plan: "pro" })));
   return {
     isPro,
     status: isPro ? "active" : "free",

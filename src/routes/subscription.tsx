@@ -18,8 +18,8 @@ function Subscription() {
       <div className="mx-auto max-w-5xl">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-xs font-bold uppercase tracking-wider text-secondary">Professional access</p>
-          <h1 className="mt-2 text-3xl font-semibold">Research freely. Pay when the work becomes actionable.</h1>
-          <p className="mt-3 text-muted-foreground">Free members can explore the regional map, public planning sources, and up to three live York address lookups per day. Pro raises the live-research limit and unlocks AI feasibility analysis.</p>
+          <h1 className="mt-2 text-3xl font-semibold">Full Planning Hub access for $15 per month.</h1>
+          <p className="mt-3 text-muted-foreground">An active Pro subscription is required to access maps, zoning research, documents, live parcel lookup, AI feasibility analysis, and exports.</p>
         </div>
         <ul className="mx-auto mt-6 grid max-w-3xl gap-3 text-sm sm:grid-cols-3">
           {["Up to 120 live lookups per minute", "AI-assisted feasibility briefs", "Pro export and print workflow"].map((item) => <li key={item} className="flex gap-2"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-secondary" />{item}</li>)}

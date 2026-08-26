@@ -30,6 +30,7 @@ function Home() {
   const setLookupResult = useHub((s) => s.setLookupResult);
   const nav = useNavigate();
   const { user, isPending } = useCurrentUserState();
+  const isPro = useHub((s) => s.isPro);
 
   return (
     <AppShell>
@@ -56,6 +57,10 @@ function Home() {
               if (isPending) return;
               if (!user) {
                 nav({ to: "/login" });
+                return;
+              }
+              if (!isPro) {
+                nav({ to: "/subscription" });
                 return;
               }
               setQuery(q);
