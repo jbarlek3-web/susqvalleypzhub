@@ -41,6 +41,14 @@ test("injects the extensions script without a project id", () => {
   assert.doesNotMatch(out, /property="grok:app_id"/);
 });
 
+test("keeps the required extensions script on a custom production host", () => {
+  const ctx = { host: "fieldacq.org", projectId: "" };
+  const once = injectGrokPwaHead("<html><head></head></html>", ctx);
+  const twice = injectGrokPwaHead(once, ctx);
+  assert.match(once, /src="https:\/\/grok\.com\/grok-app-builder\/extensions\.js" defer/);
+  assert.equal(once, twice);
+});
+
 test("injects project id on the script and meta when provided", () => {
   const out = injectGrokPwaHead("<html><head></head></html>", {
     appName: "Demo",

@@ -73,9 +73,13 @@ function Home() {
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface-variant" />
               <Input
+                id="home-address-search"
+                name="address"
+                type="search"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="York County address — live parcel + zoning"
+                aria-label="Search a York County address"
                 className="h-12 bg-card pl-9 text-on-surface"
                 autoComplete="off"
                 suppressHydrationWarning

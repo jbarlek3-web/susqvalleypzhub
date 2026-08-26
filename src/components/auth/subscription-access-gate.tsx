@@ -38,9 +38,16 @@ function LockNotice({
           Access is locked. Sign in and start the {PRO_TRIAL_DAYS}-day Pro trial to use Field ACQ
           Ordinance Aide.
         </p>
-        <Button type="button" className="shrink-0" onClick={onResume}>
-          Unlock access
-        </Button>
+        <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+          {!signedIn && (
+            <Button asChild type="button" variant="outline">
+              <Link to="/login">Sign in</Link>
+            </Button>
+          )}
+          <Button type="button" onClick={onResume}>
+            {signedIn ? "Resume checkout" : "Start trial"}
+          </Button>
+        </div>
       </aside>
     );
   }

@@ -123,6 +123,9 @@ export function AppShell({
             <div className="relative hidden md:block">
               <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-on-surface-variant" />
               <input
+                id="global-parcel-search"
+                name="globalParcelSearch"
+                type="search"
                 value={q}
                 onChange={(e) => {
                   setQ(e.target.value);
@@ -130,6 +133,7 @@ export function AppShell({
                 }}
                 onFocus={() => setSearchOpen(true)}
                 placeholder="Address, APN, owner…"
+                aria-label="Search by address, APN, or owner"
                 autoComplete="off"
                 suppressHydrationWarning
                 className="h-9 w-48 rounded-md border border-outline-variant bg-surface-low pl-8 pr-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:w-64 focus:outline-none focus:ring-2 focus:ring-secondary/30 lg:w-56"
@@ -168,7 +172,7 @@ export function AppShell({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="hidden text-primary hover:bg-primary-fixed sm:inline-flex"
+                  className="text-primary hover:bg-primary-fixed"
                 >
                   Sign In
                 </Button>
@@ -200,6 +204,20 @@ export function AppShell({
               </Link>
             ))}
           </nav>
+          <div className="border-t border-outline-variant p-4">
+            <SignedOut>
+              <Button asChild className="w-full">
+                <Link to="/login" onClick={() => setOpen(false)}>
+                  Sign In
+                </Link>
+              </Button>
+            </SignedOut>
+            <SignedIn>
+              <div className="flex items-center justify-center rounded-lg border border-outline-variant bg-surface-low p-2 text-on-surface">
+                <UserButton />
+              </div>
+            </SignedIn>
+          </div>
         </SheetContent>
       </Sheet>
 
