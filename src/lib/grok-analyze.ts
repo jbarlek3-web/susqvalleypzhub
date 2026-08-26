@@ -18,7 +18,7 @@ export const analyzeParcel = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .validator((input: unknown) => Input.parse(input))
   .handler(async ({ data, context }) => {
-    await requirePro(context.userId);
+    await requirePro();
     await consumeRateLimit({ action: "parcel-ai", subject: context.userId, max: 20, windowSeconds: 3_600 });
     const apiKey = process.env.XAI_API_KEY?.trim();
     if (!apiKey) return { ok: false as const, error: "AI is not available in this environment." };

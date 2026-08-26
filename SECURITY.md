@@ -4,22 +4,18 @@ Report suspected vulnerabilities privately to **admin@fieldacq.com**. Do not inc
 
 ## Required production configuration
 
-Store all sensitive values in the deployment platform's encrypted or sensitive environment-variable facility. Never commit `.env` files. Production rejects requests when required configuration is missing or when the application and authentication origins are not matching HTTPS origins.
+Store all sensitive values in the deployment platform's encrypted or sensitive environment-variable facility. Never commit `.env` files. Production rejects requests when required configuration is missing or the application origin is not HTTPS.
 
 - `APP_URL`
-- `BETTER_AUTH_SECRET`
-- `BETTER_AUTH_URL`
+- `CLERK_SECRET_KEY` (server-only production `sk_live_...` key)
+- `VITE_CLERK_PUBLISHABLE_KEY` (public production `pk_live_...` key)
 - `DATABASE_URL` (use the provider's pooled endpoint)
-- `GROK_AUTH_CLIENT_ID`
-- `GROK_AUTH_CLIENT_SECRET`
-- `GROK_AUTH_ISSUER`
 - `RATE_LIMIT_SALT` (independent random value, at least 32 bytes)
-- `STRIPE_PRICE_ID`
-- `STRIPE_RESTRICTED_KEY` (least-privilege `rk_` key, never a broad `sk_` key)
-- `STRIPE_WEBHOOK_SECRET`
 - `XAI_API_KEY` (optional; required only when the Pro AI feature is enabled)
 
-Use separate credentials for preview, staging, and production. Restrict Stripe keys by permission and IP policy where supported. Require passkeys or authenticator-app MFA for deployment, database, source-control, Stripe, and identity-provider administrators.
+Use separate credentials for preview, staging, and production. Billing plans and payment-gateway access are managed in Clerk rather than application environment variables. Require passkeys or authenticator-app MFA for deployment, database, source-control, payment, and identity-provider administrators.
+
+Clerk middleware restricts accepted session origins to `APP_URL` in production. Configure only required sign-in methods, require email verification, enable bot protection, and keep the production instance's allowed application domains narrow.
 
 ## Incident response
 
@@ -29,7 +25,7 @@ Use separate credentials for preview, staging, and production. Restrict Stripe k
 4. Preserve relevant logs and notify impacted users when required.
 5. Add a regression test or scanner rule before closing the incident.
 
-The webhook secret present in repository history before the commercial-hardening branch must be rotated before production deployment. Removing it from the current tree does not invalidate the historical value.
+Any payment webhook secret present in repository history from an earlier implementation must remain revoked. Removing it from the current tree does not invalidate a historical value.
 
 ## Deployment and rollback
 

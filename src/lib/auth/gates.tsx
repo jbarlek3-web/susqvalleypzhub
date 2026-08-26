@@ -1,22 +1,20 @@
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Navigate } from "@tanstack/react-router";
-import { authEnabled, signOut } from "./client";
-import { useCurrentUser, useCurrentUserState } from "./use-current-user";
+import { UserButton as ClerkUserButton } from "@clerk/tanstack-react-start";
+import { useCurrentUserState } from "./use-current-user";
 
 /**
  * Auth state components — plain wrappers around `useCurrentUserState()`.
  *
- * With auth on, visitors are signed out until they authenticate — in the sandbox
- * live preview too, which does real sign-in. The shared dev user appears only
- * when auth is disabled (`VITE_AUTH_ENABLED=false`, the shipped default).
- * While the session is still resolving, gates that care about signed-out state
+ * Visitors are signed out until Clerk authenticates them. While the session is
+ * still resolving, gates that care about signed-out state
  * render nothing so there's no signed-out flash on hard reload.
  */
 
 /** Where `RedirectToSignIn` sends signed-out visitors. Create this route. */
 export const SIGN_IN_PATH = "/login";
 
-/** Render children only when a user is present (real session, or the disabled-auth dev user). */
+/** Render children only when a verified Clerk user is present. */
 export function SignedIn({ children }: { children: ReactNode }) {
   const { user } = useCurrentUserState();
   return user ? <>{children}</> : null;
@@ -50,40 +48,5 @@ export function RedirectToSignIn({ to = SIGN_IN_PATH }: { to?: string }) {
  * disabled-auth dev user has nothing to sign out of).
  */
 export function UserButton() {
-  const user = useCurrentUser();
-  // Sign-out can take a moment (and can fail when deployed), so the control
-  // shows it is working and cannot be fired twice.
-  const [signingOut, setSigningOut] = useState(false);
-  if (!user) return null;
-  const label = user.displayName ?? user.primaryEmail ?? "Account";
-  return (
-    <div className="flex items-center gap-2">
-      {user.profileImageUrl ? (
-        <img
-          src={user.profileImageUrl}
-          alt=""
-          className="h-8 w-8 rounded-full object-cover"
-        />
-      ) : (
-        <span className="grid h-8 w-8 place-items-center rounded-full bg-black/10 text-sm font-medium dark:bg-white/20">
-          {label.charAt(0).toUpperCase()}
-        </span>
-      )}
-      <span className="text-sm font-medium">{label}</span>
-      {authEnabled && (
-        <button
-          type="button"
-          disabled={signingOut}
-          onClick={() => {
-            setSigningOut(true);
-            // Success navigates away; on failure re-enable so it can be retried.
-            void signOut().catch(() => setSigningOut(false));
-          }}
-          className="cursor-pointer text-sm underline-offset-4 opacity-70 hover:underline disabled:cursor-wait disabled:no-underline"
-        >
-          {signingOut ? "Signing out…" : "Sign out"}
-        </button>
-      )}
-    </div>
-  );
+  return <ClerkUserButton />;
 }

@@ -5,22 +5,44 @@ interface SecurityEvent {
   req: { method: string; headers: Headers };
 }
 
-const CSP = [
+function clerkFrontendOrigin() {
+  const key = process.env.VITE_CLERK_PUBLISHABLE_KEY?.trim();
+  const encoded = key?.replace(/^pk_(?:test|live)_/, "");
+  if (!encoded) return null;
+  try {
+    const host = Buffer.from(encoded, "base64").toString("utf8").replace(/\$$/, "");
+    const url = new URL(`https://${host}`);
+    return url.protocol === "https:" && url.hostname === host ? url.origin : null;
+  } catch {
+    return null;
+  }
+}
+
+function contentSecurityPolicy() {
+  const clerkOrigin = clerkFrontendOrigin();
+  const clerkSource = clerkOrigin ? ` ${clerkOrigin}` : "";
+  return [
   "default-src 'self'",
   "base-uri 'self'",
   "object-src 'none'",
-  "script-src 'self' 'unsafe-inline' https://grok.com",
+  `script-src 'self' 'unsafe-inline'${clerkSource} https://challenges.cloudflare.com https://*.protect.clerk.com`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https:",
-  "frame-src 'none'",
+  `connect-src 'self'${clerkSource} https://*.protect.clerk.com:* https://arcweb1.ycpc.org https://services2.arcgis.com https://mapservices.pasda.psu.edu https://hydro.nationalmap.gov https://basemap.nationalmap.gov https://server.arcgisonline.com https://*.tile.openstreetmap.org`,
+  "worker-src 'self' blob:",
+  "frame-src 'self' https://challenges.cloudflare.com https://*.protect.clerk.com",
   "form-action 'self'",
-].join("; ");
+  ].join("; ");
+}
 
 function secure(response: Response, isHttps: boolean) {
   const headers = new Headers(response.headers);
-  headers.set("content-security-policy", CSP);
+  // Every response reaching this middleware is dynamically generated and may
+  // contain account state. Static assets bypass the server through Vercel's
+  // filesystem route and keep their immutable cache policy.
+  headers.set("cache-control", "no-store");
+  headers.set("content-security-policy", contentSecurityPolicy());
   headers.set("cross-origin-opener-policy", "same-origin-allow-popups");
   headers.set("permissions-policy", "camera=(), microphone=(), geolocation=(), payment=(self)");
   headers.set("referrer-policy", "strict-origin-when-cross-origin");

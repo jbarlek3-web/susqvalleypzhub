@@ -4,17 +4,11 @@ import { assertProductionConfig, missingProductionEnv } from "./env.server.ts";
 
 const required = {
   APP_URL: "https://planning.example.com",
-  BETTER_AUTH_SECRET: "a-secure-random-auth-secret",
-  BETTER_AUTH_URL: "https://planning.example.com",
+  CLERK_SECRET_KEY: ["sk", "live", "placeholder"].join("_"),
   DATABASE_URL: "postgresql://example.invalid/database",
-  GROK_AUTH_CLIENT_ID: "client-id",
-  GROK_AUTH_CLIENT_SECRET: "client-secret",
-  GROK_AUTH_ISSUER: "https://issuer.example.com",
   RATE_LIMIT_SALT: "a-long-independent-rate-limit-salt",
-  STRIPE_PRICE_ID: "price_test",
-  STRIPE_RESTRICTED_KEY: "rk_" + "test_placeholder",
-  STRIPE_WEBHOOK_SECRET: "whsec_" + "placeholder",
   VERCEL_ENV: "production",
+  VITE_CLERK_PUBLISHABLE_KEY: ["pk", "live", "placeholder"].join("_"),
 };
 
 function withEnv(values: Record<string, string | undefined>, run: () => void) {
@@ -33,21 +27,21 @@ function withEnv(values: Record<string, string | undefined>, run: () => void) {
   }
 }
 
-test("production configuration accepts HTTPS same-origin auth and restricted Stripe keys", () => {
+test("production configuration accepts live Clerk keys", () => {
   withEnv(required, () => {
     assert.deepEqual(missingProductionEnv(), []);
     assert.doesNotThrow(assertProductionConfig);
   });
 });
 
-test("production configuration rejects broad Stripe secret keys", () => {
-  withEnv({ ...required, STRIPE_RESTRICTED_KEY: "sk_" + "test_placeholder" }, () => {
-    assert.throws(assertProductionConfig, /restricted key/);
+test("production configuration rejects Clerk test keys", () => {
+  withEnv({ ...required, CLERK_SECRET_KEY: ["sk", "test", "placeholder"].join("_") }, () => {
+    assert.throws(assertProductionConfig, /live secret key/);
   });
 });
 
 test("production configuration reports missing secrets without their values", () => {
-  withEnv({ ...required, STRIPE_WEBHOOK_SECRET: undefined }, () => {
-    assert.deepEqual(missingProductionEnv(), ["STRIPE_WEBHOOK_SECRET"]);
+  withEnv({ ...required, CLERK_SECRET_KEY: undefined }, () => {
+    assert.deepEqual(missingProductionEnv(), ["CLERK_SECRET_KEY"]);
   });
 });

@@ -1,15 +1,22 @@
 import type { ReactNode } from "react";
+import { ClerkProvider } from "@clerk/tanstack-react-start";
 
 /**
  * App-wide client provider mounted once near the root (in `src/routes/__root.tsx`):
  *
  *   <AuthProvider><Outlet /></AuthProvider>
  *
- * Better Auth's React client (`@/lib/auth/client`) needs NO context provider —
- * its `useSession()` works standalone — so this is a passthrough today. It's
- * kept as the single, stable mount point for any future client-side providers
- * (e.g. a toast or theme provider) without churning the root shell.
+ * Clerk owns the browser session context here. Server-side verification remains
+ * independent and always derives the user id from Clerk's signed session.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
-  return <>{children}</>;
+  return (
+    <ClerkProvider
+      signInUrl="/login"
+      signUpUrl="/sign-up"
+      afterSignOutUrl="/"
+    >
+      {children}
+    </ClerkProvider>
+  );
 }
