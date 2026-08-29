@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
+  Bot,
   CheckCircle2,
   Database,
   ContactRound,
-  FileStack,
   Gavel,
   Layers,
   Map as MapIcon,
@@ -161,10 +161,11 @@ function Home() {
             }
           />
           <Feature
-            icon={FileStack}
-            title="Builder Documentation"
-            body="Access standardized application forms, fee schedules, and review checklists for municipal submissions."
-            href="/documents"
+            icon={Bot}
+            title="Ordinance Aide Agent"
+            body="Ask municipality-specific zoning and development questions against the private Field ACQ reference corpus."
+            href="/aide"
+            cta="Ask Ordinance Aide"
           />
           <Feature
             icon={ContactRound}

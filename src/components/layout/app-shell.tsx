@@ -1,12 +1,20 @@
 import type { ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Bell, BookOpen, ContactRound, FileText, HelpCircle, Menu, Search, Users } from "lucide-react";
+import {
+  Bell,
+  BookOpen,
+  ContactRound,
+  FileText,
+  HelpCircle,
+  Menu,
+  Search,
+  Users,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FieldAcqOrdinanceAideLogo } from "@/components/brand/field-acq-ordinance-aide-logo";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { PARCELS, searchParcels } from "@/lib/data/parcels";
-import { DOCUMENTS } from "@/lib/data/catalog";
 import { ZONING_CODES as CODES } from "@/lib/data/zoning";
 import { useHub } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -18,7 +26,7 @@ const NAV = [
   { to: "/", label: "Home" },
   { to: "/map", label: "Map" },
   { to: "/dashboard", label: "Dashboard" },
-  { to: "/documents", label: "Documents" },
+  { to: "/aide", label: "Ordinance AI" },
   { to: "/directory", label: "Directory" },
   { to: "/zoning", label: "Zoning" },
   { to: "/acquire", label: "Acquire" },
@@ -72,18 +80,13 @@ export function AppShell({
     if (q.trim().length < 2)
       return {
         parcels: [] as typeof PARCELS,
-        docs: [] as typeof DOCUMENTS,
         codes: [] as typeof CODES,
       };
     const parcels = searchParcels(q).slice(0, 5);
-    const docs = DOCUMENTS.filter((d) => d.name.toLowerCase().includes(q.toLowerCase())).slice(
-      0,
-      3,
-    );
     const codes = CODES.filter((c) =>
       `${c.section} ${c.municipality}`.toLowerCase().includes(q.toLowerCase()),
     ).slice(0, 3);
-    return { parcels, docs, codes };
+    return { parcels, codes };
   }, [q]);
 
   return (
@@ -171,11 +174,7 @@ export function AppShell({
             </Link>
             <SignedOut>
               <Link to="/login">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-primary hover:bg-primary-fixed"
-                >
+                <Button variant="ghost" size="sm" className="text-primary hover:bg-primary-fixed">
                   Sign In
                 </Button>
               </Link>
@@ -242,12 +241,11 @@ function SearchResults({
 }: {
   hits: {
     parcels: typeof PARCELS;
-    docs: typeof DOCUMENTS;
     codes: typeof CODES;
   };
   onPick: () => void;
 }) {
-  if (!hits.parcels.length && !hits.docs.length && !hits.codes.length) {
+  if (!hits.parcels.length && !hits.codes.length) {
     return <p className="p-3 text-sm text-muted-foreground">No matches.</p>;
   }
   return (
@@ -264,17 +262,6 @@ function SearchResults({
           <div className="text-xs text-muted-foreground">
             {p.municipality} · {p.zoning}
           </div>
-        </Link>
-      ))}
-      {hits.docs.map((d) => (
-        <Link
-          key={d.id}
-          to="/documents"
-          onClick={onPick}
-          className="block rounded-sm px-2 py-2 hover:bg-surface-low"
-        >
-          <div className="font-medium">{d.name}</div>
-          <div className="text-xs text-muted-foreground">Document · {d.county}</div>
         </Link>
       ))}
       {hits.codes.map((c) => (

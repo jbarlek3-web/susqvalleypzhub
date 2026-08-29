@@ -41,7 +41,6 @@ function Guide() {
         </Step>
         <Step n={5} t="Research Review">
           Pro members can review saved parcel research and supporting sources in one workspace.
-          Public-source documents remain available from their originating agencies.
         </Step>
         <Step n={6} t="Acquisition toolkit">
           Run lot yield and residual offer math, screen a tract, walk York County SALDO (sketch to

@@ -200,6 +200,33 @@ export function getAiReferenceContext(input: {
     .join("\n\n---\n\n");
 }
 
+export function getAiReferenceScope() {
+  const municipalities = new Map<string, Set<string>>();
+  for (const county of corpus.counties) municipalities.set(county, new Set<string>());
+
+  for (const document of corpus.documents) {
+    if (document.status !== "ready") continue;
+    for (const jurisdiction of document.jurisdictions) {
+      const county = corpus.counties.find(
+        (candidate) => jurisdictionKey(candidate) === jurisdictionKey(jurisdiction.county),
+      );
+      if (!county) continue;
+      const municipality = jurisdiction.municipality.trim();
+      if (!/(township|borough|city|county)$/i.test(municipality)) continue;
+      municipalities.get(county)?.add(municipality);
+    }
+  }
+
+  return {
+    counties: corpus.counties.map((county) => ({
+      county,
+      municipalities: [...(municipalities.get(county) ?? [])].sort((a, b) => a.localeCompare(b)),
+    })),
+    documentCount: corpus.documents.length,
+    chunkCount: corpus.chunks.length,
+  };
+}
+
 export const AI_REFERENCE_SUMMARY = {
   schemaVersion: corpus.schemaVersion,
   audience: corpus.audience,

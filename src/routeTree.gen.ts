@@ -12,9 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccessRouteImport } from './routes/access'
 import { Route as AcquireRouteImport } from './routes/acquire'
+import { Route as AideRouteImport } from './routes/aide'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DirectoryRouteImport } from './routes/directory'
-import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as GuideRouteImport } from './routes/guide'
 import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as LoginRouteImport } from './routes/login'
@@ -46,6 +46,11 @@ const AcquireRoute = AcquireRouteImport.update({
   path: '/acquire',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AideRoute = AideRouteImport.update({
+  id: '/aide',
+  path: '/aide',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -54,11 +59,6 @@ const DashboardRoute = DashboardRouteImport.update({
 const DirectoryRoute = DirectoryRouteImport.update({
   id: '/directory',
   path: '/directory',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DocumentsRoute = DocumentsRouteImport.update({
-  id: '/documents',
-  path: '/documents',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GuideRoute = GuideRouteImport.update({
@@ -141,9 +141,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/access': typeof AccessRoute
   '/acquire': typeof AcquireRoute
+  '/aide': typeof AideRoute
   '/dashboard': typeof DashboardRoute
   '/directory': typeof DirectoryRoute
-  '/documents': typeof DocumentsRoute
   '/guide': typeof GuideRoute
   '/insights': typeof InsightsRoute
   '/login': typeof LoginRoute
@@ -164,9 +164,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/access': typeof AccessRoute
   '/acquire': typeof AcquireRoute
+  '/aide': typeof AideRoute
   '/dashboard': typeof DashboardRoute
   '/directory': typeof DirectoryRoute
-  '/documents': typeof DocumentsRoute
   '/guide': typeof GuideRoute
   '/insights': typeof InsightsRoute
   '/login': typeof LoginRoute
@@ -188,9 +188,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/access': typeof AccessRoute
   '/acquire': typeof AcquireRoute
+  '/aide': typeof AideRoute
   '/dashboard': typeof DashboardRoute
   '/directory': typeof DirectoryRoute
-  '/documents': typeof DocumentsRoute
   '/guide': typeof GuideRoute
   '/insights': typeof InsightsRoute
   '/login': typeof LoginRoute
@@ -213,9 +213,9 @@ export interface FileRouteTypes {
     | '/'
     | '/access'
     | '/acquire'
+    | '/aide'
     | '/dashboard'
     | '/directory'
-    | '/documents'
     | '/guide'
     | '/insights'
     | '/login'
@@ -236,9 +236,9 @@ export interface FileRouteTypes {
     | '/'
     | '/access'
     | '/acquire'
+    | '/aide'
     | '/dashboard'
     | '/directory'
-    | '/documents'
     | '/guide'
     | '/insights'
     | '/login'
@@ -259,9 +259,9 @@ export interface FileRouteTypes {
     | '/'
     | '/access'
     | '/acquire'
+    | '/aide'
     | '/dashboard'
     | '/directory'
-    | '/documents'
     | '/guide'
     | '/insights'
     | '/login'
@@ -283,9 +283,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccessRoute: typeof AccessRoute
   AcquireRoute: typeof AcquireRoute
+  AideRoute: typeof AideRoute
   DashboardRoute: typeof DashboardRoute
   DirectoryRoute: typeof DirectoryRoute
-  DocumentsRoute: typeof DocumentsRoute
   GuideRoute: typeof GuideRoute
   InsightsRoute: typeof InsightsRoute
   LoginRoute: typeof LoginRoute
@@ -326,6 +326,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcquireRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/aide': {
+      id: '/aide'
+      path: '/aide'
+      fullPath: '/aide'
+      preLoaderRoute: typeof AideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -338,13 +345,6 @@ declare module '@tanstack/react-router' {
       path: '/directory'
       fullPath: '/directory'
       preLoaderRoute: typeof DirectoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/documents': {
-      id: '/documents'
-      path: '/documents'
-      fullPath: '/documents'
-      preLoaderRoute: typeof DocumentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guide': {
@@ -459,9 +459,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccessRoute: AccessRoute,
   AcquireRoute: AcquireRoute,
+  AideRoute: AideRoute,
   DashboardRoute: DashboardRoute,
   DirectoryRoute: DirectoryRoute,
-  DocumentsRoute: DocumentsRoute,
   GuideRoute: GuideRoute,
   InsightsRoute: InsightsRoute,
   LoginRoute: LoginRoute,

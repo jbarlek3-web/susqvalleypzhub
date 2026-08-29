@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
@@ -7,7 +8,6 @@ const surfaceFiles = [
   "src/routes/dashboard.tsx",
   "src/components/map/map-panel.tsx",
   "src/routes/parcels.$id.tsx",
-  "src/routes/documents.tsx",
   "src/lib/store.ts",
 ];
 
@@ -39,10 +39,8 @@ test("Field ACQ exposes no generated print or export surface", async () => {
   }
 });
 
-test("official municipal source documents remain accessible", async () => {
-  const source = await readFile("src/routes/documents.tsx", "utf8");
-
-  assert.match(source, /href={d\.url}/);
-  assert.match(source, /Open source/);
-  assert.doesNotMatch(source, /> Download/);
+test("the document catalog stays stored but has no website route", async () => {
+  assert.equal(existsSync("src/routes/documents.tsx"), false);
+  const catalog = await readFile("src/lib/data/catalog.ts", "utf8");
+  assert.match(catalog, /DOCUMENTS/);
 });

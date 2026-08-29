@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { AI_REFERENCE_SUMMARY, getAiReferenceContext } from "./ai-reference.server.ts";
+import {
+  AI_REFERENCE_SUMMARY,
+  getAiReferenceContext,
+  getAiReferenceScope,
+} from "./ai-reference.server.ts";
 
 const FOUR_COUNTIES = ["Cumberland", "Dauphin", "Lancaster", "York"];
 
@@ -39,6 +43,20 @@ test("the complete regional corpus is private and explicitly attributed", () => 
   for (const document of parsedDocuments) {
     assert.ok(document.jurisdictions.length > 0, document.id);
     if (document.status !== "ready") assert.ok(document.failureReason, document.id);
+  }
+});
+
+test("the agent scope exposes jurisdictions and counts without document contents", () => {
+  const scope = getAiReferenceScope();
+  assert.deepEqual(
+    scope.counties.map(({ county }) => county),
+    FOUR_COUNTIES,
+  );
+  assert.equal(scope.documentCount, AI_REFERENCE_SUMMARY.documentCount);
+  assert.equal(scope.chunkCount, AI_REFERENCE_SUMMARY.chunkCount);
+  for (const { county, municipalities } of scope.counties) {
+    assert.ok(municipalities.length > 0, `${county} must have a queryable jurisdiction`);
+    assert.ok(municipalities.every((name) => /(township|borough|city|county)$/i.test(name)));
   }
 });
 
@@ -108,7 +126,7 @@ test("the latest Cumberland municipal intake is fully searchable", () => {
 
 test("public routes and shared catalogs do not import the private AI corpus", () => {
   for (const relativePath of [
-    "../routes/documents.tsx",
+    "../routes/aide.tsx",
     "../routes/directory.tsx",
     "./data/notification-feed.ts",
     "./data/catalog.ts",

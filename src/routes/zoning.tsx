@@ -1,10 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { COUNTIES } from "@/lib/data/catalog";
-import { DOCUMENTS } from "@/lib/data/catalog";
 import { ZONING_CODES } from "@/lib/data/zoning";
 import {
   GEN_ZONE_COLORS,
@@ -158,13 +157,6 @@ function YorkDistrictCard({ d }: { d: YorkZoningDistrict }) {
   const color = GEN_ZONE_COLORS[d.gcode] || d.color || "#466649";
   const flags = useFlags(d);
   const muniPretty = prettyMuni(d.muni);
-  const docs = DOCUMENTS.filter(
-    (doc) =>
-      doc.county === "York" &&
-      doc.municipality
-        .toLowerCase()
-        .includes(muniPretty.replace(/ Township| Borough| City/gi, "").toLowerCase()),
-  ).slice(0, 3);
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -210,28 +202,6 @@ function YorkDistrictCard({ d }: { d: YorkZoningDistrict }) {
             </span>
           ))}
         </div>
-        {docs.length > 0 && (
-          <div className="mt-3 text-xs">
-            <span className="text-muted-foreground">Ordinances: </span>
-            {docs.map((doc, i) => (
-              <span key={doc.id}>
-                <a
-                  href={doc.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-primary-container underline"
-                >
-                  {doc.category}
-                </a>
-                {i < docs.length - 1 ? " · " : ""}
-              </span>
-            ))}
-            {" · "}
-            <Link to="/documents" className="text-primary-container underline">
-              all docs
-            </Link>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

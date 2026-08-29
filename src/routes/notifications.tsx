@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
@@ -34,9 +34,6 @@ function Notifications() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button asChild variant="outline">
-            <Link to="/documents">Open document library</Link>
-          </Button>
           <Button variant="outline" onClick={mark} disabled={!unread}>
             Mark all as read
           </Button>
@@ -83,14 +80,7 @@ function Notifications() {
                       >
                         {a.actionLabel}
                       </a>
-                    ) : (
-                      <Link
-                        to="/documents"
-                        className="font-semibold text-primary-container underline-offset-2 hover:underline"
-                      >
-                        Open document library
-                      </Link>
-                    )}
+                    ) : null}
                   </div>
                 </CardContent>
               </Card>
