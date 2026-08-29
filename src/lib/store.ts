@@ -82,7 +82,6 @@ type State = {
   markAlertsRead: () => void;
   setAlertCounty: (c: County, on: boolean) => void;
   setAlertFreq: (f: State["alertFreq"]) => void;
-  canExport: () => boolean;
 };
 
 export const useHub = create<State>()(
@@ -197,7 +196,6 @@ export const useHub = create<State>()(
       setAlertCounty: (c, on) =>
         set({ alertCounties: { ...get().alertCounties, [c]: on } }),
       setAlertFreq: (alertFreq) => set({ alertFreq }),
-      canExport: () => get().isPro,
     }),
     {
       name: "svph-hub",

@@ -1,21 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  ChevronDown,
-  Download,
-  ExternalLink,
-  FileText,
-  FolderOpen,
-  LayoutList,
-  Rows3,
-} from "lucide-react";
+import { ChevronDown, ExternalLink, FileText, FolderOpen, LayoutList, Rows3 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
 import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DOCUMENTS } from "@/lib/data/catalog";
-import { useHub } from "@/lib/store";
-import { authorizeProAction } from "@/lib/pro-actions";
 import type { PlanningDoc } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -39,8 +28,6 @@ function Documents() {
   const [view, setView] = useState<"list" | "group">("list");
   const [expandAll, setExpandAll] = useState(true);
   const [openKeys, setOpenKeys] = useState<Set<string>>(new Set());
-  const isPro = useHub((s) => s.isPro);
-  const canExport = isPro;
 
   const countyOptions = useMemo(() => {
     const counts = new Map<string, number>();
@@ -193,7 +180,7 @@ function Documents() {
       ) : view === "list" ? (
         <ul className="mt-4 divide-y divide-outline-variant overflow-hidden rounded-lg border border-outline-variant bg-card">
           {list.map((d) => (
-            <DocRow key={d.id} d={d} canExport={canExport} showMuni />
+            <DocRow key={d.id} d={d} showMuni />
           ))}
         </ul>
       ) : (
@@ -223,7 +210,7 @@ function Documents() {
                 {open ? (
                   <ul className="divide-y divide-outline-variant border-t border-outline-variant bg-surface-low/40">
                     {docs.map((d) => (
-                      <DocRow key={d.id} d={d} canExport={canExport} />
+                      <DocRow key={d.id} d={d} />
                     ))}
                   </ul>
                 ) : null}
@@ -247,15 +234,7 @@ function Documents() {
   );
 }
 
-function DocRow({
-  d,
-  canExport,
-  showMuni = false,
-}: {
-  d: PlanningDoc;
-  canExport: boolean;
-  showMuni?: boolean;
-}) {
+function DocRow({ d, showMuni = false }: { d: PlanningDoc; showMuni?: boolean }) {
   const isSourcePage = d.linkType === "source-page";
   return (
     <li className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -280,29 +259,7 @@ function DocRow({
             <ExternalLink className="size-3.5" /> {isSourcePage ? "Open source" : "Open"}
           </a>
         </Button>
-        {!isSourcePage && (
-          <Button size="sm" variant="outline" onClick={() => downloadDoc(d, canExport)}>
-            <Download className="size-3.5" /> Download
-          </Button>
-        )}
       </div>
     </li>
   );
-}
-
-function downloadDoc(d: PlanningDoc, canExport: boolean) {
-  if (!canExport) {
-    toast.error("Subscribe to Pro to use guided downloads.");
-    return;
-  }
-  void authorizeProAction()
-    .then(() => {
-      const a = document.createElement("a");
-      a.href = d.url;
-      a.target = "_blank";
-      a.rel = "noreferrer";
-      a.click();
-      toast.success("Opening original document");
-    })
-    .catch(() => toast.error("Pro access could not be verified. Please sign in again."));
 }

@@ -1,0 +1,48 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import test from "node:test";
+
+const surfaceFiles = [
+  "src/routes/index.tsx",
+  "src/routes/dashboard.tsx",
+  "src/components/map/map-panel.tsx",
+  "src/routes/parcels.$id.tsx",
+  "src/routes/documents.tsx",
+  "src/lib/store.ts",
+];
+
+const forbidden = [
+  "API & Data Export",
+  "Export comprehensive parcel reports",
+  "Guided Pro print and export workflow",
+  "Print Summary",
+  "Print selected summary",
+  "Print View",
+  "window.print(",
+  "canExport",
+  "guided downloads",
+];
+
+test("Field ACQ exposes no generated print or export surface", async () => {
+  const sources = await Promise.all(
+    surfaceFiles.map(async (file) => [file, await readFile(file, "utf8")]),
+  );
+
+  for (const [file, source] of sources) {
+    for (const phrase of forbidden) {
+      assert.equal(
+        source.includes(phrase),
+        false,
+        `${file} must not contain the retired export surface: ${phrase}`,
+      );
+    }
+  }
+});
+
+test("official municipal source documents remain accessible", async () => {
+  const source = await readFile("src/routes/documents.tsx", "utf8");
+
+  assert.match(source, /href={d\.url}/);
+  assert.match(source, /Open source/);
+  assert.doesNotMatch(source, /> Download/);
+});

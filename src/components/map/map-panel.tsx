@@ -30,7 +30,6 @@ import { cn } from "@/lib/utils";
 import { lookupYorkAddress } from "@/lib/york-lookup";
 import { dimLabel, prettyMuni } from "@/lib/data/york-zoning";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
-import { authorizeProAction } from "@/lib/pro-actions";
 
 const LAYER_ITEMS: { id: LayerId; label: string; hint?: string; icon: typeof Layers }[] = [
   {
@@ -108,8 +107,6 @@ export function MapPanel() {
   const batchName = useHub((s) => s.batchName);
   const setBatchName = useHub((s) => s.setBatchName);
   const saveBatchAsProject = useHub((s) => s.saveBatchAsProject);
-  const isPro = useHub((s) => s.isPro);
-  const canExport = isPro;
   const selected = PARCELS.filter((p) => selectedIds.includes(p.id));
   const primary = selected[0];
   const [minAc, setMinAc] = useState("");
@@ -471,22 +468,6 @@ export function MapPanel() {
               <Link to="/parcels/$id" params={{ id: primary.id }}>
                 View Feasibility Report
               </Link>
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                if (!canExport) {
-                  toast.error("Subscribe to use Pro map tools.");
-                  return;
-                }
-                void authorizeProAction()
-                  .then(() => window.print())
-                  .catch(() =>
-                    toast.error("Pro access could not be verified. Please sign in again."),
-                  );
-              }}
-            >
-              Print selected summary
             </Button>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { FileDown, Map as MapIcon, Plus } from "lucide-react";
+import { Map as MapIcon, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { AppShell, StatusBadge } from "@/components/layout/app-shell";
@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PARCELS } from "@/lib/data/parcels";
 import { useHub } from "@/lib/store";
-import { authorizeProAction } from "@/lib/pro-actions";
 import type { ProjectStatus } from "@/lib/types";
 import { formatAcres } from "@/lib/utils";
 
@@ -103,26 +102,6 @@ function Dashboard() {
                   <Link to="/map">
                     <MapIcon className="size-3.5" /> Open Map
                   </Link>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    if (!useHub.getState().canExport()) {
-                      toast.error("Subscribe to use Pro project tools.");
-                      return;
-                    }
-                    void authorizeProAction()
-                      .then(() => {
-                        toast.success("Preparing project summary…");
-                        window.print();
-                      })
-                      .catch(() =>
-                        toast.error("Pro access could not be verified. Please sign in again."),
-                      );
-                  }}
-                >
-                  <FileDown className="size-3.5" /> Print Summary
                 </Button>
               </div>
             </CardContent>

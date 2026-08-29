@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bookmark, BookmarkCheck, Download, Share2, Sparkles } from "lucide-react";
+import { Bookmark, BookmarkCheck, Share2, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/layout/app-shell";
@@ -10,7 +10,6 @@ import { RENO_2026 } from "@/lib/data/catalog";
 import { getParcel } from "@/lib/data/parcels";
 import { analyzeParcel } from "@/lib/grok-analyze";
 import { useHub } from "@/lib/store";
-import { authorizeProAction } from "@/lib/pro-actions";
 import { formatFullMoney } from "@/lib/utils";
 
 export const Route = createFileRoute("/parcels/$id")({ component: ParcelReport });
@@ -68,21 +67,6 @@ function ParcelReport() {
           <Button variant="outline" size="sm" onClick={() => toggleSaved(id)}>
             {saved ? <BookmarkCheck className="size-3.5" /> : <Bookmark className="size-3.5" />}
             {saved ? "Saved" : "Save"}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              if (!useHub.getState().canExport()) {
-                toast.error("Subscribe to use Pro parcel tools.");
-                return;
-              }
-              void authorizeProAction()
-                .then(() => window.print())
-                .catch(() => toast.error("Pro access could not be verified. Please sign in again."));
-            }}
-          >
-            <Download className="size-3.5" /> Print View
           </Button>
         </div>
       </div>
