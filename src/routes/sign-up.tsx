@@ -2,6 +2,7 @@ import { SignUp } from "@clerk/tanstack-react-start";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Check } from "lucide-react";
 import { FieldAcqOrdinanceAideLogo } from "@/components/brand/field-acq-ordinance-aide-logo";
+import { AuthEntryNav } from "@/components/auth/auth-entry-nav";
 
 export const Route = createFileRoute("/sign-up")({ component: SignUpPage });
 
@@ -34,18 +35,24 @@ function SignUpPage() {
           </ul>
         </section>
         <section className="p-7 md:p-12">
-          <SignUp
-            routing="hash"
-            signInUrl="/login"
-            forceRedirectUrl="/subscription"
-            appearance={{
-              elements: {
-                rootBox: "w-full",
-                cardBox: "w-full shadow-none",
-                card: "w-full p-0 shadow-none bg-transparent",
-              },
-            }}
-          />
+          <AuthEntryNav active="sign-up" />
+          <p className="mt-6 text-sm text-muted-foreground">
+            Create your account, then continue to the secure Pro trial checkout.
+          </p>
+          <div className="mt-5">
+            <SignUp
+              routing="hash"
+              signInUrl="/login"
+              fallbackRedirectUrl="/subscription"
+              appearance={{
+                elements: {
+                  rootBox: "w-full",
+                  cardBox: "w-full shadow-none",
+                  card: "w-full p-0 shadow-none bg-transparent",
+                },
+              }}
+            />
+          </div>
         </section>
       </div>
     </main>

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Bell, BookOpen, FileText, HelpCircle, Menu, Search, Users } from "lucide-react";
+import { Bell, BookOpen, ContactRound, FileText, HelpCircle, Menu, Search, Users } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FieldAcqOrdinanceAideLogo } from "@/components/brand/field-acq-ordinance-aide-logo";
@@ -19,6 +19,7 @@ const NAV = [
   { to: "/map", label: "Map" },
   { to: "/dashboard", label: "Dashboard" },
   { to: "/documents", label: "Documents" },
+  { to: "/directory", label: "Directory" },
   { to: "/zoning", label: "Zoning" },
   { to: "/acquire", label: "Acquire" },
   { to: "/insights", label: "Insights" },
@@ -26,6 +27,7 @@ const NAV = [
 ];
 
 const MORE = [
+  { to: "/directory", label: "PA County Directory", icon: ContactRound },
   { to: "/minutes", label: "Meeting Minutes", icon: FileText },
   { to: "/workspace", label: "Team Workspace", icon: Users },
   { to: "/guide", label: "Quick Start", icon: BookOpen },
@@ -299,6 +301,11 @@ export function SiteFooter() {
             County Resources
           </p>
           <ul className="space-y-2 text-sm">
+            <li>
+              <Link className="font-medium text-primary-container hover:underline" to="/directory">
+                Pennsylvania County Planning and Zoning Directory
+              </Link>
+            </li>
             <li>
               <a
                 className="hover:text-primary-container"

@@ -112,6 +112,19 @@ export type PlanningDoc = {
   linkType?: "source-page";
 };
 
+export type CountyPlanningContact = {
+  county: string;
+  departmentName: string;
+  departmentUrl: string;
+};
+
+export type CountyZoningSourceLinks = {
+  county: string;
+  municipalityListSourceUrl: string;
+  zoningStatusSourceUrl: string;
+  countySourceUrl: string;
+};
+
 export type MeetingRecord = {
   id: string;
   date: string;

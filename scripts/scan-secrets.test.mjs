@@ -43,3 +43,19 @@ test("artifact scanning reports only the path and never echoes the credential", 
     rmSync(directory, { recursive: true, force: true });
   }
 });
+
+test("artifact scanning detects Google API keys without echoing them", () => {
+  const directory = mkdtempSync(join(tmpdir(), "secret-scan-google-"));
+  const credential = `AIza${"A".repeat(35)}`;
+  try {
+    const artifact = join(directory, "corpus.json");
+    writeFileSync(artifact, JSON.stringify({ text: credential }));
+
+    const result = runScanner(directory);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /corpus\.json/);
+    assert.doesNotMatch(result.stderr, new RegExp(credential));
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});

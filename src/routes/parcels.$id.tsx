@@ -74,7 +74,7 @@ function ParcelReport() {
             size="sm"
             onClick={() => {
               if (!useHub.getState().canExport()) {
-                toast.error("Subscribe to export PDF reports.");
+                toast.error("Subscribe to use Pro parcel tools.");
                 return;
               }
               void authorizeProAction()
@@ -82,7 +82,7 @@ function ParcelReport() {
                 .catch(() => toast.error("Pro access could not be verified. Please sign in again."));
             }}
           >
-            <Download className="size-3.5" /> PDF Report
+            <Download className="size-3.5" /> Print View
           </Button>
         </div>
       </div>

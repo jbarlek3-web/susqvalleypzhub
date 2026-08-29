@@ -1,0 +1,194 @@
+[
+  {
+    "county": "Armstrong",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.co.armstrong.pa.us/index.php/county-government-m/planning-and-development-m",
+    "countySourceUrl": "https://www.co.armstrong.pa.us/index.php/county-government-m/planning-and-development-m"
+  },
+  {
+    "county": "Berks",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.berkspa.gov/departments/planning-commission",
+    "countySourceUrl": "https://www.berkspa.gov/departments/planning-commission"
+  },
+  {
+    "county": "Blair",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.blairplanning.org/",
+    "countySourceUrl": "https://www.blairplanning.org/"
+  },
+  {
+    "county": "Cambria",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.cambriacountypa.gov/planning-commission/",
+    "countySourceUrl": "https://www.cambriacountypa.gov/planning-commission/"
+  },
+  {
+    "county": "Chester",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.chesco.org/planning",
+    "countySourceUrl": "https://www.chesco.org/planning"
+  },
+  {
+    "county": "Clarion",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.co.clarion.pa.us/government/departments/planning/index.php",
+    "countySourceUrl": "https://www.co.clarion.pa.us/government/departments/planning/index.php"
+  },
+  {
+    "county": "Cumberland",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.cumberlandcountypa.gov/120/Planning-Department",
+    "countySourceUrl": "https://www.cumberlandcountypa.gov/120/Planning-Department"
+  },
+  {
+    "county": "Dauphin",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.tcrpc-pa.org/dcpc-contact",
+    "countySourceUrl": "https://www.tcrpc-pa.org/dcpc-contact"
+  },
+  {
+    "county": "Delaware",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.delcopa.gov/planning",
+    "countySourceUrl": "https://www.delcopa.gov/planning"
+  },
+  {
+    "county": "Erie",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://eriecountypa.gov/departments/planning-and-community-development/",
+    "countySourceUrl": "https://eriecountypa.gov/departments/planning-and-community-development/"
+  },
+  {
+    "county": "Franklin",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.franklincountypa.gov/departments/planning/",
+    "countySourceUrl": "https://www.franklincountypa.gov/departments/planning/"
+  },
+  {
+    "county": "Fulton",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.co.fulton.pa.us/planning-commission.php",
+    "countySourceUrl": "https://www.co.fulton.pa.us/planning-commission.php"
+  },
+  {
+    "county": "Huntingdon",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.huntingdoncountypa.gov/departments/planning-and-development",
+    "countySourceUrl": "https://www.huntingdoncountypa.gov/departments/planning-and-development"
+  },
+  {
+    "county": "Jefferson",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.jeffersoncountypa.gov/departments/department-of-development/",
+    "countySourceUrl": "https://www.jeffersoncountypa.gov/departments/department-of-development/"
+  },
+  {
+    "county": "Juniata",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.juniataco.org/departments/planning/",
+    "countySourceUrl": "https://www.juniataco.org/departments/planning/"
+  },
+  {
+    "county": "Lackawanna",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.lackawannacounty.org/government/departments/planning.php",
+    "countySourceUrl": "https://www.lackawannacounty.org/government/departments/planning.php"
+  },
+  {
+    "county": "Lancaster",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://lancastercountyplanning.org/",
+    "countySourceUrl": "https://lancastercountyplanning.org/"
+  },
+  {
+    "county": "Lehigh",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://lvpc.org/",
+    "countySourceUrl": "https://lvpc.org/"
+  },
+  {
+    "county": "Mckean",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.mckeancountypa.gov/departments/planning_commission/index.php",
+    "countySourceUrl": "https://www.mckeancountypa.gov/departments/planning_commission/index.php"
+  },
+  {
+    "county": "Mercer",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.mcrpc.com/",
+    "countySourceUrl": "https://www.mcrpc.com/"
+  },
+  {
+    "county": "Mifflin",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.mifflincountypa.gov/planning",
+    "countySourceUrl": "https://www.mifflincountypa.gov/planning"
+  },
+  {
+    "county": "Monroe",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.monroecountypa.gov/departments/planning",
+    "countySourceUrl": "https://www.monroecountypa.gov/departments/planning"
+  },
+  {
+    "county": "Montgomery",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.montgomerycountypa.gov/490/Planning-Commission",
+    "countySourceUrl": "https://www.montgomerycountypa.gov/490/Planning-Commission"
+  },
+  {
+    "county": "Perry",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.tcrpc-pa.org/pcpc-contact",
+    "countySourceUrl": "https://www.tcrpc-pa.org/pcpc-contact"
+  },
+  {
+    "county": "Pike",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.pikepa.org/living___working/planning_and_mapping/index.php",
+    "countySourceUrl": "https://www.pikepa.org/living___working/planning_and_mapping/index.php"
+  },
+  {
+    "county": "Potter",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://pottercountypa.gov/departments/gis_planning_community_development/planning.php",
+    "countySourceUrl": "https://pottercountypa.gov/departments/gis_planning_community_development/planning.php"
+  },
+  {
+    "county": "Susquehanna",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.susqco.com/departments/planning-and-development",
+    "countySourceUrl": "https://www.susqco.com/departments/planning-and-development"
+  },
+  {
+    "county": "Venango",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.venangocountypa.gov/DocumentCenter/View/2599/Municipal-Zoning-Summary-V1---June-2022",
+    "countySourceUrl": "https://www.venangocountypa.gov/452/Planning-Commission"
+  },
+  {
+    "county": "Washington",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.washingtoncopa.gov/planning",
+    "countySourceUrl": "https://www.washingtoncopa.gov/planning"
+  },
+  {
+    "county": "Wayne",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://waynecountypa.gov/360/Zoning",
+    "countySourceUrl": "https://waynecountypa.gov/328/Subdivision-Zoning"
+  },
+  {
+    "county": "Westmoreland",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://www.westmorelandcountypa.gov/3278/Planning",
+    "countySourceUrl": "https://www.westmorelandcountypa.gov/3278/Planning"
+  },
+  {
+    "county": "Wyoming",
+    "municipalityListSourceUrl": "https://dced.pa.gov/local-government/municipal-statistics/municipalities/",
+    "zoningStatusSourceUrl": "https://wyomingcountypa.gov/board/",
+    "countySourceUrl": "https://wyomingcountypa.gov/board/"
+  }
+]

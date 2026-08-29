@@ -3,6 +3,7 @@ import {
   ArrowRight,
   CheckCircle2,
   Database,
+  ContactRound,
   FileStack,
   Gavel,
   Layers,
@@ -166,11 +167,18 @@ function Home() {
             href="/documents"
           />
           <Feature
+            icon={ContactRound}
+            title="Pennsylvania County Planning and Zoning Directory"
+            body="Find planning departments, zoning contacts, phone numbers, email addresses, and official county websites statewide."
+            href="/directory"
+            cta="Open directory"
+          />
+          <Feature
             icon={Database}
-            title="API & Data Export"
-            body="Export comprehensive parcel reports in CSV, PDF, or GeoJSON. Integrate planning data into your firm's systems."
+            title="Integrated Due Diligence"
+            body="Review parcel, zoning, planning, and environmental intelligence in one coordinated research workspace."
             href="/guide"
-            cta="View Documentation"
+            cta="View workflow"
           />
           <Feature
             icon={Gavel}
@@ -193,7 +201,7 @@ function Home() {
             {[
               "High-volume live York parcel and zoning lookups.",
               "AI-assisted parcel feasibility briefs.",
-              "Guided Pro print and export workflow.",
+              "Pro directories and saved-project workflow.",
             ].map((t) => (
               <li key={t} className="flex gap-2">
                 <CheckCircle2 className="mt-0.5 size-4 text-secondary" /> {t}

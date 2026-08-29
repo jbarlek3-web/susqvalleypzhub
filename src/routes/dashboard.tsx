@@ -109,12 +109,12 @@ function Dashboard() {
                   size="sm"
                   onClick={() => {
                     if (!useHub.getState().canExport()) {
-                      toast.error("Subscribe to export reports.");
+                      toast.error("Subscribe to use Pro project tools.");
                       return;
                     }
                     void authorizeProAction()
                       .then(() => {
-                        toast.success("Preparing PDF export…");
+                        toast.success("Preparing project summary…");
                         window.print();
                       })
                       .catch(() =>
@@ -122,7 +122,7 @@ function Dashboard() {
                       );
                   }}
                 >
-                  <FileDown className="size-3.5" /> Export
+                  <FileDown className="size-3.5" /> Print Summary
                 </Button>
               </div>
             </CardContent>

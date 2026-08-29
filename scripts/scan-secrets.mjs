@@ -7,6 +7,7 @@ const patterns = [
   String.raw`sk_(live|test)_[A-Za-z0-9]+`,
   String.raw`rk_(live|test)_[A-Za-z0-9]+`,
   String.raw`whsec_[A-Za-z0-9]+`,
+  String.raw`AIza[0-9A-Za-z_-]{35}`,
   String.raw`AKIA[0-9A-Z]{16}`,
   String.raw`-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----`,
 ];
@@ -63,12 +64,12 @@ if (artifactPaths.length > 0) {
 
 const result = spawnSync(
   "git",
-  ["grep", "-l", "-I", "-E", patterns.join("|"), "HEAD", "--", ".", ":!scripts/scan-secrets.mjs", ":!scripts/scan-secrets.test.mjs"],
+  ["grep", "--cached", "-l", "-I", "-E", patterns.join("|"), "--", ".", ":!scripts/scan-secrets.mjs", ":!scripts/scan-secrets.test.mjs"],
   { encoding: "utf8", shell: false },
 );
 
 if (result.status === 1) {
-  console.log("[secrets] no high-confidence secret patterns found in tracked files");
+  console.log("[secrets] no high-confidence secret patterns found in staged files");
   process.exit(0);
 }
 if (result.status !== 0) {
@@ -76,6 +77,6 @@ if (result.status !== 0) {
   process.exit(result.status ?? 2);
 }
 
-process.stderr.write("[secrets] potential credentials found in tracked files (values redacted):\n");
+process.stderr.write("[secrets] potential credentials found in staged files (values redacted):\n");
 process.stderr.write(result.stdout);
 process.exit(1);

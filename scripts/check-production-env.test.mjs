@@ -7,6 +7,7 @@ const checker = fileURLToPath(new URL("./check-production-env.mjs", import.meta.
 const validProduction = {
   APP_URL: "https://planning.example.com",
   CLERK_SECRET_KEY: ["sk", "live", "private"].join("_"),
+  CLERK_WEBHOOK_SIGNING_SECRET: ["whsec", "private"].join("_"),
   DATABASE_URL: "postgresql://private-database-value",
   RATE_LIMIT_SALT: "private-rate-limit-salt",
   VERCEL_ENV: "production",

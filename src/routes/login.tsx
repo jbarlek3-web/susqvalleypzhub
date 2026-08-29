@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SignIn } from "@clerk/tanstack-react-start";
 import { ArrowLeft, Check, LockKeyhole } from "lucide-react";
 import { FieldAcqOrdinanceAideLogo } from "@/components/brand/field-acq-ordinance-aide-logo";
+import { AuthEntryNav } from "@/components/auth/auth-entry-nav";
 
 export const Route = createFileRoute("/login")({ component: LoginPage });
 
@@ -21,7 +22,7 @@ function LoginPage() {
             Turn parcel research into a defensible acquisition decision.
           </h1>
           <p className="mt-4 max-w-lg text-muted-foreground">
-            Sign in, then start Pro access to unlock complete zoning detail, downloads, projects,
+            Sign in, then start Pro access to unlock complete zoning detail, directories, projects,
             and alerts.
           </p>
           <ul className="mt-8 space-y-3 text-sm">
@@ -39,18 +40,19 @@ function LoginPage() {
         </section>
         <section className="p-7 md:p-12">
           <div className="mx-auto max-w-sm">
-            <div className="grid size-11 place-items-center rounded-xl bg-primary-fixed text-on-primary-fixed">
+            <AuthEntryNav active="sign-in" />
+            <div className="mt-7 grid size-11 place-items-center rounded-xl bg-primary-fixed text-on-primary-fixed">
               <LockKeyhole />
             </div>
             <h2 className="mt-6 text-2xl font-semibold">Sign in to your workspace</h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Sign in securely, then continue to the Pro trial checkout.
+              Active Pro and administrator accounts continue directly to the app.
             </p>
             <div className="mt-7">
               <SignIn
                 routing="hash"
                 signUpUrl="/sign-up"
-                forceRedirectUrl="/subscription"
+                fallbackRedirectUrl="/"
                 appearance={{
                   elements: {
                     rootBox: "w-full",

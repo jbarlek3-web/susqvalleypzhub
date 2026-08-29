@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccessRouteImport } from './routes/access'
 import { Route as AcquireRouteImport } from './routes/acquire'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as GuideRouteImport } from './routes/guide'
 import { Route as InsightsRouteImport } from './routes/insights'
@@ -28,6 +29,7 @@ import { Route as WorkspaceRouteImport } from './routes/workspace'
 import { Route as ZoningRouteImport } from './routes/zoning'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ParcelsIdRouteImport } from './routes/parcels.$id'
+import { Route as ApiWebhooksClerkRouteImport } from './routes/api/webhooks/clerk'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -47,6 +49,11 @@ const AcquireRoute = AcquireRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DirectoryRoute = DirectoryRouteImport.update({
+  id: '/directory',
+  path: '/directory',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocumentsRoute = DocumentsRouteImport.update({
@@ -124,12 +131,18 @@ const ParcelsIdRoute = ParcelsIdRouteImport.update({
   path: '/parcels/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiWebhooksClerkRoute = ApiWebhooksClerkRouteImport.update({
+  id: '/api/webhooks/clerk',
+  path: '/api/webhooks/clerk',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/access': typeof AccessRoute
   '/acquire': typeof AcquireRoute
   '/dashboard': typeof DashboardRoute
+  '/directory': typeof DirectoryRoute
   '/documents': typeof DocumentsRoute
   '/guide': typeof GuideRoute
   '/insights': typeof InsightsRoute
@@ -145,12 +158,14 @@ export interface FileRoutesByFullPath {
   '/zoning': typeof ZoningRoute
   '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
+  '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/access': typeof AccessRoute
   '/acquire': typeof AcquireRoute
   '/dashboard': typeof DashboardRoute
+  '/directory': typeof DirectoryRoute
   '/documents': typeof DocumentsRoute
   '/guide': typeof GuideRoute
   '/insights': typeof InsightsRoute
@@ -166,6 +181,7 @@ export interface FileRoutesByTo {
   '/zoning': typeof ZoningRoute
   '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
+  '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -173,6 +189,7 @@ export interface FileRoutesById {
   '/access': typeof AccessRoute
   '/acquire': typeof AcquireRoute
   '/dashboard': typeof DashboardRoute
+  '/directory': typeof DirectoryRoute
   '/documents': typeof DocumentsRoute
   '/guide': typeof GuideRoute
   '/insights': typeof InsightsRoute
@@ -188,6 +205,7 @@ export interface FileRoutesById {
   '/zoning': typeof ZoningRoute
   '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
+  '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -196,6 +214,7 @@ export interface FileRouteTypes {
     | '/access'
     | '/acquire'
     | '/dashboard'
+    | '/directory'
     | '/documents'
     | '/guide'
     | '/insights'
@@ -211,12 +230,14 @@ export interface FileRouteTypes {
     | '/zoning'
     | '/api/health'
     | '/parcels/$id'
+    | '/api/webhooks/clerk'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/access'
     | '/acquire'
     | '/dashboard'
+    | '/directory'
     | '/documents'
     | '/guide'
     | '/insights'
@@ -232,12 +253,14 @@ export interface FileRouteTypes {
     | '/zoning'
     | '/api/health'
     | '/parcels/$id'
+    | '/api/webhooks/clerk'
   id:
     | '__root__'
     | '/'
     | '/access'
     | '/acquire'
     | '/dashboard'
+    | '/directory'
     | '/documents'
     | '/guide'
     | '/insights'
@@ -253,6 +276,7 @@ export interface FileRouteTypes {
     | '/zoning'
     | '/api/health'
     | '/parcels/$id'
+    | '/api/webhooks/clerk'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -260,6 +284,7 @@ export interface RootRouteChildren {
   AccessRoute: typeof AccessRoute
   AcquireRoute: typeof AcquireRoute
   DashboardRoute: typeof DashboardRoute
+  DirectoryRoute: typeof DirectoryRoute
   DocumentsRoute: typeof DocumentsRoute
   GuideRoute: typeof GuideRoute
   InsightsRoute: typeof InsightsRoute
@@ -275,6 +300,7 @@ export interface RootRouteChildren {
   ZoningRoute: typeof ZoningRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ParcelsIdRoute: typeof ParcelsIdRoute
+  ApiWebhooksClerkRoute: typeof ApiWebhooksClerkRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -305,6 +331,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/directory': {
+      id: '/directory'
+      path: '/directory'
+      fullPath: '/directory'
+      preLoaderRoute: typeof DirectoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/documents': {
@@ -412,6 +445,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ParcelsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/webhooks/clerk': {
+      id: '/api/webhooks/clerk'
+      path: '/api/webhooks/clerk'
+      fullPath: '/api/webhooks/clerk'
+      preLoaderRoute: typeof ApiWebhooksClerkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -420,6 +460,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccessRoute: AccessRoute,
   AcquireRoute: AcquireRoute,
   DashboardRoute: DashboardRoute,
+  DirectoryRoute: DirectoryRoute,
   DocumentsRoute: DocumentsRoute,
   GuideRoute: GuideRoute,
   InsightsRoute: InsightsRoute,
@@ -435,6 +476,7 @@ const rootRouteChildren: RootRouteChildren = {
   ZoningRoute: ZoningRoute,
   ApiHealthRoute: ApiHealthRoute,
   ParcelsIdRoute: ParcelsIdRoute,
+  ApiWebhooksClerkRoute: ApiWebhooksClerkRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

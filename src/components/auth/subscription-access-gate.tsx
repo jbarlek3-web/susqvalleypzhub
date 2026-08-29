@@ -1,16 +1,17 @@
 import { PricingTable } from "@clerk/tanstack-react-start";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { LockKeyhole, Loader2 } from "lucide-react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FieldAcqOrdinanceAideLogo } from "@/components/brand/field-acq-ordinance-aide-logo";
 import { getEntitlement } from "@/lib/billing";
 import { PRO_PLAN_KEY, PRO_TRIAL_DAYS } from "@/lib/billing-config";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { entitlementWithTimeout } from "@/lib/entitlement-client";
 
 const ACCESS_EXEMPT_PATHS = new Set(["/login", "/sign-up", "/subscription", "/terms", "/privacy"]);
 
-type AccessState = "checking" | "locked" | "allowed";
+type AccessState = "checking" | "locked" | "allowed" | "error";
 
 function LoadingGate() {
   return (
@@ -22,63 +23,34 @@ function LoadingGate() {
   );
 }
 
-function LockNotice({
-  signedIn,
-  onSkip,
-  onResume,
-}: {
-  signedIn: boolean;
-  onSkip: () => void;
-  onResume?: () => void;
-}) {
-  if (onResume) {
-    return (
-      <aside className="fixed inset-x-3 bottom-3 z-50 mx-auto flex max-w-2xl flex-col gap-3 rounded-xl border border-outline-variant bg-card p-4 shadow-xl sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-on-surface">
-          Access is locked. Sign in and start the {PRO_TRIAL_DAYS}-day Pro trial to use Field ACQ
-          Ordinance Aide.
-        </p>
-        <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-          {!signedIn && (
-            <Button asChild type="button" variant="outline">
-              <Link to="/login">Sign in</Link>
-            </Button>
-          )}
-          <Button type="button" onClick={onResume}>
-            {signedIn ? "Resume checkout" : "Start trial"}
-          </Button>
-        </div>
-      </aside>
-    );
-  }
-
+function AccessNotice({ signedIn }: { signedIn: boolean }) {
   return (
-    <div className="fixed inset-0 z-50 grid overflow-y-auto bg-on-surface/25 p-4 sm:p-8">
+    <main className="grid min-h-screen bg-surface-low px-4 py-8 sm:px-6 sm:py-12">
       <section
         aria-describedby="subscription-access-description"
         aria-labelledby="subscription-access-title"
-        aria-modal="true"
-        className="m-auto w-full max-w-5xl rounded-2xl border border-outline-variant bg-card p-6 shadow-xl sm:p-8"
-        role="dialog"
-        tabIndex={-1}
+        className="m-auto w-full max-w-5xl rounded-2xl border border-outline-variant border-t-4 border-t-brand-lime bg-card p-6 shadow-xl sm:p-8"
       >
         <div className="mx-auto max-w-3xl text-center">
           <FieldAcqOrdinanceAideLogo className="mx-auto h-14 max-w-[235px]" />
-          <span className="mx-auto grid size-11 place-items-center rounded-xl bg-primary-fixed text-on-primary-fixed">
+          <span className="mx-auto mt-6 grid size-11 place-items-center rounded-xl bg-primary-fixed text-on-primary-fixed">
             <LockKeyhole className="size-5" />
           </span>
           <p className="mt-4 text-xs font-bold uppercase tracking-wider text-secondary">
-            Professional access
+            Secure access
           </p>
           <h1 id="subscription-access-title" className="mt-2 text-2xl font-semibold sm:text-3xl">
-            Start your {PRO_TRIAL_DAYS}-day Pro trial to use Field ACQ Ordinance Aide.
+            {signedIn
+              ? `Start your ${PRO_TRIAL_DAYS}-day Pro trial to continue.`
+              : "Sign in or create your account to continue."}
           </h1>
           <p
             id="subscription-access-description"
             className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground"
           >
-            The app remains locked until your account has Pro access. No alternative tier is
-            available.
+            {signedIn
+              ? "Your account is secure. Choose Pro access below to unlock research, directories, and saved projects."
+              : "Field ACQ Ordinance Aide keeps parcel research, reports, and saved projects private to your account."}
           </p>
         </div>
 
@@ -92,27 +64,43 @@ function LockNotice({
             />
           </div>
         ) : (
-          <div className="mx-auto mt-7 flex max-w-md flex-col gap-3 sm:flex-row sm:justify-center">
-            <Button asChild className="flex-1">
-              <Link to="/sign-up">Create account</Link>
-            </Button>
-            <Button asChild className="flex-1" variant="outline">
+          <div className="mx-auto mt-7 grid max-w-md gap-3 sm:grid-cols-2">
+            <Button asChild size="lg">
               <Link to="/login">Sign in</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline">
+              <Link to="/sign-up">Sign up</Link>
             </Button>
           </div>
         )}
 
-        <div className="mt-6 flex flex-col items-center gap-2 text-center">
+        <div className="mt-6 text-center">
           <p className="text-xs text-muted-foreground">
-            Clerk applies the trial rule at checkout; accounts that already used a trial continue
-            through paid checkout.
+            {signedIn
+              ? "Clerk applies the trial rule at checkout; accounts that already used a trial continue through paid checkout."
+              : `New accounts continue to the ${PRO_TRIAL_DAYS}-day Pro trial after secure sign-up.`}
           </p>
-          <Button type="button" size="sm" variant="ghost" onClick={onSkip}>
-            Skip for now
-          </Button>
         </div>
       </section>
-    </div>
+    </main>
+  );
+}
+
+function AccessError({ onRetry }: { onRetry: () => void }) {
+  return (
+    <main className="grid min-h-screen place-items-center bg-surface-low px-4">
+      <section className="w-full max-w-lg rounded-2xl border border-outline-variant bg-card p-7 text-center shadow-xl">
+        <FieldAcqOrdinanceAideLogo className="mx-auto h-14 max-w-[235px]" />
+        <h1 className="mt-6 text-2xl font-semibold">We could not verify your access.</h1>
+        <p className="mt-3 text-sm text-muted-foreground">
+          The secure account check did not finish. Your account was not changed and checkout was not
+          started.
+        </p>
+        <Button className="mt-6" type="button" onClick={onRetry}>
+          Try again
+        </Button>
+      </section>
+    </main>
   );
 }
 
@@ -126,8 +114,7 @@ export function SubscriptionAccessGate({ children }: { children: ReactNode }) {
   const { user, isPending } = useCurrentUserState();
   const userId = user?.id;
   const [access, setAccess] = useState<AccessState>("checking");
-  const [skipped, setSkipped] = useState(false);
-  const lastUserId = useRef<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
   const isExempt = ACCESS_EXEMPT_PATHS.has(pathname);
 
   useEffect(() => {
@@ -139,44 +126,23 @@ export function SubscriptionAccessGate({ children }: { children: ReactNode }) {
 
     let active = true;
     setAccess("checking");
-    void getEntitlement()
+    void entitlementWithTimeout(getEntitlement())
       .then(({ isPro }) => {
         if (active) setAccess(isPro ? "allowed" : "locked");
       })
       .catch(() => {
-        if (active) setAccess("locked");
+        if (active) setAccess("error");
       });
 
     return () => {
       active = false;
     };
-  }, [isExempt, isPending, userId]);
-
-  useEffect(() => {
-    if (lastUserId.current !== userId) {
-      lastUserId.current = userId ?? null;
-      setSkipped(false);
-    }
-  }, [userId]);
+  }, [attempt, isExempt, isPending, userId]);
 
   if (isExempt) return <>{children}</>;
   if (isPending || access === "checking") return <LoadingGate />;
   if (access === "allowed") return <>{children}</>;
+  if (access === "error") return <AccessError onRetry={() => setAttempt((value) => value + 1)} />;
 
-  return (
-    <>
-      <div aria-hidden="true" className="pointer-events-none select-none opacity-35" inert>
-        {children}
-      </div>
-      {skipped ? (
-        <LockNotice
-          signedIn={Boolean(user)}
-          onResume={() => setSkipped(false)}
-          onSkip={() => setSkipped(true)}
-        />
-      ) : (
-        <LockNotice signedIn={Boolean(user)} onSkip={() => setSkipped(true)} />
-      )}
-    </>
-  );
+  return <AccessNotice signedIn={Boolean(user)} />;
 }

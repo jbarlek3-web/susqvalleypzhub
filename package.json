@@ -7,7 +7,7 @@
     "nf3": "0.3.17"
   },
   "scripts": {
-    "prebuild": "node --experimental-strip-types scripts/check-production-env.mjs",
+    "prebuild": "node --experimental-strip-types scripts/check-production-env.mjs && npm run deploy:migrate",
     "dev": "node scripts/with-app-env.mjs node node_modules/vite/bin/vite.js dev --host 0.0.0.0 --port 8080",
     "build": "node scripts/with-app-env.mjs node node_modules/vite/bin/vite.js build && node scripts/copy-pglite-assets.mjs",
     "db:migrate": "node scripts/migrate.mjs",
@@ -23,7 +23,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@clerk/tanstack-react-start": "^1.5.8",
+    "@clerk/tanstack-react-start": "1.5.8",
     "@electric-sql/pglite": "^0.5.4",
     "@hookform/resolvers": "^5.7.0",
     "@radix-ui/react-accordion": "^1.2.12",

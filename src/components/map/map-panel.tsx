@@ -476,7 +476,7 @@ export function MapPanel() {
               variant="outline"
               onClick={() => {
                 if (!canExport) {
-                  toast.error("Subscribe to Pro to use guided export.");
+                  toast.error("Subscribe to use Pro map tools.");
                   return;
                 }
                 void authorizeProAction()
@@ -486,7 +486,7 @@ export function MapPanel() {
                   );
               }}
             >
-              Export selected (PDF)
+              Print selected summary
             </Button>
           </div>
         </div>

@@ -1,0 +1,675 @@
+{
+  "source": "PA Counties P&Z Directory.csv",
+  "records": [
+    {
+      "county": "Adams",
+      "departmentName": "Office of Planning and Development",
+      "websiteUrl": "https://www.adamscountypa.gov/departments/officeofplanninganddevelopment/zoning",
+      "phoneNumber": "(717) 337-9824",
+      "emailAddress": null,
+      "physicalAddress": "670 Old Harrisburg Rd, Suite 100, Gettysburg, PA 17325",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Sherri Clayton-Williams"
+    },
+    {
+      "county": "Allegheny",
+      "departmentName": "Allegheny County Economic Development",
+      "websiteUrl": "https://www.alleghenycounty.us/Projects-and-Initiatives/Economic-Development/Land-Use-Planning",
+      "phoneNumber": "(412) 350-4636",
+      "emailAddress": "opportunityzones@alleghenycounty.us",
+      "physicalAddress": "One Chatham Center, Suite 900, 112 Washington Place, Pittsburgh, PA 15219",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Lauren Connelly"
+    },
+    {
+      "county": "Armstrong",
+      "departmentName": "Armstrong County Department of Planning and Development",
+      "websiteUrl": "https://www.co.armstrong.pa.us/index.php/county-government-m/planning-and-development-m",
+      "phoneNumber": "(724) 548-3223",
+      "emailAddress": "planning@co.armstrong.pa.us",
+      "physicalAddress": "402 Market Street, Kittanning, PA 16201",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Darin Alviano"
+    },
+    {
+      "county": "Beaver",
+      "departmentName": "Beaver County Planning Commission",
+      "websiteUrl": "https://www.beavercountypa.gov/departments/planning-commission",
+      "phoneNumber": "(724) 770-4428",
+      "emailAddress": "ddistler@beavercountypa.gov",
+      "physicalAddress": "810 Third Street, Beaver, PA 15009",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Dan Distler"
+    },
+    {
+      "county": "Bedford",
+      "departmentName": "Planning Department",
+      "websiteUrl": "https://www.bedfordcountypa.org/departments/planning/index.php",
+      "phoneNumber": "(814) 623-4827",
+      "emailAddress": "sclevenstine@bedfordcountypa.org",
+      "physicalAddress": "200 South Juliana Street, Bedford, PA 15522",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Stephanie Clevenstine"
+    },
+    {
+      "county": "Berks",
+      "departmentName": "Berks County Planning Commission",
+      "websiteUrl": "https://www.berkspa.gov/departments/planning-commission",
+      "phoneNumber": "(610) 478-6300",
+      "emailAddress": "planning@berkspa.gov",
+      "physicalAddress": "400 E. Wyomissing Ave. Suite D, Mohnton, PA 19540",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Ashley Showers"
+    },
+    {
+      "county": "Blair",
+      "departmentName": "Blair County Planning Commission",
+      "websiteUrl": "https://www.blairplanning.org/",
+      "phoneNumber": "(814) 693-2080",
+      "emailAddress": "dmcfarland@blairplanning.org",
+      "physicalAddress": "423 Allegheny St., Suite 046, Hollidaysburg, PA 16648",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "David W. McFarland, III, AICP"
+    },
+    {
+      "county": "Bradford",
+      "departmentName": "Community Planning & Mapping",
+      "websiteUrl": "https://www.bradfordcountypa.gov/299/Community-Planning-Mapping",
+      "phoneNumber": "(570) 265-1727",
+      "emailAddress": "naugled@bradfordcountypa.gov",
+      "physicalAddress": "301 Main Street, Towanda, PA 18848",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Duane Naugle"
+    },
+    {
+      "county": "Bucks",
+      "departmentName": "Bucks County Planning Commission",
+      "websiteUrl": "https://www.buckscounty.gov/2207/Planning-Commission",
+      "phoneNumber": "(215) 345-3400",
+      "emailAddress": "bcpc@buckscounty.org",
+      "physicalAddress": "1260 Almshouse Road, Doylestown, PA 18901",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Eleanor M. Breslin"
+    },
+    {
+      "county": "Butler",
+      "departmentName": "Planning Commission",
+      "websiteUrl": "https://www.butlercountypa.gov/321/Planning-Commission",
+      "phoneNumber": "(724) 284-5300",
+      "emailAddress": "plans@co.butler.pa.us",
+      "physicalAddress": "124 West Diamond Street, Butler, PA 16001",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Mark Gordon"
+    },
+    {
+      "county": "Cambria",
+      "departmentName": "Cambria County Planning Commission",
+      "websiteUrl": "https://cambriaplanning.org/",
+      "phoneNumber": "(814) 472-2106",
+      "emailAddress": "mlazzari@co.cambria.pa.us",
+      "physicalAddress": "401 Candlelight Drive, Suite 213, Ebensburg, PA 15931",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Mark Lazzari"
+    },
+    {
+      "county": "Cameron",
+      "departmentName": "Cameron County Planning Commission",
+      "websiteUrl": "https://www.cameroncountypa.com/resident/planning_commission.php",
+      "phoneNumber": "(814) 486-9356",
+      "emailAddress": null,
+      "physicalAddress": "20 E 5th St, Emporium, PA 15834",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Laura Narby"
+    },
+    {
+      "county": "Carbon",
+      "departmentName": "Carbon County Office of Planning & Development",
+      "websiteUrl": "https://www.carboncountypa.gov/services/planning___development/index.php",
+      "phoneNumber": "(570) 325-3671",
+      "emailAddress": "ccopad@carboncounty.net",
+      "physicalAddress": "44 Susquehanna St, 2nd Floor, Jim Thorpe, PA 18229",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "David Bodnar"
+    },
+    {
+      "county": "Centre",
+      "departmentName": "Centre County Planning and Community Development Office",
+      "websiteUrl": "https://centrecountypa.gov/207/Planning-Community-Development",
+      "phoneNumber": "(814) 355-6791",
+      "emailAddress": "planning@centrecountypa.gov",
+      "physicalAddress": "Willowbank Office Building, 420 Holmes Street (Suite 340), Bellefonte, PA 16823",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Ray Stolinas"
+    },
+    {
+      "county": "Chester",
+      "departmentName": "Planning Commission",
+      "websiteUrl": "https://www.chesco.org/planning",
+      "phoneNumber": "(610) 344-6285",
+      "emailAddress": "ccplanning@chesco.org",
+      "physicalAddress": "601 Westtown Road, Suite 270, West Chester, PA 19380",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Matthew Edmond, AICP"
+    },
+    {
+      "county": "Clarion",
+      "departmentName": "Clarion County Planning Department",
+      "websiteUrl": "https://www.co.clarion.pa.us/government/departments/planning/index.php",
+      "phoneNumber": "(814) 226-4000",
+      "emailAddress": "kamato@clarioncounty.gov",
+      "physicalAddress": "421 Main Street, Suite 22, Clarion, PA 16214",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Kristi Amato"
+    },
+    {
+      "county": "Clearfield",
+      "departmentName": "Clearfield County Planning Department",
+      "websiteUrl": "https://clearfieldcountypa.gov/217/Planning",
+      "phoneNumber": "(814) 765-5149",
+      "emailAddress": "jbrennan@clearfieldco.org",
+      "physicalAddress": "212 East Locust Street, Clearfield, PA 16830",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Jodi Brennan"
+    },
+    {
+      "county": "Clinton",
+      "departmentName": "Clinton County Planning Department",
+      "websiteUrl": "https://www.clintoncountypa.gov/departments/planning-grants-zoning",
+      "phoneNumber": "(570) 893-4080",
+      "emailAddress": "planning@clintoncountypa.gov",
+      "physicalAddress": "2 Piper Way, Suite 244, Lock Haven, PA 17745",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Stephen Gibson"
+    },
+    {
+      "county": "Columbia",
+      "departmentName": "Commissioners' Office of Planning and Development",
+      "websiteUrl": "http://columbiapa.org/planning/index.php",
+      "phoneNumber": "(570) 389-9146",
+      "emailAddress": "dwitchey@columbiapa.org",
+      "physicalAddress": "26 West First Street, Bloomsburg, PA 17815",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Rachel Swartwood"
+    },
+    {
+      "county": "Crawford",
+      "departmentName": "Crawford County Planning Commission + Office",
+      "websiteUrl": "https://www.crawfordcountypa.net/Planning/Pages/home.aspx",
+      "phoneNumber": "(814) 333-7341",
+      "emailAddress": "Planning@co.crawford.pa.us",
+      "physicalAddress": "903 Diamond Park, Meadville, PA 16335",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Samantha Travis"
+    },
+    {
+      "county": "Cumberland",
+      "departmentName": "Planning Department",
+      "websiteUrl": "https://www.cumberlandcountypa.gov/120/Planning-Department",
+      "phoneNumber": "(717) 240-5362",
+      "emailAddress": "planning@cumberlandcountypa.gov",
+      "physicalAddress": "310 Allen Road, Suite 101, Carlisle, PA 17013",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Kirk Stoner"
+    },
+    {
+      "county": "Dauphin",
+      "departmentName": "Dauphin County Planning Commission",
+      "websiteUrl": "https://www.tcrpc-pa.org/dcpc-about",
+      "phoneNumber": "(717) 234-2639",
+      "emailAddress": "jduke@tcrpc-pa.org",
+      "physicalAddress": "320 Market St., #301E, Harrisburg PA 17101-2225",
+      "countyZoningStatus": "UNKNOWN",
+      "directorOrZoningOfficer": "Jerry Duke"
+    },
+    {
+      "county": "Delaware",
+      "departmentName": "Planning Department",
+      "websiteUrl": "https://www.delcopa.gov/planning",
+      "phoneNumber": "(610) 891-5200",
+      "emailAddress": "Planning_Department@co.delaware.pa.us",
+      "physicalAddress": "2 W. Baltimore Avenue, Suite 202, Media, PA 19063",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Gina Burritt"
+    },
+    {
+      "county": "Elk",
+      "departmentName": "Elk County Planning Department",
+      "websiteUrl": "https://countyofelkpa.gov/elk-county-offices/elk-county-planning-department/",
+      "phoneNumber": "(814) 776-5335",
+      "emailAddress": "planning@countyofelkpa.gov",
+      "physicalAddress": "Elk County Courthouse Annex, 300 Center Street, P.O. Box 448, Ridgway, PA 15853",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Tracy Gerber"
+    },
+    {
+      "county": "Erie",
+      "departmentName": "Department of Planning and Community Development",
+      "websiteUrl": "https://eriecountypa.gov/departments/planning-and-community-development/",
+      "phoneNumber": "(814) 451-7321",
+      "emailAddress": "pcdinfo@eriecountypa.gov",
+      "physicalAddress": "150 East Front Street, Suite 300, Erie, PA 16507",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Jessica Horan"
+    },
+    {
+      "county": "Fayette",
+      "departmentName": "Planning, Zoning & Community Development",
+      "websiteUrl": "https://www.fayettecountypa.org/258/Planning-Zoning-Community-Development",
+      "phoneNumber": "(724) 430-1210",
+      "emailAddress": "lminnick@fayettepa.org",
+      "physicalAddress": "2 W. Main Street, Suite 211, Uniontown, PA 15401",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Sara Harvey"
+    },
+    {
+      "county": "Forest",
+      "departmentName": "Conservation District and Planning Department",
+      "websiteUrl": "https://www.co.forest.pa.us/departments/conservation_district_and_planning.php",
+      "phoneNumber": "(814) 755-3450",
+      "emailAddress": "dzofcin@forestcountypa.gov",
+      "physicalAddress": "526 Elm Street, Box 4, Tionesta, PA 16353",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Donna Lynn Zofcin"
+    },
+    {
+      "county": "Franklin",
+      "departmentName": "Franklin County Planning Department",
+      "websiteUrl": "https://www.franklincountypa.gov/departments/planning/",
+      "phoneNumber": "(717) 261-3855",
+      "emailAddress": "planning@franklincountypa.gov",
+      "physicalAddress": "272 North Second Street, Chambersburg, PA 17201",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Quentin Clapper"
+    },
+    {
+      "county": "Fulton",
+      "departmentName": "Planning & Mapping",
+      "websiteUrl": "https://www.co.fulton.pa.us/planning-commission.php",
+      "phoneNumber": "(717) 485-3717",
+      "emailAddress": "tpeppernick@co.fulton.pa.us",
+      "physicalAddress": "116 West Market Street, Suite 203, McConnellsburg, PA 17233",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Thomas Peppernick"
+    },
+    {
+      "county": "Greene",
+      "departmentName": "Department of Planning and Community Development",
+      "websiteUrl": "https://www.co.greene.pa.us/department-planning-commission",
+      "phoneNumber": "(724) 852-5300",
+      "emailAddress": "info@greenecountypa.gov",
+      "physicalAddress": "93 East High Street, Waynesburg, PA 15370",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Kyle Lamb"
+    },
+    {
+      "county": "Huntingdon",
+      "departmentName": "Huntingdon County Planning and Development Department",
+      "websiteUrl": "https://www.huntingdoncountypa.gov/departments/planning-and-development/planning-commission",
+      "phoneNumber": "(814) 643-5091",
+      "emailAddress": "planning@huntingdoncounty.net",
+      "physicalAddress": "233 Penn Street, Huntingdon, PA 16652",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Ron Rabena (Chairman)"
+    },
+    {
+      "county": "Indiana",
+      "departmentName": "Indiana County Office of Planning & Development",
+      "websiteUrl": "https://www.icopd.org/",
+      "phoneNumber": "(724) 465-3870",
+      "emailAddress": "byronjr@ceo.co.indiana.pa.us",
+      "physicalAddress": "801 Water St, Indiana, PA 15701-1705",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Byron G. Stauffer, Jr."
+    },
+    {
+      "county": "Jefferson",
+      "departmentName": "Jefferson County Planning Commission",
+      "websiteUrl": "https://www.jeffersoncountypa.gov/departments/department-of-development/planning/",
+      "phoneNumber": "(814) 849-1516",
+      "emailAddress": "egrovanz@jefferoncountypa.gov",
+      "physicalAddress": "155 Main Street, 2nd Floor, Brookville, PA 15825",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Elise Grovanz"
+    },
+    {
+      "county": "Juniata",
+      "departmentName": "Planning & Community Development",
+      "websiteUrl": "https://www.juniataco.org/departments/planning/",
+      "phoneNumber": "(717) 436-7729",
+      "emailAddress": "bkerstetter@juniataco.org",
+      "physicalAddress": "P.O. Box 68, Mifflintown, PA 17059",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Bradley Kerstetter"
+    },
+    {
+      "county": "Lackawanna",
+      "departmentName": "Lackawanna County Department of Planning",
+      "websiteUrl": "https://www.lackawannacounty.org/government/departments/planning.php",
+      "phoneNumber": "(570) 963-6400",
+      "emailAddress": "donatom@lackawannacounty.org",
+      "physicalAddress": "Lackawanna County Government Center 123 Wyoming Avenue, 5th Floor, Scranton, PA 18503",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Mary Liz Donato"
+    },
+    {
+      "county": "Lancaster",
+      "departmentName": "Lancaster County Planning Department",
+      "websiteUrl": "https://lancastercountyplanning.org/",
+      "phoneNumber": "(717) 299-8333",
+      "emailAddress": "lcpd@co.lancaster.pa.us",
+      "physicalAddress": "150 North Queen Street, Suite 320, Lancaster, PA 17603",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "William Clark"
+    },
+    {
+      "county": "Lawrence",
+      "departmentName": "Lawrence County Department of Planning and Community Development",
+      "websiteUrl": "https://www.lawrencecountypa.gov/departments/planning-community-development",
+      "phoneNumber": "(724) 656-2144",
+      "emailAddress": "amckinney@lawrencecountypa.gov",
+      "physicalAddress": "430 Court St., Lower Level, New Castle, PA 16101",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Amy McKinney"
+    },
+    {
+      "county": "Lebanon",
+      "departmentName": "Lebanon County Planning Department",
+      "websiteUrl": "https://www.lebanoncountypa.gov/departments/planning",
+      "phoneNumber": "(717) 228-4444",
+      "emailAddress": "planning@lebanoncountypa.gov",
+      "physicalAddress": "Room 206, Municipal Building, 400 South 8th Street, Lebanon, PA 17042-6794",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Julie Cheyney"
+    },
+    {
+      "county": "Lehigh",
+      "departmentName": "Lehigh Valley Planning Commission",
+      "websiteUrl": "https://lvpc.org/",
+      "phoneNumber": "(610) 264-4544",
+      "emailAddress": "hmilagio@lvpc.org",
+      "physicalAddress": "615 Waterfront Drive, Suite 201, Allentown, Pennsylvania 18102",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Becky A. Bradley"
+    },
+    {
+      "county": "Luzerne",
+      "departmentName": "Planning & Zoning",
+      "websiteUrl": "https://www.luzernecounty.org/281/Planning-Zoning",
+      "phoneNumber": "(570) 825-1560",
+      "emailAddress": "zoning@luzernecounty.org",
+      "physicalAddress": "20 N Pennsylvania Avenue, Wilkes-Barre, PA 18711",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Dan Reese"
+    },
+    {
+      "county": "Lycoming",
+      "departmentName": "Planning & Community Development",
+      "websiteUrl": "https://lycomingcountypa.gov/government/departments/planning_community_development/zoning.php",
+      "phoneNumber": "(570) 320-2130",
+      "emailAddress": "lycoplan@lyco.org",
+      "physicalAddress": "48 W. Third St., Williamsport, PA 17701",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Jenny Picciano"
+    },
+    {
+      "county": "McKean",
+      "departmentName": "Planning Commission",
+      "websiteUrl": "https://www.mckeancountypa.gov/departments/planning_commission/index.php",
+      "phoneNumber": "(814) 887-2754",
+      "emailAddress": "RFry@mckeancountypa.gov",
+      "physicalAddress": "17137 Route 6, Smethport, PA 16749",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Richard Fry"
+    },
+    {
+      "county": "Mercer",
+      "departmentName": "Mercer County Regional Planning Commission",
+      "websiteUrl": "https://www.mcrpc.com/",
+      "phoneNumber": "(724) 981-2412",
+      "emailAddress": "mail@mcrpc.com",
+      "physicalAddress": "2491 Highland Road, Hermitage, PA 16148",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Doniele Russell"
+    },
+    {
+      "county": "Mifflin",
+      "departmentName": "Mifflin County Planning and Development Department",
+      "websiteUrl": "https://www.mifflincountypa.gov/planning",
+      "phoneNumber": "(717) 242-0887",
+      "emailAddress": null,
+      "physicalAddress": "20 North Wayne Street, Lewistown, PA 17044",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "James P. Lettiere"
+    },
+    {
+      "county": "Monroe",
+      "departmentName": "Monroe County Planning Commission",
+      "websiteUrl": "https://www.monroecountypa.gov/departments/planning",
+      "phoneNumber": "(570) 517-3100",
+      "emailAddress": "CMeinhart@monroecountypa.gov",
+      "physicalAddress": "701 Main Street, Stroudsburg, PA 18360",
+      "countyZoningStatus": "UNKNOWN",
+      "directorOrZoningOfficer": "Christine Meinhart-Fritz"
+    },
+    {
+      "county": "Montgomery",
+      "departmentName": "Montgomery County Planning Commission",
+      "websiteUrl": "https://www.montgomerycountypa.gov/490/Planning-Commission",
+      "phoneNumber": "(610) 278-3722",
+      "emailAddress": "planning@montgomerycountypa.gov",
+      "physicalAddress": "One Montgomery Plaza, Suite 201, 425 Swede St, Norristown, PA 19401",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Scott France"
+    },
+    {
+      "county": "Montour",
+      "departmentName": "Office of Zoning",
+      "websiteUrl": "https://www.montourcounty.gov/departments/zoning",
+      "phoneNumber": "(570) 271-3021",
+      "emailAddress": "gmolter@montourcounty.gov",
+      "physicalAddress": "Montour County Administrative Center, 435 East Front Street, Danville, PA 17821",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Keith Rine"
+    },
+    {
+      "county": "Northampton",
+      "departmentName": "Lehigh Valley Planning Commission",
+      "websiteUrl": "https://lvpc.org/",
+      "phoneNumber": "(610) 264-4544",
+      "emailAddress": "planning@lvpc.org",
+      "physicalAddress": "615 Waterfront Drive, Suite 201, Allentown, PA 18102",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Becky A. Bradley"
+    },
+    {
+      "county": "Northumberland",
+      "departmentName": "Northumberland County Department of Economic Development & Planning",
+      "websiteUrl": "https://northumberlandcountypa.gov/planning/",
+      "phoneNumber": "(570) 988-4220",
+      "emailAddress": "planning@northumberlandcountypa.gov",
+      "physicalAddress": "399 Stadium Drive, Sunbury, PA 17801",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Justin Skavery"
+    },
+    {
+      "county": "Perry",
+      "departmentName": "Planning Commission",
+      "websiteUrl": "https://perryco.org/departments/planning-commission/",
+      "phoneNumber": "(717) 582-5124",
+      "emailAddress": "pcpc@perryco.org",
+      "physicalAddress": "20 W. McClure St., New Bloomfield, PA 17068",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Jason Finnerty"
+    },
+    {
+      "county": "Philadelphia",
+      "departmentName": "Department of Planning and Development",
+      "websiteUrl": "https://www.phila.gov/departments/department-of-planning-and-development/",
+      "phoneNumber": "(215) 683-4601",
+      "emailAddress": "planning@phila.gov",
+      "physicalAddress": "1515 Arch St. 13th Floor Philadelphia, PA 19102",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Martine Decamp, AICP"
+    },
+    {
+      "county": "Pike",
+      "departmentName": "Pike County Planning & Mapping Office",
+      "websiteUrl": "https://www.pikepa.org/living___working/planning_and_mapping/index.php",
+      "phoneNumber": "(570) 296-3500",
+      "emailAddress": "planning@pikepa.org",
+      "physicalAddress": "Pike County Administration Bldg, 506 Broad Street, Milford, PA 18337",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Michael Mrozinski"
+    },
+    {
+      "county": "Potter",
+      "departmentName": "Planning Department",
+      "websiteUrl": "https://pottercountypa.gov/departments/gis_planning_community_development/planning.php",
+      "phoneNumber": "(814) 274-8254",
+      "emailAddress": "whunt@pottercountypa.net",
+      "physicalAddress": "Gunzburger Building, Suite 103, One North Main Street, Coudersport, PA 16915",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Will Hunt"
+    },
+    {
+      "county": "Schuylkill",
+      "departmentName": "Planning & Zoning",
+      "websiteUrl": "https://schuylkillcountypa.gov/departments/planning___zoning/index.php",
+      "phoneNumber": "(570) 628-1415",
+      "emailAddress": "zoning@schuylkillcountypa.gov",
+      "physicalAddress": "401 North Second Street, Pottsville, PA 17901",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Susan Smith"
+    },
+    {
+      "county": "Snyder",
+      "departmentName": "Planning Commission",
+      "websiteUrl": "https://www.snydercounty.org/departments/planning-commission/",
+      "phoneNumber": "(570) 837-4257",
+      "emailAddress": "lkaufman@snydercounty.org",
+      "physicalAddress": "9 West Market Street, Middleburg, PA 17842",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Lincoln Kaufman"
+    },
+    {
+      "county": "Somerset",
+      "departmentName": "Somerset County Planning Commission",
+      "websiteUrl": "http://www.co.somerset.pa.us/department.asp?deptnum=104",
+      "phoneNumber": "(814) 445-1544",
+      "emailAddress": "sinesc@co.somerset.pa.us",
+      "physicalAddress": "300 N Center Ave, Somerset, PA 15501",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Chadd Sines"
+    },
+    {
+      "county": "Sullivan",
+      "departmentName": "Sullivan County Planning & Development",
+      "websiteUrl": "https://www.sullivancountypa.gov/offices/planning-development",
+      "phoneNumber": "(570) 946-5207",
+      "emailAddress": "croenning@sullivancountypa.gov",
+      "physicalAddress": "245 Muncy Street, Suite 110, Laporte, PA 18626",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Christopher Roenning"
+    },
+    {
+      "county": "Susquehanna",
+      "departmentName": "The Susquehanna County Department of Planning and Development",
+      "websiteUrl": "https://www.susqco.com/departments/planning-and-development",
+      "phoneNumber": "(570) 278-5950",
+      "emailAddress": "ppeltz@susqco.com",
+      "physicalAddress": "County Courthouse, 31 Lake Ave, Montrose, PA 18801",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Patti Peltz"
+    },
+    {
+      "county": "Tioga",
+      "departmentName": "Tioga County Planning Commission",
+      "websiteUrl": "https://www.tiogacountypa.us/departments/planning-commission",
+      "phoneNumber": "(570) 723-8251",
+      "emailAddress": null,
+      "physicalAddress": "118 Main Street, Wellsboro, PA 16901",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": null
+    },
+    {
+      "county": "Union",
+      "departmentName": "Union County Planning and Economic Development",
+      "websiteUrl": "https://unioncountypa.org/planning-commission/",
+      "phoneNumber": "(570) 524-3840",
+      "emailAddress": "SMcLaughlin@unionco.org",
+      "physicalAddress": "155 N. 15th Street, Lewisburg, PA 17837",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Shawn McLaughlin"
+    },
+    {
+      "county": "Venango",
+      "departmentName": "Venango County Regional Planning Commission",
+      "websiteUrl": "https://www.venangocountypa.gov/452/Planning-Commission",
+      "phoneNumber": "(814) 432-9689",
+      "emailAddress": "jsterling@co.venango.pa.us",
+      "physicalAddress": "1168 Liberty Street, Courthouse, 1st Floor, Franklin, PA 16323",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Joshua Sterling"
+    },
+    {
+      "county": "Warren",
+      "departmentName": "Planning & Zoning",
+      "websiteUrl": "https://warrencountypa.gov/1197/Planning-Zoning",
+      "phoneNumber": "(814) 728-3512",
+      "emailAddress": "mlyon@warrencountypa.gov",
+      "physicalAddress": "204 4th Avenue, Warren, PA 16365",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Michael S. Lyon"
+    },
+    {
+      "county": "Washington",
+      "departmentName": "Washington County Planning Commission",
+      "websiteUrl": "https://www.washingtoncopa.gov/planning",
+      "phoneNumber": "(724) 228-6811",
+      "emailAddress": null,
+      "physicalAddress": "95 W. Beau Street, Suite 115, Washington, PA 15301",
+      "countyZoningStatus": "UNKNOWN",
+      "directorOrZoningOfficer": "Jason Theakston"
+    },
+    {
+      "county": "Wayne",
+      "departmentName": "Wayne County Department of Planning / GIS",
+      "websiteUrl": "https://waynecountypa.gov/328/Subdivision-Zoning",
+      "phoneNumber": "(570) 253-5970",
+      "emailAddress": "wcpd@waynecountypa.gov",
+      "physicalAddress": "925 Court Street, Honesdale, PA 18431",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Craig Rickard"
+    },
+    {
+      "county": "Westmoreland",
+      "departmentName": "Westmoreland County Planning Division",
+      "websiteUrl": "https://www.westmorelandcountypa.gov/3278/Planning",
+      "phoneNumber": "(724) 830-3600",
+      "emailAddress": "planning@co.westmoreland.pa.us",
+      "physicalAddress": "40 N. Pennsylvania Ave, 5th Floor, Suite 520, Greensburg, PA 15601",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Jason Rigone"
+    },
+    {
+      "county": "Wyoming",
+      "departmentName": "Wyoming County Office of Community Planning",
+      "websiteUrl": "https://wyomingcountypa.gov/directory/community-planning/",
+      "phoneNumber": "(570) 996-2268",
+      "emailAddress": "callaoui@wyomingcountypa.gov",
+      "physicalAddress": "1 Courthouse Square, 3rd Floor, Tunkhannock, PA 18657",
+      "countyZoningStatus": "NO",
+      "directorOrZoningOfficer": "Matthew C. Jones"
+    },
+    {
+      "county": "York",
+      "departmentName": "York County Planning Commission",
+      "websiteUrl": "https://www.ycpc.org/",
+      "phoneNumber": "(717) 771-9870",
+      "emailAddress": "ycpc@ycpc.org",
+      "physicalAddress": "28 E Market Street, 3rd Floor, York, PA 17401",
+      "countyZoningStatus": "YES",
+      "directorOrZoningOfficer": "Mike Pritchard"
+    }
+  ]
+}

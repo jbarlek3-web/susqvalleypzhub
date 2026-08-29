@@ -1,23 +1,83 @@
 import { PricingTable } from "@clerk/tanstack-react-start";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle2, Loader2, Lock } from "lucide-react";
+import { useEffect, useState } from "react";
 import { RedirectToSignIn } from "@/lib/auth/gates";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { Button } from "@/components/ui/button";
 import { PRO_PLAN_KEY, PRO_TRIAL_DAYS } from "@/lib/billing-config";
 import { FieldAcqOrdinanceAideLogo } from "@/components/brand/field-acq-ordinance-aide-logo";
+import { getEntitlement } from "@/lib/billing";
+import { entitlementWithTimeout } from "@/lib/entitlement-client";
 
 export const Route = createFileRoute("/subscription")({ component: Subscription });
 
 function Subscription() {
   const { user, isPending } = useCurrentUserState();
+  const userId = user?.id;
+  const [access, setAccess] = useState<"checking" | "active" | "locked" | "error">("checking");
+  const [attempt, setAttempt] = useState(0);
 
-  if (isPending)
+  useEffect(() => {
+    if (isPending || !userId) return;
+    let current = true;
+    setAccess("checking");
+    void entitlementWithTimeout(getEntitlement())
+      .then(({ isPro }) => {
+        if (current) setAccess(isPro ? "active" : "locked");
+      })
+      .catch(() => {
+        if (current) setAccess("error");
+      });
+    return () => {
+      current = false;
+    };
+  }, [attempt, isPending, userId]);
+
+  if (isPending || (user && access === "checking"))
     return (
       <main className="grid min-h-screen place-items-center">
-        <Loader2 className="animate-spin" />
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="size-4 animate-spin" /> Checking your account…
+        </div>
       </main>
     );
   if (!user) return <RedirectToSignIn />;
+
+  if (access === "error") {
+    return (
+      <main className="grid min-h-screen place-items-center bg-surface-low px-4">
+        <section className="w-full max-w-lg rounded-2xl border border-outline-variant bg-card p-7 text-center shadow-xl">
+          <FieldAcqOrdinanceAideLogo className="mx-auto h-14 max-w-[235px]" />
+          <h1 className="mt-6 text-2xl font-semibold">Billing access could not be verified.</h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Checkout was not started. Retry the secure account check before changing your plan.
+          </p>
+          <Button className="mt-6" type="button" onClick={() => setAttempt((value) => value + 1)}>
+            Try again
+          </Button>
+        </section>
+      </main>
+    );
+  }
+
+  if (access === "active") {
+    return (
+      <main className="grid min-h-screen place-items-center bg-surface-low px-4">
+        <section className="w-full max-w-lg rounded-2xl border border-outline-variant bg-card p-7 text-center shadow-xl">
+          <FieldAcqOrdinanceAideLogo className="mx-auto h-14 max-w-[235px]" />
+          <CheckCircle2 className="mx-auto mt-6 size-10 text-secondary" />
+          <h1 className="mt-4 text-2xl font-semibold">Your Pro access is active.</h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            No checkout is needed. Continue directly to your workspace.
+          </p>
+          <Button asChild className="mt-6">
+            <Link to="/">Continue to Field ACQ</Link>
+          </Button>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-surface-low px-4 py-10 sm:py-14">
@@ -39,7 +99,7 @@ function Subscription() {
           {[
             "Live parcel and zoning research",
             "AI-assisted feasibility briefs",
-            "Downloads and export-ready reports",
+            "Pro directories and saved projects",
           ].map((item) => (
             <li key={item} className="flex gap-2">
               <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-secondary" />
