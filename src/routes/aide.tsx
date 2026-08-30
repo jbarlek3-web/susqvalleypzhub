@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Bot, Loader2, Network, Send, ShieldCheck } from "lucide-react";
+import { Bot, Gauge, Loader2, Network, Send, ShieldCheck } from "lucide-react";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Badge } from "@/components/ui/badge";
@@ -52,6 +52,14 @@ function OrdinanceAide() {
     () => scope?.counties.find((item) => item.county === county)?.municipalities ?? [],
     [county, scope],
   );
+  const usage = scope?.usage;
+  const resetsLabel = usage
+    ? new Intl.DateTimeFormat(undefined, {
+        month: "short",
+        day: "numeric",
+        timeZone: "UTC",
+      }).format(new Date(usage.resetsAt))
+    : "—";
 
   function changeCounty(nextCounty: string) {
     setCounty(nextCounty);
@@ -69,6 +77,9 @@ function OrdinanceAide() {
     setBusy(true);
     try {
       const result = await askOrdinanceAide({ data: { county, municipality, question: prompt } });
+      if ("usage" in result && result.usage) {
+        setScope((current) => (current ? { ...current, usage: result.usage } : current));
+      }
       setMessages((current) => [
         ...current,
         {
@@ -174,6 +185,22 @@ function OrdinanceAide() {
               Source files remain private and are never exposed as a browsable website section. This
               agent returns only the excerpts needed to support an answer.
             </div>
+            <div className="rounded-md border border-outline-variant p-3">
+              <div className="flex items-center gap-2 text-sm font-semibold">
+                <Gauge className="size-4 text-secondary" /> AI allowance
+              </div>
+              <p className="mt-2 text-2xl font-semibold">
+                {usage ? usage.remaining.toLocaleString() : "—"}
+                <span className="ml-1 text-sm font-normal text-muted-foreground">
+                  questions left
+                </span>
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {usage
+                  ? `${usage.includedLimit} included monthly · resets ${resetsLabel}`
+                  : "Loading allowance…"}
+              </p>
+            </div>
           </CardContent>
         </Card>
 
@@ -209,7 +236,7 @@ function OrdinanceAide() {
                 maxLength={1_200}
                 placeholder="Example: What setbacks and approvals should I verify for a small commercial addition?"
                 className="min-h-24"
-                disabled={!scope || busy}
+                disabled={!scope || busy || usage?.exhausted}
               />
               <div className="mt-3 flex items-center justify-between gap-3">
                 <p className="text-xs text-muted-foreground">
@@ -217,11 +244,16 @@ function OrdinanceAide() {
                 </p>
                 <Button
                   type="submit"
-                  disabled={!scope || !municipality || !question.trim() || busy}
+                  disabled={!scope || !municipality || !question.trim() || busy || usage?.exhausted}
                 >
                   <Send className="size-4" /> Ask Aide
                 </Button>
               </div>
+              {usage?.exhausted ? (
+                <p className="mt-2 text-sm font-medium text-destructive">
+                  Monthly AI allowance used. Access resumes {resetsLabel}.
+                </p>
+              ) : null}
             </form>
           </CardContent>
         </Card>
