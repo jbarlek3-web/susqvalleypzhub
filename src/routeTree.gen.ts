@@ -28,6 +28,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ZoningRouteImport } from './routes/zoning'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ParcelsIdRouteImport } from './routes/parcels.$id'
+import { Route as ApiFeasibilityReportPdfRouteImport } from './routes/api/feasibility-report/pdf'
 import { Route as ApiGoogleDriveCallbackRouteImport } from './routes/api/google-drive/callback'
 import { Route as ApiGoogleDriveDisconnectRouteImport } from './routes/api/google-drive/disconnect'
 import { Route as ApiGoogleDriveExportRouteImport } from './routes/api/google-drive/export'
@@ -131,6 +132,11 @@ const ParcelsIdRoute = ParcelsIdRouteImport.update({
   path: '/parcels/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiFeasibilityReportPdfRoute = ApiFeasibilityReportPdfRouteImport.update({
+  id: '/api/feasibility-report/pdf',
+  path: '/api/feasibility-report/pdf',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGoogleDriveCallbackRoute = ApiGoogleDriveCallbackRouteImport.update({
   id: '/api/google-drive/callback',
   path: '/api/google-drive/callback',
@@ -188,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/zoning': typeof ZoningRoute
   '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
+  '/api/feasibility-report/pdf': typeof ApiFeasibilityReportPdfRoute
   '/api/google-drive/callback': typeof ApiGoogleDriveCallbackRoute
   '/api/google-drive/disconnect': typeof ApiGoogleDriveDisconnectRoute
   '/api/google-drive/export': typeof ApiGoogleDriveExportRoute
@@ -216,6 +223,7 @@ export interface FileRoutesByTo {
   '/zoning': typeof ZoningRoute
   '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
+  '/api/feasibility-report/pdf': typeof ApiFeasibilityReportPdfRoute
   '/api/google-drive/callback': typeof ApiGoogleDriveCallbackRoute
   '/api/google-drive/disconnect': typeof ApiGoogleDriveDisconnectRoute
   '/api/google-drive/export': typeof ApiGoogleDriveExportRoute
@@ -245,6 +253,7 @@ export interface FileRoutesById {
   '/zoning': typeof ZoningRoute
   '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
+  '/api/feasibility-report/pdf': typeof ApiFeasibilityReportPdfRoute
   '/api/google-drive/callback': typeof ApiGoogleDriveCallbackRoute
   '/api/google-drive/disconnect': typeof ApiGoogleDriveDisconnectRoute
   '/api/google-drive/export': typeof ApiGoogleDriveExportRoute
@@ -275,6 +284,7 @@ export interface FileRouteTypes {
     | '/zoning'
     | '/api/health'
     | '/parcels/$id'
+    | '/api/feasibility-report/pdf'
     | '/api/google-drive/callback'
     | '/api/google-drive/disconnect'
     | '/api/google-drive/export'
@@ -303,6 +313,7 @@ export interface FileRouteTypes {
     | '/zoning'
     | '/api/health'
     | '/parcels/$id'
+    | '/api/feasibility-report/pdf'
     | '/api/google-drive/callback'
     | '/api/google-drive/disconnect'
     | '/api/google-drive/export'
@@ -331,6 +342,7 @@ export interface FileRouteTypes {
     | '/zoning'
     | '/api/health'
     | '/parcels/$id'
+    | '/api/feasibility-report/pdf'
     | '/api/google-drive/callback'
     | '/api/google-drive/disconnect'
     | '/api/google-drive/export'
@@ -360,6 +372,7 @@ export interface RootRouteChildren {
   ZoningRoute: typeof ZoningRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ParcelsIdRoute: typeof ParcelsIdRoute
+  ApiFeasibilityReportPdfRoute: typeof ApiFeasibilityReportPdfRoute
   ApiGoogleDriveCallbackRoute: typeof ApiGoogleDriveCallbackRoute
   ApiGoogleDriveDisconnectRoute: typeof ApiGoogleDriveDisconnectRoute
   ApiGoogleDriveExportRoute: typeof ApiGoogleDriveExportRoute
@@ -504,6 +517,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ParcelsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/feasibility-report/pdf': {
+      id: '/api/feasibility-report/pdf'
+      path: '/api/feasibility-report/pdf'
+      fullPath: '/api/feasibility-report/pdf'
+      preLoaderRoute: typeof ApiFeasibilityReportPdfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/google-drive/callback': {
       id: '/api/google-drive/callback'
       path: '/api/google-drive/callback'
@@ -576,6 +596,7 @@ const rootRouteChildren: RootRouteChildren = {
   ZoningRoute: ZoningRoute,
   ApiHealthRoute: ApiHealthRoute,
   ParcelsIdRoute: ParcelsIdRoute,
+  ApiFeasibilityReportPdfRoute: ApiFeasibilityReportPdfRoute,
   ApiGoogleDriveCallbackRoute: ApiGoogleDriveCallbackRoute,
   ApiGoogleDriveDisconnectRoute: ApiGoogleDriveDisconnectRoute,
   ApiGoogleDriveExportRoute: ApiGoogleDriveExportRoute,

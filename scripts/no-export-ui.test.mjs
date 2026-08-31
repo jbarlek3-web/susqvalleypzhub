@@ -90,3 +90,15 @@ test("the market report remains the explicit document download exception", async
     true,
   );
 });
+
+test("the generated feasibility report is the only approved analysis download", async () => {
+  const component = await readFile("src/components/feasibility/feasibility-report-tab.tsx", "utf8");
+  const route = await readFile("src/routes/api/feasibility-report/pdf.ts", "utf8");
+  assert.match(component, /Download feasibility report/);
+  assert.match(component, /Municipal and county source documents are not included/);
+  assert.match(route, /application\/pdf/);
+  assert.doesNotMatch(
+    component + route,
+    /data\/documents|DocumentCenter\/View|wp-content\/uploads/i,
+  );
+});

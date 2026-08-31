@@ -22,10 +22,11 @@ import {
 } from "@/lib/data/acquisition";
 import { FEASIBILITY_DATA_GROUPS, FEASIBILITY_DATA_SOURCES } from "@/lib/data/feasibility-data";
 import { cn } from "@/lib/utils";
+import { FeasibilityReportTab } from "@/components/feasibility/feasibility-report-tab";
 
 export const Route = createFileRoute("/acquire")({ component: Acquire });
 
-const TABS = ["Yield", "Offer", "Screen", "Diligence", "Data", "SALDO"] as const;
+const TABS = ["Report", "Yield", "Offer", "Screen", "Diligence", "Data", "SALDO"] as const;
 
 function money(n: number) {
   if (!Number.isFinite(n)) return "—";
@@ -37,7 +38,7 @@ function money(n: number) {
 }
 
 function Acquire() {
-  const [tab, setTab] = useState<(typeof TABS)[number]>("Yield");
+  const [tab, setTab] = useState<(typeof TABS)[number]>("Report");
   return (
     <AppShell>
       <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
@@ -45,9 +46,9 @@ function Acquire() {
       </p>
       <h1 className="mt-1 text-3xl font-semibold">Acquisition Toolkit</h1>
       <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-        Lot yield, residual offer, screening, and York County SALDO path — built from the land
-        acquisition analyst playbook, the Land Acquisition & Valuation Guide, and the 2012 York
-        County SALDO. Numbers are worksheets, not appraisals.
+        Source-grounded feasibility reporting, lot yield, residual offer, screening, and municipal
+        approval-path research in one acquisition workspace. Numbers are transparent worksheets, not
+        appraisals.
       </p>
       <div className="mt-5 flex flex-wrap gap-1.5">
         {TABS.map((t) => (
@@ -66,6 +67,7 @@ function Acquire() {
         ))}
       </div>
       <div className="mt-6">
+        {tab === "Report" && <FeasibilityReportTab />}
         {tab === "Yield" && <YieldTab />}
         {tab === "Offer" && <OfferTab />}
         {tab === "Screen" && <ScreenTab />}

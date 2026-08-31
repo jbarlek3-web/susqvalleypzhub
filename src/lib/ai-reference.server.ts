@@ -25,6 +25,17 @@ type ReferenceChunk = {
   page: number | null;
   text: string;
 };
+
+export type AiReferenceEvidence = {
+  id: string;
+  documentId: string;
+  filename: string;
+  kind: string;
+  category: string;
+  page: number | null;
+  jurisdiction: string;
+  text: string;
+};
 type ReferenceCorpus = {
   schemaVersion: number;
   audience: "ai-only";
@@ -143,16 +154,16 @@ function scoreChunk(chunk: ReferenceChunk, queryTokens: string[]): number {
   return score;
 }
 
-export function getAiReferenceContext(input: {
+export function getAiReferenceEvidence(input: {
   municipality: string;
   county: string;
   zoning: string;
   constraints: string[];
   question?: string;
-}): string {
+}): AiReferenceEvidence[] {
   const requestedCounty = jurisdictionKey(input.county);
   const knownCounties = municipalityCounties.get(jurisdictionKey(input.municipality));
-  if (knownCounties && !knownCounties.has(requestedCounty)) return "";
+  if (knownCounties && !knownCounties.has(requestedCounty)) return [];
 
   const queryTokens = tokens(
     [
@@ -187,15 +198,29 @@ export function getAiReferenceContext(input: {
     characters += chunk.text.length;
   }
 
-  if (!selected.length) return "";
-  return selected
-    .map(({ chunk, document }) => {
-      const source = document.jurisdictions.find((jurisdiction) =>
-        appliesTo({ ...document, jurisdictions: [jurisdiction] }, input.county, input.municipality),
-      );
-      const locator = chunk.page ? `, page ${chunk.page}` : "";
-      const jurisdiction = source?.municipality ?? input.municipality;
-      return `[${source?.county ?? input.county} / ${jurisdiction} reference: ${chunk.filename}${locator}]\n${chunk.text}`;
+  return selected.map(({ chunk, document }) => {
+    const source = document.jurisdictions.find((jurisdiction) =>
+      appliesTo({ ...document, jurisdictions: [jurisdiction] }, input.county, input.municipality),
+    );
+    return {
+      id: chunk.id,
+      documentId: document.id,
+      filename: chunk.filename,
+      kind: document.kind,
+      category: document.category,
+      page: chunk.page,
+      jurisdiction: `${source?.municipality ?? input.municipality}, ${source?.county ?? input.county} County`,
+      text: chunk.text,
+    };
+  });
+}
+
+export function getAiReferenceContext(input: Parameters<typeof getAiReferenceEvidence>[0]): string {
+  return getAiReferenceEvidence(input)
+    .map((evidence) => {
+      const locator = evidence.page ? `, page ${evidence.page}` : "";
+      const jurisdiction = evidence.jurisdiction.split(",")[0] ?? input.municipality;
+      return `[${evidence.id}] [${input.county} / ${jurisdiction} reference: ${evidence.filename}${locator}]\n${evidence.text}`;
     })
     .join("\n\n---\n\n");
 }

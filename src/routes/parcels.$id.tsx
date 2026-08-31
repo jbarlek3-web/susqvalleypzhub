@@ -72,9 +72,17 @@ function ParcelReport() {
       </div>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
-        <Kpi label="Lot Size" value={`${parcel.acres} Acres`} sub={`${parcel.sqft.toLocaleString()} Sq. Ft.`} />
+        <Kpi
+          label="Lot Size"
+          value={`${parcel.acres} Acres`}
+          sub={`${parcel.sqft.toLocaleString()} Sq. Ft.`}
+        />
         <Kpi label="Zoning District" value={parcel.zoning} sub={parcel.zoningName} />
-        <Kpi label="Assessed Value" value={formatFullMoney(parcel.assessed)} sub={`Tax Year ${parcel.taxYear}`} />
+        <Kpi
+          label="Assessed Value"
+          value={formatFullMoney(parcel.assessed)}
+          sub={`Tax Year ${parcel.taxYear}`}
+        />
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
@@ -105,7 +113,10 @@ function ParcelReport() {
             </p>
             <dl className="mt-2 space-y-1 text-sm">
               <Row l="Gross Lot Area" v={`${parcel.sqft.toLocaleString()} SF`} />
-              <Row l="Right-of-Way Dedication" v={`− ${parcel.rowDedicationSf.toLocaleString()} SF`} />
+              <Row
+                l="Right-of-Way Dedication"
+                v={`− ${parcel.rowDedicationSf.toLocaleString()} SF`}
+              />
               <Row l="Environmental Buffers" v={`− ${parcel.envBufferSf.toLocaleString()} SF`} />
               <Row l="Required Setbacks" v={`− ${parcel.setbackSf.toLocaleString()} SF`} />
               <Row l="Net Buildable Area" v={`${parcel.buildableSf.toLocaleString()} SF`} strong />
@@ -152,7 +163,8 @@ function ParcelReport() {
                 ({parcel.slopePct}% grade)
               </p>
               <p>
-                Historic District <span className="font-semibold">{parcel.historic ? "YES" : "NO"}</span>
+                Historic District{" "}
+                <span className="font-semibold">{parcel.historic ? "YES" : "NO"}</span>
               </p>
             </CardContent>
           </Card>
@@ -231,12 +243,7 @@ function ParcelReport() {
               setBusy(true);
               const res = await analyzeParcel({
                 data: {
-                  address: parcel.address,
-                  municipality: parcel.municipality,
-                  county: parcel.county,
-                  zoning: parcel.zoning,
-                  acres: parcel.acres,
-                  constraints: parcel.constraints,
+                  parcelId: parcel.id,
                 },
               });
               setBusy(false);
@@ -255,8 +262,8 @@ function ParcelReport() {
             <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{ai}</pre>
           ) : (
             <p className="text-sm text-muted-foreground">
-              User-initiated zoning and process brief for this parcel. Not a substitute for municipal
-              counsel.
+              User-initiated zoning and process brief for this parcel. Not a substitute for
+              municipal counsel.
             </p>
           )}
         </CardContent>
@@ -271,8 +278,7 @@ function ParcelReport() {
             {comments.map((c) => (
               <li key={c.id} className="rounded-md bg-surface-low p-3">
                 <div className="text-sm font-semibold">
-                  {c.author}{" "}
-                  <span className="font-normal text-muted-foreground">{c.at}</span>
+                  {c.author} <span className="font-normal text-muted-foreground">{c.at}</span>
                 </div>
                 <p className="mt-1 text-sm">{c.body}</p>
               </li>
@@ -283,11 +289,19 @@ function ParcelReport() {
             onSubmit={(e) => {
               e.preventDefault();
               if (!note.trim()) return;
-              addComment(id, profile ? `${profile.firstName} ${profile.lastName}` : "You", note.trim());
+              addComment(
+                id,
+                profile ? `${profile.firstName} ${profile.lastName}` : "You",
+                note.trim(),
+              );
               setNote("");
             }}
           >
-            <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Post comment" />
+            <Textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Post comment"
+            />
             <Button type="submit" className="self-end">
               Post comment
             </Button>
@@ -301,7 +315,9 @@ function ParcelReport() {
 function Kpi({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
     <div className="rounded-lg border border-outline-variant bg-card p-4">
-      <div className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">{label}</div>
+      <div className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
+        {label}
+      </div>
       <div className="mt-1 text-2xl font-semibold">{value}</div>
       <div className="text-sm text-muted-foreground">{sub}</div>
     </div>
