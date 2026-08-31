@@ -9,6 +9,9 @@ const validProduction = {
   CLERK_SECRET_KEY: ["sk", "live", "private"].join("_"),
   CLERK_WEBHOOK_SIGNING_SECRET: ["whsec", "private"].join("_"),
   DATABASE_URL: "postgresql://private-database-value",
+  GOOGLE_DRIVE_CLIENT_ID: "drive-client.apps.googleusercontent.com",
+  GOOGLE_DRIVE_CLIENT_SECRET: "private-drive-client-secret",
+  GOOGLE_DRIVE_TOKEN_ENCRYPTION_KEY: Buffer.alloc(32, 7).toString("base64"),
   RATE_LIMIT_SALT: "private-rate-limit-salt",
   VERCEL_ENV: "production",
   VITE_CLERK_PUBLISHABLE_KEY: ["pk", "live", "private"].join("_"),
@@ -52,6 +55,7 @@ test("production builds fail early with missing names but no secret values", () 
   assert.match(result.stderr, /DATABASE_URL/);
   assert.match(result.stderr, /CLERK_SECRET_KEY/);
   for (const value of Object.values(validProduction)) {
-    if (value && value !== "production") assert.doesNotMatch(result.stderr, new RegExp(value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+    if (value && value !== "production")
+      assert.doesNotMatch(result.stderr, new RegExp(value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
 });

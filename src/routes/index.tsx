@@ -3,7 +3,6 @@ import {
   ArrowRight,
   Bot,
   CheckCircle2,
-  Database,
   ContactRound,
   Gavel,
   Layers,
@@ -15,7 +14,6 @@ import { FieldAcqOrdinanceAideLogo } from "@/components/brand/field-acq-ordinanc
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { REGIONAL_DOCUMENT_COVERAGE } from "@/lib/data/regional-document-coverage";
 import { useHub } from "@/lib/store";
 import type { County } from "@/lib/types";
 import { useState } from "react";
@@ -46,8 +44,9 @@ function Home() {
             Make the next acquisition decision with confidence.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm text-muted-foreground md:text-lg">
-            Field ACQ Ordinance Aide brings zoning codes, property maps, and builder documentation
-            together for York, Cumberland, Dauphin, and Lancaster counties.
+            Field ACQ Ordinance Aide brings zoning research, property maps, official-source
+            directories, and a private AI reference library together for York, Cumberland, Dauphin,
+            and Lancaster counties.
           </p>
           <form
             className="mx-auto mt-8 flex max-w-xl flex-col gap-2 sm:flex-row"
@@ -91,12 +90,9 @@ function Home() {
             </Button>
           </form>
           <div className="mt-8 grid grid-cols-3 gap-4 text-center">
+            <Stat n="4" l="Core counties" />
             <Stat n="72" l="York municipalities" />
-            <Stat
-              n={REGIONAL_DOCUMENT_COVERAGE.sourceRecords.toLocaleString()}
-              l="Regional source records"
-            />
-            <Stat n={REGIONAL_DOCUMENT_COVERAGE.saldoRecords.toLocaleString()} l="SALDO records" />
+            <Stat n="67" l="PA county contacts" />
           </div>
         </div>
       </section>
@@ -144,7 +140,7 @@ function Home() {
             title="Interactive Property Map"
             body="Visualize zoning districts, floodplain overlays, and individual parcel boundaries across county lines."
             href="/map"
-            cta="Launch GIS Map"
+            cta="Launch Property Map"
           />
           <Feature
             icon={Gavel}
@@ -175,16 +171,9 @@ function Home() {
             cta="Open directory"
           />
           <Feature
-            icon={Database}
-            title="Integrated Due Diligence"
-            body="Review parcel, zoning, planning, and environmental intelligence in one coordinated research workspace."
-            href="/guide"
-            cta="View workflow"
-          />
-          <Feature
             icon={Gavel}
             title="Acquisition Toolkit"
-            body="Lot yield, residual land offer, York SALDO path, diligence checklists, and York Home Depot material prices."
+            body="Lot yield, residual land offer, York SALDO path, and diligence checklists."
             href="/acquire"
             cta="Open toolkit"
           />
@@ -195,14 +184,14 @@ function Home() {
         <div>
           <h2 className="text-2xl font-semibold">Professional Access</h2>
           <p className="mt-2 text-muted-foreground">
-            Unlock the full potential of regional data. Join municipal officials, developers, and
+            Unlock the full potential of regional data for developers, contractors, realtors, and
             surveyors who rely on Field ACQ Ordinance Aide for integrated land-use intelligence.
           </p>
           <ul className="mt-4 space-y-2 text-sm">
             {[
               "High-volume live York parcel and zoning lookups.",
               "AI-assisted parcel feasibility briefs.",
-              "Pro directories and saved-project workflow.",
+              "Direct links to official municipal and county websites.",
             ].map((t) => (
               <li key={t} className="flex gap-2">
                 <CheckCircle2 className="mt-0.5 size-4 text-secondary" /> {t}
@@ -224,9 +213,6 @@ function Home() {
             <Button asChild className="mt-4 w-full">
               <Link to="/subscription">Subscribe Now</Link>
             </Button>
-            <p className="mt-2 text-xs text-muted-foreground">
-              Municipal accounts eligible for group licensing.
-            </p>
           </CardContent>
         </Card>
       </section>

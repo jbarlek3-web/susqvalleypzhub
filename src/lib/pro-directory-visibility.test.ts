@@ -29,5 +29,32 @@ test("directory data is loaded only after server-side Pro authorization", () => 
 test("the Pro directory page identifies both protected directories", () => {
   assert.match(route, /Pro only/);
   assert.match(route, /County P&amp;Z directory/);
-  assert.match(route, /Municipal document directory/);
+  assert.match(route, /Municipal source directory/);
+  assert.doesNotMatch(route, /Municipal document directory/);
+});
+
+test("municipal directory responses expose source websites, not document links", () => {
+  const retiredDocumentFields = [
+    "municipalityZoningOrdinanceUrl",
+    "municipalityComprehensivePlanUrl",
+    "municipalitySaldoUrl",
+    "municipalitySaldoApplicationUrl",
+    "countySaldoUrl",
+    "countySaldoApplicationUrl",
+    "countyFeeScheduleUrl",
+    "countyComprehensivePlanUrl",
+    "countyZoningMapsUrl",
+    "countyBuildingCodeUrl",
+  ];
+
+  for (const field of retiredDocumentFields) {
+    assert.doesNotMatch(serverFunction, new RegExp(field));
+    assert.doesNotMatch(serverData, new RegExp(field));
+    assert.doesNotMatch(route, new RegExp(field));
+  }
+
+  assert.match(serverData, /municipalityWebsiteUrl: record\.municipalityWebsiteUrl/);
+  assert.match(serverData, /countyPlanningUrl: record\.countyPlanningUrl/);
+  assert.match(serverData, /officialCodeLibraryUrl\(record\.ecode360Url\)/);
+  assert.doesNotMatch(serverData, /as MunicipalityDirectoryPayload/);
 });

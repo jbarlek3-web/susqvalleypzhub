@@ -45,7 +45,7 @@ export const FEASIBILITY_DATA_SOURCES: FeasibilityDataSource[] = [
     mode: "live-map",
     use: "Local roads, zoning, floodplains, streams, wetlands, conservation easements, contours, and growth areas.",
     detail:
-      "Use the official download index for bulk GIS extracts and the live map for the selected York overlays.",
+      "Use the official download index for bulk mapping extracts and the live map for the selected York overlays.",
     url: "https://www.pasda.psu.edu/download/yorkcounty/",
     status: "Live in map",
   },
@@ -98,7 +98,7 @@ export const FEASIBILITY_DATA_SOURCES: FeasibilityDataSource[] = [
     title: "PASDA statewide download catalog",
     provider: "Pennsylvania Spatial Data Access",
     mode: "download",
-    use: "Authoritative Pennsylvania GIS source discovery and bulk downloads.",
+    use: "Authoritative Pennsylvania mapping source discovery and bulk downloads.",
     detail:
       "Use this when a project needs a full extract rather than a viewport-sized live map layer.",
     url: "https://www.pasda.psu.edu/download/",
@@ -149,7 +149,7 @@ export const FEASIBILITY_DATA_SOURCES: FeasibilityDataSource[] = [
   },
   {
     id: "hud-open-data",
-    title: "HUD GIS Open Data",
+    title: "HUD Open Data",
     provider: "U.S. Department of Housing and Urban Development",
     mode: "underwriting",
     use: "Affordable-housing, neighborhood, and program-eligibility research.",
@@ -206,7 +206,7 @@ export const FEASIBILITY_DATA_GROUPS: Array<{
   {
     mode: "download",
     title: "Official downloads",
-    description: "Bulk packages for engineering, GIS, or offline desktop analysis.",
+    description: "Bulk packages for engineering, mapping, or offline desktop analysis.",
   },
   {
     mode: "underwriting",

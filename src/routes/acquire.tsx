@@ -11,8 +11,6 @@ import {
   DEFAULT_ROW,
   DEFAULT_STORM,
   DEFAULT_UNDEV,
-  HD_STORE,
-  HD_YORK_MATERIALS,
   HBU_QUESTIONS,
   LOT_TO_BASE,
   PERMIT_PATHS,
@@ -27,7 +25,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/acquire")({ component: Acquire });
 
-const TABS = ["Yield", "Offer", "Screen", "Diligence", "Data", "SALDO", "Materials"] as const;
+const TABS = ["Yield", "Offer", "Screen", "Diligence", "Data", "SALDO"] as const;
 
 function money(n: number) {
   if (!Number.isFinite(n)) return "—";
@@ -74,7 +72,6 @@ function Acquire() {
         {tab === "Diligence" && <DiligenceTab />}
         {tab === "Data" && <DataTab />}
         {tab === "SALDO" && <SaldoTab />}
-        {tab === "Materials" && <MaterialsTab />}
       </div>
     </AppShell>
   );
@@ -322,8 +319,8 @@ function DataTab() {
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-muted-foreground">
           <p>
-            Official GIS, hazard, market, and housing-finance sources used for early feasibility and
-            underwriting research. Live layers appear in the Map workspace; bulk and governed
+            Official mapping, hazard, market, and housing-finance sources used for early feasibility
+            and underwriting research. Live layers appear in the Map workspace; bulk and governed
             sources open at their authoritative publisher.
           </p>
           <p>
@@ -367,7 +364,10 @@ function DataTab() {
                         rel="noreferrer"
                         className="inline-flex items-center gap-1 underline"
                       >
-                        <ExternalLink className="size-3.5" /> Open source
+                        <ExternalLink className="size-3.5" />{" "}
+                        {source.id === "central-pa-market-report-2026-08"
+                          ? "Download market report"
+                          : "Open source"}
                       </a>
                     </div>
                   </CardContent>
@@ -432,12 +432,12 @@ function SaldoTab() {
               </div>
             ))}
             <a
-              href="https://drive.google.com/file/d/1Y5j4rvT6Hic9ZvlvJjDV5ZoPnGGuAnJN/view"
+              href={YCPC_CONTACT.url}
               target="_blank"
               rel="noreferrer"
               className="mt-2 text-sm text-primary-container underline"
             >
-              Open York County SALDO PDF
+              Open York County Planning Commission
             </a>
           </CardContent>
         </Card>
@@ -462,46 +462,6 @@ function SaldoTab() {
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
-}
-
-function MaterialsTab() {
-  return (
-    <div className="grid gap-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>{HD_STORE.name}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            {HD_STORE.address} · prices checked {HD_STORE.checked}. Use for rough site/material
-            takeoffs, not bid documents.
-          </p>
-          <div className="mt-4 overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-xs uppercase tracking-wider text-on-surface-variant">
-                  <th className="pb-2">Item</th>
-                  <th className="pb-2">Cat</th>
-                  <th className="pb-2">Unit</th>
-                  <th className="pb-2 text-right">York #4125</th>
-                </tr>
-              </thead>
-              <tbody>
-                {HD_YORK_MATERIALS.map((m) => (
-                  <tr key={m.sku} className="border-t border-outline-variant">
-                    <td className="py-2">{m.name}</td>
-                    <td>{m.cat}</td>
-                    <td>{m.unit}</td>
-                    <td className="text-right font-mono">${m.price.toFixed(2)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

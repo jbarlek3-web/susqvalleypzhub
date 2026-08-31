@@ -1,17 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { SEED_COMMENTS, SEED_PROJECTS } from "@/lib/data/catalog";
+import { SEED_COMMENTS } from "@/lib/data/catalog";
 import { NOTIFICATION_FEED_VERSION, OPERATIONAL_ALERTS } from "@/lib/data/notification-feed";
 import { PARCELS } from "@/lib/data/parcels";
 import type { YorkLookup } from "@/lib/york-lookup";
-import type {
-  AlertItem,
-  County,
-  LayerId,
-  Profile,
-  Project,
-  TeamComment,
-} from "@/lib/types";
+import type { AlertItem, County, LayerId, Profile, Project, TeamComment } from "@/lib/types";
 
 const DEFAULT_LAYERS: Record<LayerId, boolean> = {
   zoning: true,
@@ -77,6 +70,7 @@ type State = {
   setLookupBusy: (v: boolean) => void;
   clearLookup: () => void;
   saveBatchAsProject: (name: string) => void;
+  deleteProject: (id: string) => void;
   toggleSaved: (id: string) => void;
   addComment: (parcelId: string, author: string, body: string) => void;
   markAlertsRead: () => void;
@@ -100,7 +94,7 @@ export const useHub = create<State>()(
       lookup: null,
       lookupError: null,
       lookupBusy: false,
-      projects: SEED_PROJECTS,
+      projects: [],
       comments: SEED_COMMENTS,
       alerts: OPERATIONAL_ALERTS,
       notificationFeedVersion: NOTIFICATION_FEED_VERSION,
@@ -109,7 +103,7 @@ export const useHub = create<State>()(
       alertFreq: "Daily Digest",
       subscribe: (profile) => set({ isPro: true, profile }),
       setPro: (isPro) => set({ isPro }),
-      signOut: () => set({ isPro: false, profile: null }),
+      signOut: () => set({ isPro: false, profile: null, projects: [] }),
       setCounty: (county) => set({ county }),
       toggleLayer: (id) =>
         set({
@@ -167,12 +161,12 @@ export const useHub = create<State>()(
         };
         set({ projects: [project, ...projects] });
       },
+      deleteProject: (id) =>
+        set({ projects: get().projects.filter((project) => project.id !== id) }),
       toggleSaved: (id) => {
         const { savedIds } = get();
         set({
-          savedIds: savedIds.includes(id)
-            ? savedIds.filter((x) => x !== id)
-            : [...savedIds, id],
+          savedIds: savedIds.includes(id) ? savedIds.filter((x) => x !== id) : [...savedIds, id],
         });
       },
       addComment: (parcelId, author, body) => {
@@ -191,10 +185,8 @@ export const useHub = create<State>()(
         };
         set({ comments: [comment, ...get().comments] });
       },
-      markAlertsRead: () =>
-        set({ alerts: get().alerts.map((a) => ({ ...a, unread: false })) }),
-      setAlertCounty: (c, on) =>
-        set({ alertCounties: { ...get().alertCounties, [c]: on } }),
+      markAlertsRead: () => set({ alerts: get().alerts.map((a) => ({ ...a, unread: false })) }),
+      setAlertCounty: (c, on) => set({ alertCounties: { ...get().alertCounties, [c]: on } }),
       setAlertFreq: (alertFreq) => set({ alertFreq }),
     }),
     {
@@ -213,8 +205,22 @@ export const useHub = create<State>()(
           alerts: hasCurrentFeed && stored.alerts ? stored.alerts : current.alerts,
           notificationFeedVersion: NOTIFICATION_FEED_VERSION,
           isPro: false,
+          profile: null,
+          projects: current.projects,
         };
       },
+      // Projects and other account-specific research are session-only. Persist
+      // only non-identifying view and notification preferences.
+      partialize: (state) => ({
+        county: state.county,
+        layers: state.layers,
+        satellite: state.satellite,
+        floodFt: state.floodFt,
+        alerts: state.alerts,
+        notificationFeedVersion: state.notificationFeedVersion,
+        alertCounties: state.alertCounties,
+        alertFreq: state.alertFreq,
+      }),
     },
   ),
 );

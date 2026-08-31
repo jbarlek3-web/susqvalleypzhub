@@ -25,10 +25,15 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as TermsRouteImport } from './routes/terms'
-import { Route as WorkspaceRouteImport } from './routes/workspace'
 import { Route as ZoningRouteImport } from './routes/zoning'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ParcelsIdRouteImport } from './routes/parcels.$id'
+import { Route as ApiGoogleDriveCallbackRouteImport } from './routes/api/google-drive/callback'
+import { Route as ApiGoogleDriveDisconnectRouteImport } from './routes/api/google-drive/disconnect'
+import { Route as ApiGoogleDriveExportRouteImport } from './routes/api/google-drive/export'
+import { Route as ApiGoogleDriveStartRouteImport } from './routes/api/google-drive/start'
+import { Route as ApiGoogleDriveStatusRouteImport } from './routes/api/google-drive/status'
+import { Route as ApiGoogleDriveUploadRouteImport } from './routes/api/google-drive/upload'
 import { Route as ApiWebhooksClerkRouteImport } from './routes/api/webhooks/clerk'
 
 const IndexRoute = IndexRouteImport.update({
@@ -111,11 +116,6 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WorkspaceRoute = WorkspaceRouteImport.update({
-  id: '/workspace',
-  path: '/workspace',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ZoningRoute = ZoningRouteImport.update({
   id: '/zoning',
   path: '/zoning',
@@ -129,6 +129,37 @@ const ApiHealthRoute = ApiHealthRouteImport.update({
 const ParcelsIdRoute = ParcelsIdRouteImport.update({
   id: '/parcels/$id',
   path: '/parcels/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGoogleDriveCallbackRoute = ApiGoogleDriveCallbackRouteImport.update({
+  id: '/api/google-drive/callback',
+  path: '/api/google-drive/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGoogleDriveDisconnectRoute =
+  ApiGoogleDriveDisconnectRouteImport.update({
+    id: '/api/google-drive/disconnect',
+    path: '/api/google-drive/disconnect',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiGoogleDriveExportRoute = ApiGoogleDriveExportRouteImport.update({
+  id: '/api/google-drive/export',
+  path: '/api/google-drive/export',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGoogleDriveStartRoute = ApiGoogleDriveStartRouteImport.update({
+  id: '/api/google-drive/start',
+  path: '/api/google-drive/start',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGoogleDriveStatusRoute = ApiGoogleDriveStatusRouteImport.update({
+  id: '/api/google-drive/status',
+  path: '/api/google-drive/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGoogleDriveUploadRoute = ApiGoogleDriveUploadRouteImport.update({
+  id: '/api/google-drive/upload',
+  path: '/api/google-drive/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiWebhooksClerkRoute = ApiWebhooksClerkRouteImport.update({
@@ -154,10 +185,15 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof SignUpRoute
   '/subscription': typeof SubscriptionRoute
   '/terms': typeof TermsRoute
-  '/workspace': typeof WorkspaceRoute
   '/zoning': typeof ZoningRoute
   '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
+  '/api/google-drive/callback': typeof ApiGoogleDriveCallbackRoute
+  '/api/google-drive/disconnect': typeof ApiGoogleDriveDisconnectRoute
+  '/api/google-drive/export': typeof ApiGoogleDriveExportRoute
+  '/api/google-drive/start': typeof ApiGoogleDriveStartRoute
+  '/api/google-drive/status': typeof ApiGoogleDriveStatusRoute
+  '/api/google-drive/upload': typeof ApiGoogleDriveUploadRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
 }
 export interface FileRoutesByTo {
@@ -177,10 +213,15 @@ export interface FileRoutesByTo {
   '/sign-up': typeof SignUpRoute
   '/subscription': typeof SubscriptionRoute
   '/terms': typeof TermsRoute
-  '/workspace': typeof WorkspaceRoute
   '/zoning': typeof ZoningRoute
   '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
+  '/api/google-drive/callback': typeof ApiGoogleDriveCallbackRoute
+  '/api/google-drive/disconnect': typeof ApiGoogleDriveDisconnectRoute
+  '/api/google-drive/export': typeof ApiGoogleDriveExportRoute
+  '/api/google-drive/start': typeof ApiGoogleDriveStartRoute
+  '/api/google-drive/status': typeof ApiGoogleDriveStatusRoute
+  '/api/google-drive/upload': typeof ApiGoogleDriveUploadRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
 }
 export interface FileRoutesById {
@@ -201,10 +242,15 @@ export interface FileRoutesById {
   '/sign-up': typeof SignUpRoute
   '/subscription': typeof SubscriptionRoute
   '/terms': typeof TermsRoute
-  '/workspace': typeof WorkspaceRoute
   '/zoning': typeof ZoningRoute
   '/api/health': typeof ApiHealthRoute
   '/parcels/$id': typeof ParcelsIdRoute
+  '/api/google-drive/callback': typeof ApiGoogleDriveCallbackRoute
+  '/api/google-drive/disconnect': typeof ApiGoogleDriveDisconnectRoute
+  '/api/google-drive/export': typeof ApiGoogleDriveExportRoute
+  '/api/google-drive/start': typeof ApiGoogleDriveStartRoute
+  '/api/google-drive/status': typeof ApiGoogleDriveStatusRoute
+  '/api/google-drive/upload': typeof ApiGoogleDriveUploadRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
 }
 export interface FileRouteTypes {
@@ -226,10 +272,15 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/subscription'
     | '/terms'
-    | '/workspace'
     | '/zoning'
     | '/api/health'
     | '/parcels/$id'
+    | '/api/google-drive/callback'
+    | '/api/google-drive/disconnect'
+    | '/api/google-drive/export'
+    | '/api/google-drive/start'
+    | '/api/google-drive/status'
+    | '/api/google-drive/upload'
     | '/api/webhooks/clerk'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -249,10 +300,15 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/subscription'
     | '/terms'
-    | '/workspace'
     | '/zoning'
     | '/api/health'
     | '/parcels/$id'
+    | '/api/google-drive/callback'
+    | '/api/google-drive/disconnect'
+    | '/api/google-drive/export'
+    | '/api/google-drive/start'
+    | '/api/google-drive/status'
+    | '/api/google-drive/upload'
     | '/api/webhooks/clerk'
   id:
     | '__root__'
@@ -272,10 +328,15 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/subscription'
     | '/terms'
-    | '/workspace'
     | '/zoning'
     | '/api/health'
     | '/parcels/$id'
+    | '/api/google-drive/callback'
+    | '/api/google-drive/disconnect'
+    | '/api/google-drive/export'
+    | '/api/google-drive/start'
+    | '/api/google-drive/status'
+    | '/api/google-drive/upload'
     | '/api/webhooks/clerk'
   fileRoutesById: FileRoutesById
 }
@@ -296,10 +357,15 @@ export interface RootRouteChildren {
   SignUpRoute: typeof SignUpRoute
   SubscriptionRoute: typeof SubscriptionRoute
   TermsRoute: typeof TermsRoute
-  WorkspaceRoute: typeof WorkspaceRoute
   ZoningRoute: typeof ZoningRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ParcelsIdRoute: typeof ParcelsIdRoute
+  ApiGoogleDriveCallbackRoute: typeof ApiGoogleDriveCallbackRoute
+  ApiGoogleDriveDisconnectRoute: typeof ApiGoogleDriveDisconnectRoute
+  ApiGoogleDriveExportRoute: typeof ApiGoogleDriveExportRoute
+  ApiGoogleDriveStartRoute: typeof ApiGoogleDriveStartRoute
+  ApiGoogleDriveStatusRoute: typeof ApiGoogleDriveStatusRoute
+  ApiGoogleDriveUploadRoute: typeof ApiGoogleDriveUploadRoute
   ApiWebhooksClerkRoute: typeof ApiWebhooksClerkRoute
 }
 
@@ -417,13 +483,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/workspace': {
-      id: '/workspace'
-      path: '/workspace'
-      fullPath: '/workspace'
-      preLoaderRoute: typeof WorkspaceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/zoning': {
       id: '/zoning'
       path: '/zoning'
@@ -443,6 +502,48 @@ declare module '@tanstack/react-router' {
       path: '/parcels/$id'
       fullPath: '/parcels/$id'
       preLoaderRoute: typeof ParcelsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/google-drive/callback': {
+      id: '/api/google-drive/callback'
+      path: '/api/google-drive/callback'
+      fullPath: '/api/google-drive/callback'
+      preLoaderRoute: typeof ApiGoogleDriveCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/google-drive/disconnect': {
+      id: '/api/google-drive/disconnect'
+      path: '/api/google-drive/disconnect'
+      fullPath: '/api/google-drive/disconnect'
+      preLoaderRoute: typeof ApiGoogleDriveDisconnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/google-drive/export': {
+      id: '/api/google-drive/export'
+      path: '/api/google-drive/export'
+      fullPath: '/api/google-drive/export'
+      preLoaderRoute: typeof ApiGoogleDriveExportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/google-drive/start': {
+      id: '/api/google-drive/start'
+      path: '/api/google-drive/start'
+      fullPath: '/api/google-drive/start'
+      preLoaderRoute: typeof ApiGoogleDriveStartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/google-drive/status': {
+      id: '/api/google-drive/status'
+      path: '/api/google-drive/status'
+      fullPath: '/api/google-drive/status'
+      preLoaderRoute: typeof ApiGoogleDriveStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/google-drive/upload': {
+      id: '/api/google-drive/upload'
+      path: '/api/google-drive/upload'
+      fullPath: '/api/google-drive/upload'
+      preLoaderRoute: typeof ApiGoogleDriveUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/webhooks/clerk': {
@@ -472,10 +573,15 @@ const rootRouteChildren: RootRouteChildren = {
   SignUpRoute: SignUpRoute,
   SubscriptionRoute: SubscriptionRoute,
   TermsRoute: TermsRoute,
-  WorkspaceRoute: WorkspaceRoute,
   ZoningRoute: ZoningRoute,
   ApiHealthRoute: ApiHealthRoute,
   ParcelsIdRoute: ParcelsIdRoute,
+  ApiGoogleDriveCallbackRoute: ApiGoogleDriveCallbackRoute,
+  ApiGoogleDriveDisconnectRoute: ApiGoogleDriveDisconnectRoute,
+  ApiGoogleDriveExportRoute: ApiGoogleDriveExportRoute,
+  ApiGoogleDriveStartRoute: ApiGoogleDriveStartRoute,
+  ApiGoogleDriveStatusRoute: ApiGoogleDriveStatusRoute,
+  ApiGoogleDriveUploadRoute: ApiGoogleDriveUploadRoute,
   ApiWebhooksClerkRoute: ApiWebhooksClerkRoute,
 }
 export const routeTree = rootRouteImport

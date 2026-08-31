@@ -78,9 +78,10 @@ export const PARCEL_SERVICES: ParcelService[] = [
   {
     county: "Dauphin",
     title: "Dauphin County Parcel",
-    source: "Dauphin County GIS",
+    source: "Dauphin County mapping service",
     url: "https://services2.arcgis.com/EEtiX55QzkHKYQKY/arcgis/rest/services/DC_Parcels/FeatureServer/0",
-    fields: "PID,MUNICIPALI,house_numb,street_nam,street_suf,last_name,first_name,acres,land,building,cleangrn",
+    fields:
+      "PID,MUNICIPALI,house_numb,street_nam,street_suf,last_name,first_name,acres,land,building,cleangrn",
     maxRecords: 1500,
     extent: { west: -77.04, south: 40.11, east: -76.52, north: 40.67 },
     popup: (p) => {
@@ -100,7 +101,7 @@ export const PARCEL_SERVICES: ParcelService[] = [
   {
     county: "Cumberland",
     title: "Cumberland County Parcel",
-    source: "Cumberland County GIS / PASDA",
+    source: "Cumberland County mapping service / PASDA",
     url: "https://mapservices.pasda.psu.edu/server/rest/services/pasda/CumberlandCounty/MapServer/4",
     fields: "PID,SCHOOL_DIS,TOTALTAX,COUNTYTAX,MUNICIPALT,SCHOOLTAX,SITUS_ZIP,VISION_URL",
     maxRecords: 1000,
@@ -117,7 +118,7 @@ export const PARCEL_SERVICES: ParcelService[] = [
   {
     county: "Lancaster",
     title: "Lancaster County Parcel",
-    source: "Lancaster County GIS / PASDA",
+    source: "Lancaster County mapping service / PASDA",
     url: "https://mapservices.pasda.psu.edu/server/rest/services/pasda/LancasterCounty/MapServer/21",
     fields: "ACCOUNT",
     maxRecords: 1000,

@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   Building2,
   ExternalLink,
-  FileText,
   Loader2,
   Mail,
   MapPin,
@@ -75,7 +74,7 @@ function ProDirectories() {
         if (current)
           setMunicipalities({
             data: null,
-            error: "The municipal document directory could not be loaded.",
+            error: "The municipal source directory could not be loaded.",
             loading: false,
           });
       });
@@ -95,17 +94,17 @@ function ProDirectories() {
             <ShieldCheck className="mr-1 size-3" /> Pro only
           </Badge>
         </div>
-        <h1 className="mt-2 text-3xl font-semibold">Planning, zoning, and document directories</h1>
+        <h1 className="mt-2 text-3xl font-semibold">Planning and zoning directories</h1>
         <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-          Search county planning contacts or municipal land-development references. Records are
-          delivered only after the server verifies an active Pro or administrator entitlement.
+          Search county planning contacts and official municipal source websites. Field ACQ points
+          you to the agency, code library, or planning page where current materials are maintained.
         </p>
       </section>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6">
         <TabsList aria-label="Pro directory selection" className="h-auto flex-wrap">
           <TabsTrigger value="counties">County P&amp;Z directory</TabsTrigger>
-          <TabsTrigger value="municipalities">Municipal document directory</TabsTrigger>
+          <TabsTrigger value="municipalities">Municipal source directory</TabsTrigger>
         </TabsList>
         <TabsContent value="counties" className="mt-4">
           <DirectoryLoadState state={counties}>
@@ -263,18 +262,8 @@ function ContactLine({
 
 const MUNICIPAL_LINKS: Array<[keyof MunicipalityDirectoryRecord, string]> = [
   ["municipalityWebsiteUrl", "Municipal website"],
-  ["ecode360Url", "eCode360"],
-  ["municipalityZoningOrdinanceUrl", "Municipal zoning ordinance"],
-  ["municipalityComprehensivePlanUrl", "Municipal comprehensive plan"],
-  ["municipalitySaldoUrl", "Municipal SALDO"],
-  ["municipalitySaldoApplicationUrl", "Municipal SALDO application"],
-  ["countyPlanningUrl", "County planning"],
-  ["countySaldoUrl", "County SALDO"],
-  ["countySaldoApplicationUrl", "County SALDO application"],
-  ["countyFeeScheduleUrl", "County fee schedule"],
-  ["countyComprehensivePlanUrl", "County comprehensive plan"],
-  ["countyZoningMapsUrl", "County zoning maps"],
-  ["countyBuildingCodeUrl", "County building code"],
+  ["ecode360Url", "Official code library"],
+  ["countyPlanningUrl", "County planning website"],
 ];
 
 function MunicipalityDirectory({ data }: { data: MunicipalityDirectoryPayload }) {
@@ -290,10 +279,7 @@ function MunicipalityDirectory({ data }: { data: MunicipalityDirectoryPayload })
     return data.records.filter(
       (record) =>
         (county === "all" || record.county === county) &&
-        (!needle ||
-          `${record.municipality} ${record.county} ${record.notes ?? ""}`
-            .toLowerCase()
-            .includes(needle)),
+        (!needle || `${record.municipality} ${record.county}`.toLowerCase().includes(needle)),
     );
   }, [county, data.records, query]);
 
@@ -385,19 +371,16 @@ function MunicipalityCard({ entry }: { entry: MunicipalityDirectoryRecord }) {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <FileText className="mt-0.5 size-3.5 shrink-0" /> {link.label}
+                  <ExternalLink className="mt-0.5 size-3.5 shrink-0" /> {link.label}
                 </a>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="mt-4 text-sm text-muted-foreground">No direct online resource is listed.</p>
-        )}
-        {entry.notes ? (
-          <p className="mt-4 border-t border-outline-variant pt-3 text-xs leading-relaxed text-muted-foreground">
-            {entry.notes}
+          <p className="mt-4 text-sm text-muted-foreground">
+            No official municipal or county source website is listed.
           </p>
-        ) : null}
+        )}
       </CardContent>
     </Card>
   );

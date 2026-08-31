@@ -44,7 +44,7 @@ function Guide() {
         </Step>
         <Step n={6} t="Acquisition toolkit">
           Run lot yield and residual offer math, screen a tract, walk York County SALDO (sketch to
-          final plat), and pull York Home Depot material prices. Search a York address on the map to
+          final plat), and review public feasibility sources. Search a York address on the map to
           load live YCPC parcel and zoning.
         </Step>
       </ol>

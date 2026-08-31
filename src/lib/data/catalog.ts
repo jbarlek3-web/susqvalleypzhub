@@ -1,69 +1,4 @@
-import type {
-  MeetingRecord,
-  Project,
-  TeamComment,
-  TeamMember,
-} from "@/lib/types";
-
-export { DOCUMENTS } from "@/lib/data/documents";
-
-export const SEED_PROJECTS: Project[] = [
-  {
-    id: "prj-market",
-    name: "Market St Development",
-    county: "Cumberland",
-    municipality: "Camp Hill Borough",
-    status: "Lead",
-    parcelIds: ["p-1042", "p-1048", "p-1102"],
-    acres: 2.04,
-    modified: "Oct 24",
-    constraints: [],
-  },
-  {
-    id: "prj-camphill",
-    name: "Camp Hill Mixed-Use",
-    county: "Cumberland",
-    municipality: "Camp Hill Borough",
-    status: "Permitting",
-    parcelIds: ["p-1042"],
-    acres: 1.24,
-    modified: "Sep 15",
-    constraints: [],
-  },
-  {
-    id: "prj-york",
-    name: "York Logistics Hub",
-    county: "York",
-    municipality: "West Manchester Township",
-    status: "Due Diligence",
-    parcelIds: ["p-york-log-1", "p-york-log-2"],
-    acres: 50.5,
-    modified: "Aug 02",
-    constraints: ["Flood Zone"],
-  },
-  {
-    id: "prj-hershey",
-    name: "Chocolate Ave Infill",
-    county: "Dauphin",
-    municipality: "Derry Township",
-    status: "Lead",
-    parcelIds: ["p-hershey"],
-    acres: 2.1,
-    modified: "Oct 08",
-    constraints: [],
-  },
-  {
-    id: "prj-queen",
-    name: "Queen Street TOD",
-    county: "Lancaster",
-    municipality: "Lancaster City",
-    status: "Approved",
-    parcelIds: ["p-lanc-city"],
-    acres: 0.12,
-    modified: "Jul 22",
-    constraints: ["Historic District"],
-  },
-];
+import type { MeetingRecord, TeamComment, TeamMember } from "@/lib/types";
 
 export const MEETINGS: MeetingRecord[] = [
   {
@@ -126,7 +61,8 @@ export const MEETINGS: MeetingRecord[] = [
     county: "Dauphin",
     body: "Zoning Hearing Board",
     status: "Approved",
-    summary: "Special exception for hotel use on Chocolate Avenue corridor granted with conditions.",
+    summary:
+      "Special exception for hotel use on Chocolate Avenue corridor granted with conditions.",
     tags: ["Special Exception"],
   },
   {

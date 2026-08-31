@@ -1,15 +1,6 @@
 import type { ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import {
-  Bell,
-  BookOpen,
-  ContactRound,
-  FileText,
-  HelpCircle,
-  Menu,
-  Search,
-  Users,
-} from "lucide-react";
+import { Bell, BookOpen, ContactRound, FileText, HelpCircle, Menu, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FieldAcqOrdinanceAideLogo } from "@/components/brand/field-acq-ordinance-aide-logo";
@@ -37,7 +28,6 @@ const NAV = [
 const MORE = [
   { to: "/directory", label: "PA County Directory", icon: ContactRound },
   { to: "/minutes", label: "Meeting Minutes", icon: FileText },
-  { to: "/workspace", label: "Team Workspace", icon: Users },
   { to: "/guide", label: "Quick Start", icon: BookOpen },
   { to: "/acquire", label: "Acquisition Toolkit", icon: FileText },
 ];

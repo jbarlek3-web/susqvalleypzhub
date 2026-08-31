@@ -149,30 +149,6 @@ export const PERMIT_PATHS = [
   },
 ];
 
-export const HD_YORK_MATERIALS = [
-  { name: "Quikrete 60 lb Concrete Mix", sku: "202535857", unit: "bag", price: 4.48, cat: "Concrete" },
-  { name: "Quikrete 80 lb High Early Strength", sku: "100318486", unit: "bag", price: 7.48, cat: "Concrete" },
-  { name: "Quikrete 50 lb Fast-Setting Mix", sku: "100318485", unit: "bag", price: 7.97, cat: "Concrete" },
-  { name: "Quikrete 80 lb Type S Mason Mix", sku: "100318487", unit: "bag", price: 8.97, cat: "Masonry" },
-  { name: "Quikrete 20 lb Hydraulic Water-Stop", sku: "100318488", unit: "bag", price: 26.97, cat: "Concrete" },
-  { name: "1/2 in. x 10 ft. #4 Rebar", sku: "202094293", unit: "each", price: 9.36, cat: "Rebar" },
-  { name: "3/8 in. x 4 ft. #3 Rebar", sku: "202094274", unit: "each", price: 4.98, cat: "Rebar" },
-  { name: "Simpson H2.5A Hurricane Tie", sku: "100275721", unit: "each", price: 0.98, cat: "Hardware" },
-  { name: "Simpson LUS24Z Joist Hanger 2x4", sku: "100375096", unit: "each", price: 1.22, cat: "Hardware" },
-  { name: "Simpson A23 18-Ga Angle", sku: "100375094", unit: "each", price: 0.68, cat: "Hardware" },
-  { name: "USG 1/2 in. x 4x8 UltraLight Drywall", sku: "202530304", unit: "sheet", price: 15.48, cat: "Drywall" },
-  { name: "USG 5/8 in. Firecode Drywall 4x8", sku: "100321591", unit: "sheet", price: 17.78, cat: "Drywall" },
-  { name: "Gold Bond PURPLE XP 1/2 in. MR", sku: "202090534", unit: "sheet", price: 23.38, cat: "Drywall" },
-  { name: "Owens Corning R-13 Kraft Batt 15x93", sku: "303305391", unit: "bag", price: 9.97, cat: "Insulation" },
-  { name: "Owens Corning R-13 Roll 15 in. x 32 ft.", sku: "202585857", unit: "roll", price: 27.97, cat: "Insulation" },
-] as const;
-
-export const HD_STORE = {
-  name: "Home Depot York #4125",
-  address: "1600 Mt. Zion Rd, York, PA 17402",
-  checked: "Aug 1, 2026",
-};
-
 export const HBU_QUESTIONS = [
   {
     n: 1,

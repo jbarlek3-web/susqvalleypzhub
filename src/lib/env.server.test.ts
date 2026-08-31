@@ -7,6 +7,9 @@ const required = {
   CLERK_SECRET_KEY: ["sk", "live", "placeholder"].join("_"),
   CLERK_WEBHOOK_SIGNING_SECRET: ["whsec", "placeholder"].join("_"),
   DATABASE_URL: "postgresql://example.invalid/database",
+  GOOGLE_DRIVE_CLIENT_ID: "drive-client.apps.googleusercontent.com",
+  GOOGLE_DRIVE_CLIENT_SECRET: "drive-client-secret",
+  GOOGLE_DRIVE_TOKEN_ENCRYPTION_KEY: Buffer.alloc(32, 7).toString("base64"),
   RATE_LIMIT_SALT: "a-long-independent-rate-limit-salt",
   VERCEL_ENV: "production",
   VITE_CLERK_PUBLISHABLE_KEY: ["pk", "live", "placeholder"].join("_"),
@@ -32,6 +35,24 @@ test("production configuration accepts live Clerk keys", () => {
   withEnv(required, () => {
     assert.deepEqual(missingProductionEnv(), []);
     assert.doesNotThrow(assertProductionConfig);
+  });
+});
+
+test("production configuration permits Google Drive to remain disabled", () => {
+  withEnv(
+    {
+      ...required,
+      GOOGLE_DRIVE_CLIENT_ID: undefined,
+      GOOGLE_DRIVE_CLIENT_SECRET: undefined,
+      GOOGLE_DRIVE_TOKEN_ENCRYPTION_KEY: undefined,
+    },
+    () => assert.doesNotThrow(assertProductionConfig),
+  );
+});
+
+test("production configuration rejects a partially configured Google Drive integration", () => {
+  withEnv({ ...required, GOOGLE_DRIVE_CLIENT_SECRET: undefined }, () => {
+    assert.throws(assertProductionConfig, /Incomplete Google Drive configuration.*CLIENT_SECRET/);
   });
 });
 

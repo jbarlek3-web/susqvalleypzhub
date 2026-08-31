@@ -29,8 +29,7 @@ function Notifications() {
         <div>
           <h1 className="text-2xl font-semibold">Notifications Hub</h1>
           <p className="text-sm text-muted-foreground">
-            A source-backed watchlist for documents that were indexed or re-verified in the app
-            catalog.
+            Official planning websites for the four-county Field ACQ research area.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -44,15 +43,15 @@ function Notifications() {
           <Card className="border-primary-container/30 bg-primary-fixed/35">
             <CardContent className="p-5">
               <div className="text-xs font-bold uppercase tracking-wider text-primary-container">
-                Regional source watch
+                Official source watch
               </div>
               <div className="mt-1 text-lg font-semibold">
-                {visibleAlerts.length} current records across{" "}
+                {visibleAlerts.length} official planning websites across{" "}
                 {Object.values(counties).filter(Boolean).length} counties
               </div>
               <p className="mt-1 text-sm text-muted-foreground">
-                {unread} unread. These are catalog-source updates, not unverified claims that a
-                municipality adopted a rule.
+                {unread} unread. Use these agency websites to locate current municipal and county
+                materials.
               </p>
             </CardContent>
           </Card>
@@ -88,7 +87,7 @@ function Notifications() {
           ) : (
             <Card>
               <CardContent className="p-6 text-sm text-muted-foreground">
-                No counties are enabled. Turn on a county below to see its source-backed records.
+                No counties are enabled. Turn on a county below to see its official planning source.
               </CardContent>
             </Card>
           )}
@@ -135,8 +134,8 @@ function Notifications() {
               </ul>
             </div>
             <p className="text-xs text-muted-foreground">
-              Preferences filter the in-app watchlist. Email delivery is not active, and dates
-              reflect catalog indexing or verification—not ordinance adoption.
+              Preferences filter the in-app watchlist. Email delivery is not active, and dates do
+              not imply that an ordinance or fee schedule changed.
             </p>
           </CardContent>
         </Card>

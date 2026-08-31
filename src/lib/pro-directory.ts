@@ -19,18 +19,7 @@ export type MunicipalityDirectoryRecord = {
   municipality: string;
   municipalityWebsiteUrl: string | null;
   ecode360Url: string | null;
-  municipalityZoningOrdinanceUrl: string | null;
-  municipalityComprehensivePlanUrl: string | null;
-  municipalitySaldoUrl: string | null;
-  municipalitySaldoApplicationUrl: string | null;
   countyPlanningUrl: string | null;
-  countySaldoUrl: string | null;
-  countySaldoApplicationUrl: string | null;
-  countyFeeScheduleUrl: string | null;
-  countyComprehensivePlanUrl: string | null;
-  countyZoningMapsUrl: string | null;
-  countyBuildingCodeUrl: string | null;
-  notes: string | null;
 };
 
 export type CountyDirectoryPayload = {

@@ -57,7 +57,7 @@ function Zoning() {
       <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
         {YORK_ZONING_DISTRICTS.length} live districts across {YORK_MUNICIPALITIES.length}{" "}
         municipalities, joined to PASDA dimensional standards (front/side/lot/height/coverage and
-        use matrix). Zero in the GIS layer means “see the ordinance,” not a 0-ft setback. Source:
+        use matrix). Zero in the map layer means “see the ordinance,” not a 0-ft setback. Source:
         YCPC Open Data + PASDA.
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
