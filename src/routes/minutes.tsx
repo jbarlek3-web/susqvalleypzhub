@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { ProvenanceBadge } from "@/components/brand/provenance-badge";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -22,12 +23,15 @@ function Minutes() {
   return (
     <AppShell>
       <h1 className="text-2xl font-semibold">Meeting Minutes & Archives</h1>
-      <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-        Search public records from municipal bodies across the region. AI-style summaries highlight
-        key decisions.
+      <div className="mt-2">
+        <ProvenanceBadge status="sample-demo" />
+      </div>
+      <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+        Sample/demo catalog of meeting-style summaries. These are not official municipal minutes
+        and are excluded from generated decisions.
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
-        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search records" className="max-w-sm" />
+        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search sample records" className="max-w-sm" />
         <select
           value={body}
           onChange={(e) => setBody(e.target.value)}
@@ -47,7 +51,7 @@ function Minutes() {
           <Card key={m.id}>
             <CardContent className="p-5">
               <div className="text-xs text-muted-foreground">
-                {m.municipality} · {m.date}
+                {m.municipality} \u00b7 {m.date}
               </div>
               <div className="mt-1 font-semibold">{m.body}</div>
               <p className="mt-2 text-sm text-muted-foreground">{m.summary}</p>
