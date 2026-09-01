@@ -18,6 +18,7 @@ async function secure(response: Response, isHttps: boolean) {
   if (contentType.includes("text/html")) {
     const html = await response.text();
     const headers = new Headers(response.headers);
+    headers.delete("content-length");
     applySecurityHeaders(headers, nonce, clerkOrigin, isHttps);
     return new Response(injectHtmlNonce(html, nonce), {
       status: response.status,
