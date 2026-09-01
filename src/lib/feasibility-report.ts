@@ -24,8 +24,8 @@ export const generateFeasibilityReport = createServerFn({ method: "POST" })
     const { getParcel } = await import("@/lib/data/parcels");
     const parcel = getParcel(data.parcelId);
     if (!parcel) return { ok: false as const, error: "Parcel not found." };
-    const { SAMPLE_DEMO_SURFACES } = await import("@/lib/data/derived-layers");
-    if (!isUsableInGeneratedDecisions(SAMPLE_DEMO_SURFACES.seededParcels)) {
+    const { getParcelProvenanceStatus } = await import("@/lib/data/derived-layers");
+    if (!isUsableInGeneratedDecisions(getParcelProvenanceStatus(parcel.id))) {
       return {
         ok: false as const,
         code: "SAMPLE_DEMO_EXCLUDED" as const,

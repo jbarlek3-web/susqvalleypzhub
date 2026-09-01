@@ -7,6 +7,18 @@ export const SAMPLE_DEMO_SURFACES: Record<string, ProvenanceStatus> = {
   seededParcels: "sample-demo",
 };
 
+/**
+ * Per-parcel provenance overrides. Parcels not listed here inherit the
+ * seededParcels surface status ("sample-demo"). Add entries for authoritative
+ * parcels when they are ingested from a live or captured feed.
+ */
+const PARCEL_PROVENANCE_OVERRIDES: Record<string, ProvenanceStatus> = {};
+
+/** Returns the provenance status for the given parcel ID. */
+export function getParcelProvenanceStatus(parcelId: string): ProvenanceStatus {
+  return PARCEL_PROVENANCE_OVERRIDES[parcelId] ?? SAMPLE_DEMO_SURFACES.seededParcels;
+}
+
 const CALCULATED_AT = "2024-10-24T00:00:00.000Z";
 
 export const INSIGHTS_DERIVED: Record<string, DerivedLineage> = {
