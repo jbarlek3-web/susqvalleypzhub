@@ -2,13 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Bookmark, BookmarkCheck, Share2, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { ProvenanceBadge } from "@/components/brand/provenance-badge";
 import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { RENO_2026 } from "@/lib/data/catalog";
+import { SEEDED_PARCEL_BUILDABLE } from "@/lib/data/derived-layers";
 import { getParcel } from "@/lib/data/parcels";
 import { analyzeParcel } from "@/lib/grok-analyze";
+import { sampleDemoBlockMessage } from "@/lib/provenance";
 import { useHub } from "@/lib/store";
 import { formatFullMoney } from "@/lib/utils";
 
@@ -46,11 +49,15 @@ function ParcelReport() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="font-mono text-xs text-on-surface-variant">
-            PARCEL ID: {parcel.apn} · LAST UPDATED: 24 OCT 2024
+            PARCEL ID: {parcel.apn} {"\u00b7"} LAST UPDATED: 24 OCT 2024
           </p>
           <h1 className="text-3xl font-semibold">{parcel.address}</h1>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <ProvenanceBadge status="sample-demo" />
+            <ProvenanceBadge status="derived" lineage={SEEDED_PARCEL_BUILDABLE} />
+          </div>
           <p className="text-muted-foreground">
-            {parcel.municipality}, PA · {parcel.county} County
+            {parcel.municipality}, PA {"\u00b7"} {parcel.county} County
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -97,7 +104,7 @@ function ParcelReport() {
             <ul className="mt-2 grid gap-1 sm:grid-cols-2">
               {parcel.permittedUses.map((u) => (
                 <li key={u} className="text-sm">
-                  · {u}
+                  {"\u00b7"} {u}
                 </li>
               ))}
             </ul>
@@ -115,10 +122,10 @@ function ParcelReport() {
               <Row l="Gross Lot Area" v={`${parcel.sqft.toLocaleString()} SF`} />
               <Row
                 l="Right-of-Way Dedication"
-                v={`− ${parcel.rowDedicationSf.toLocaleString()} SF`}
+                v={`\u2212 ${parcel.rowDedicationSf.toLocaleString()} SF`}
               />
-              <Row l="Environmental Buffers" v={`− ${parcel.envBufferSf.toLocaleString()} SF`} />
-              <Row l="Required Setbacks" v={`− ${parcel.setbackSf.toLocaleString()} SF`} />
+              <Row l="Environmental Buffers" v={`\u2212 ${parcel.envBufferSf.toLocaleString()} SF`} />
+              <Row l="Required Setbacks" v={`\u2212 ${parcel.setbackSf.toLocaleString()} SF`} />
               <Row l="Net Buildable Area" v={`${parcel.buildableSf.toLocaleString()} SF`} strong />
             </dl>
           </CardContent>
@@ -184,7 +191,7 @@ function ParcelReport() {
                     <div className="font-medium">{t.party}</div>
                     <div className="text-xs text-muted-foreground">{t.date}</div>
                   </div>
-                  <div className="font-mono">{t.price ? formatFullMoney(t.price) : "—"}</div>
+                  <div className="font-mono">{t.price ? formatFullMoney(t.price) : "\u2014"}</div>
                 </li>
               ))}
             </ul>
@@ -227,7 +234,7 @@ function ParcelReport() {
               </tbody>
             </table>
             <p className="mt-2 text-[11px] text-muted-foreground">
-              Central PA 2026 contractor ranges. Site work priced separately by acre.
+              Central PA 2026 contractor ranges. Site work priced separately by acre. Sample/demo.
             </p>
           </CardContent>
         </Card>
@@ -238,7 +245,7 @@ function ParcelReport() {
           <CardTitle>Grok Feasibility Brief</CardTitle>
           <Button
             size="sm"
-            disabled={busy}
+            disabled
             onClick={async () => {
               setBusy(true);
               const res = await analyzeParcel({
@@ -254,18 +261,14 @@ function ParcelReport() {
               setAi(res.text);
             }}
           >
-            <Sparkles className="size-3.5" /> {busy ? "Analyzing…" : "Ask Grok"}
+            <Sparkles className="size-3.5" /> Ask Grok
           </Button>
         </CardHeader>
         <CardContent>
+          <p className="text-sm text-muted-foreground">{sampleDemoBlockMessage()}</p>
           {ai ? (
-            <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{ai}</pre>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              User-initiated zoning and process brief for this parcel. Not a substitute for
-              municipal counsel.
-            </p>
-          )}
+            <pre className="mt-2 whitespace-pre-wrap font-sans text-sm leading-relaxed">{ai}</pre>
+          ) : null}
         </CardContent>
       </Card>
 
