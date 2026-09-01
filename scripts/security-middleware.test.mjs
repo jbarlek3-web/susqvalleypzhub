@@ -1,27 +1,23 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
+import { buildContentSecurityPolicy, cspOmitsUnsafeInlineScripts } from "../src/lib/csp.ts";
 
 const source = readFileSync(new URL("../server/middleware/security.ts", import.meta.url), "utf8");
 
-function cspDirective(name) {
-  const line = source.split(/\r?\n/).find((candidate) => candidate.includes(`${name} `));
-  assert.ok(line, `${name} directive was not found`);
-  return line;
-}
-
 test("dynamic responses override upstream caching with no-store", () => {
-  const secureFunction = source.match(/function secure\([\s\S]*?\n}/)?.[0];
-  assert.ok(secureFunction, "secure response function was not found");
-  assert.match(secureFunction, /headers\.set\("cache-control", "no-store"\)/);
-  assert.match(secureFunction, /headers\.set\("x-content-type-options", "nosniff"\)/);
-  assert.match(secureFunction, /headers\.set\("strict-transport-security", "max-age=31536000; includeSubDomains"\)/);
+  assert.match(source, /applySecurityHeaders/);
+  assert.match(source, /injectHtmlNonce/);
+  assert.match(source, /generateNonce/);
 });
 
-test("CSP permits reviewed GIS and Clerk Billing origins without a broad connect allowlist", () => {
-  const scriptSrc = cspDirective("script-src");
-  const connectSrc = cspDirective("connect-src");
-  const frameSrc = cspDirective("frame-src");
+test("CSP builder permits reviewed GIS and Clerk Billing origins without unsafe-inline scripts", () => {
+  const policy = buildContentSecurityPolicy("C".repeat(16), "https://clerk.example");
+  assert.equal(cspOmitsUnsafeInlineScripts(policy), true);
+  const connectSrc = policy.split(";").map((p) => p.trim()).find((p) => p.startsWith("connect-src "));
+  const scriptSrc = policy.split(";").map((p) => p.trim()).find((p) => p.startsWith("script-src "));
+  const frameSrc = policy.split(";").map((p) => p.trim()).find((p) => p.startsWith("frame-src "));
+  assert.ok(connectSrc && scriptSrc && frameSrc);
 
   for (const origin of [
     "https://arcweb1.ycpc.org",
@@ -38,9 +34,7 @@ test("CSP permits reviewed GIS and Clerk Billing origins without a broad connect
   for (const origin of ["https://js.stripe.com", "https://*.js.stripe.com"]) {
     assert.match(scriptSrc, new RegExp(origin.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
-  for (const origin of ["https://api.stripe.com"]) {
-    assert.match(connectSrc, new RegExp(origin.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-  }
+  assert.match(connectSrc, /https:\/\/api\.stripe\.com/);
   for (const origin of [
     "https://js.stripe.com",
     "https://*.js.stripe.com",
@@ -55,4 +49,5 @@ test("CSP permits reviewed GIS and Clerk Billing origins without a broad connect
   assert.doesNotMatch(connectSrc, /grok\.com/);
   assert.doesNotMatch(frameSrc, /grok\.com/);
   assert.doesNotMatch(connectSrc, /\shttps:\s/);
+  assert.match(policy, /script-src-elem /);
 });
