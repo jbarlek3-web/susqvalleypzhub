@@ -40,7 +40,7 @@ export function ProvenanceBadge({
       ) : null}
       {status === "derived" && lineage ? (
         <span className="font-medium normal-case tracking-normal text-muted-foreground">
-          {lineage.formula} \u00b7 {lineage.units} \u00b7 {lineage.rounding} \u00b7 {lineage.inputVersions} \u00b7{" "}
+          {lineage.formula} · {lineage.units} · {lineage.rounding} · {lineage.inputVersions} ·{" "}
           {lineage.calculatedAt}
         </span>
       ) : null}
