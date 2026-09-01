@@ -27,7 +27,7 @@ test("buildContentSecurityPolicy uses nonce and forbids unsafe-inline on scripts
   assert.match(policy, /script-src-elem /);
   assert.match(policy, new RegExp(`'nonce-${nonce}'`));
   assert.doesNotMatch(policy.split("style-src-attr")[0] ?? policy, /script-src[^;]*'unsafe-inline'/);
-  assert.match(policy, /https:\\/\\/js\\.stripe\\.com/);
+  assert.match(policy, /https:\/\/js\.stripe\.com/);
 });
 
 test("injectHtmlNonce stamps script and style tags without a nonce", () => {
