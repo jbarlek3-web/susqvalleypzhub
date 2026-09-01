@@ -49,7 +49,7 @@ function Insights() {
         <Metric
           label="Median Days on Market"
           value="42"
-          delta="\u22125 days"
+          delta="−5 days"
           vs="vs last quarter"
           up={false}
         />
