@@ -34,7 +34,8 @@ export const analyzeParcel = createServerFn({ method: "POST" })
     ]);
     const parcel = getParcel(data.parcelId);
     if (!parcel) return { ok: false as const, error: "Parcel not found." };
-    if (!isUsableInGeneratedDecisions("sample-demo")) {
+    const { SAMPLE_DEMO_SURFACES } = await import("@/lib/data/derived-layers");
+    if (!isUsableInGeneratedDecisions(SAMPLE_DEMO_SURFACES.seededParcels)) {
       return {
         ok: false as const,
         code: "SAMPLE_DEMO_EXCLUDED" as const,
