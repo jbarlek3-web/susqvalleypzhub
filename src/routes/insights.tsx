@@ -11,9 +11,11 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { ProvenanceBadge } from "@/components/brand/provenance-badge";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PERMIT_VOLUME, PRICE_SERIES } from "@/lib/data/catalog";
+import { INSIGHTS_DERIVED } from "@/lib/data/derived-layers";
 
 export const Route = createFileRoute("/insights")({ component: Insights });
 
@@ -24,8 +26,14 @@ function Insights() {
         <div>
           <h1 className="text-2xl font-semibold">Regional Insights</h1>
           <p className="text-sm text-muted-foreground">
-            Market, risk, and development intelligence for Central Pennsylvania municipalities.
+            Illustrative catalog metrics. Not municipal source data.
           </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <ProvenanceBadge status="sample-demo" />
+            <ProvenanceBadge status="derived" lineage={INSIGHTS_DERIVED.pricePerAcre} />
+            <ProvenanceBadge status="derived" lineage={INSIGHTS_DERIVED.permitVolume} />
+            <ProvenanceBadge status="derived" lineage={INSIGHTS_DERIVED.floodShare} />
+          </div>
         </div>
       </div>
       <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -41,7 +49,7 @@ function Insights() {
         <Metric
           label="Median Days on Market"
           value="42"
-          delta="−5 days"
+          delta="\u22125 days"
           vs="vs last quarter"
           up={false}
         />
