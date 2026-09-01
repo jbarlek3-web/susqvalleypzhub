@@ -1,5 +1,5 @@
-import type { DerivedLineage, ProvenanceStatus } from "@/lib/provenance";
-import { assertDerivedLineage } from "@/lib/provenance";
+import type { DerivedLineage, ProvenanceStatus } from "../provenance.ts";
+import { assertDerivedLineage } from "../provenance.ts";
 
 export const SAMPLE_DEMO_SURFACES: Record<string, ProvenanceStatus> = {
   insights: "sample-demo",
