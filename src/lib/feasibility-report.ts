@@ -4,6 +4,7 @@ import { consumeAiQuestion, getAiUsage } from "@/lib/ai-credits.server";
 import { requirePro } from "@/lib/entitlement.server";
 import { FeasibilityInputSchema } from "@/lib/feasibility-report-core";
 import { consumeRateLimit } from "@/lib/rate-limit.server";
+import { isUsableInGeneratedDecisions, sampleDemoBlockMessage } from "@/lib/provenance";
 
 export const generateFeasibilityReport = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
@@ -23,6 +24,13 @@ export const generateFeasibilityReport = createServerFn({ method: "POST" })
     const { getParcel } = await import("@/lib/data/parcels");
     const parcel = getParcel(data.parcelId);
     if (!parcel) return { ok: false as const, error: "Parcel not found." };
+    if (!isUsableInGeneratedDecisions("sample-demo")) {
+      return {
+        ok: false as const,
+        code: "SAMPLE_DEMO_EXCLUDED" as const,
+        error: sampleDemoBlockMessage(),
+      };
+    }
     const evidence = getAiReferenceEvidence({
       county: parcel.county,
       municipality: parcel.municipality,
