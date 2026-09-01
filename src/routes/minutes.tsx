@@ -51,7 +51,7 @@ function Minutes() {
           <Card key={m.id}>
             <CardContent className="p-5">
               <div className="text-xs text-muted-foreground">
-                {m.municipality} \u00b7 {m.date}
+                {m.municipality} {"\u00b7"} {m.date}
               </div>
               <div className="mt-1 font-semibold">{m.body}</div>
               <p className="mt-2 text-sm text-muted-foreground">{m.summary}</p>

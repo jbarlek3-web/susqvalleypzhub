@@ -49,7 +49,7 @@ function ParcelReport() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="font-mono text-xs text-on-surface-variant">
-            PARCEL ID: {parcel.apn} \u00b7 LAST UPDATED: 24 OCT 2024
+            PARCEL ID: {parcel.apn} {"\u00b7"} LAST UPDATED: 24 OCT 2024
           </p>
           <h1 className="text-3xl font-semibold">{parcel.address}</h1>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -57,7 +57,7 @@ function ParcelReport() {
             <ProvenanceBadge status="derived" lineage={SEEDED_PARCEL_BUILDABLE} />
           </div>
           <p className="text-muted-foreground">
-            {parcel.municipality}, PA \u00b7 {parcel.county} County
+            {parcel.municipality}, PA {"\u00b7"} {parcel.county} County
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -104,7 +104,7 @@ function ParcelReport() {
             <ul className="mt-2 grid gap-1 sm:grid-cols-2">
               {parcel.permittedUses.map((u) => (
                 <li key={u} className="text-sm">
-                  \u00b7 {u}
+                  {"\u00b7"} {u}
                 </li>
               ))}
             </ul>
