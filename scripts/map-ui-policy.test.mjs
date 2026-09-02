@@ -1,22 +1,26 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import test from "node:test";
 
-const MAP_UI_FILES = [
-  "src/routes/map.tsx",
-  "src/components/map/esri-dynamic-layer.tsx",
-  "src/components/map/gis-overlays.tsx",
-  "src/components/map/leaflet-map.tsx",
-  "src/components/map/map-panel.tsx",
-  "src/components/map/parcel-map.tsx",
-  "src/components/map/york-parcels-layer.tsx",
-  "src/components/map/york-zoning-layer.tsx",
-];
+async function sourceFiles(directory) {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const nested = await Promise.all(
+    entries.map(async (entry) => {
+      const path = `${directory}/${entry.name}`;
+      if (entry.isDirectory()) return sourceFiles(path);
+      return /\.[cm]?[jt]sx?$/.test(entry.name) ? [path] : [];
+    }),
+  );
+  return nested.flat();
+}
 
 test("map views do not render provenance or sample/demo overlays", async () => {
-  const sources = await Promise.all(MAP_UI_FILES.map((path) => readFile(path, "utf8")));
+  const mapUiFiles = ["src/routes/map.tsx", ...(await sourceFiles("src/components/map"))];
+  const sources = await Promise.all(mapUiFiles.map((path) => readFile(path, "utf8")));
   const mapUi = sources.join("\n");
 
-  assert.doesNotMatch(mapUi, /ProvenanceBadge|data-provenance/);
-  assert.doesNotMatch(mapUi, /SAMPLE\/DEMO|Not for generated decisions/i);
+  assert.doesNotMatch(
+    mapUi,
+    /ProvenanceBadge|data-provenance|sample[-/]demo|Not for generated decisions|SEEDED_PARCEL_BUILDABLE|DerivedLineage/i,
+  );
 });
