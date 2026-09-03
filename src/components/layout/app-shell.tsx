@@ -93,7 +93,7 @@ export function AppShell({
             <Menu />
           </Button>
           <Link to="/" className="flex min-w-0 items-center">
-            <FieldAcqOrdinanceAideLogo className="h-10 max-w-[150px] md:h-12 md:max-w-[190px]" />
+            <FieldAcqOrdinanceAideLogo className="h-8 max-w-[114px] sm:h-10 sm:max-w-[150px] md:h-12 md:max-w-[190px]" />
           </Link>
           <nav className="ml-4 hidden items-center gap-1 lg:flex">
             {NAV.map((n) => {

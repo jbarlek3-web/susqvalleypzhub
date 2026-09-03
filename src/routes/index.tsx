@@ -36,7 +36,7 @@ function Home() {
     <AppShell>
       <section className="relative overflow-hidden rounded-xl border border-outline-variant border-t-4 border-t-brand-lime bg-card px-5 py-12 md:px-12 md:py-16">
         <div className="relative mx-auto max-w-3xl text-center">
-          <FieldAcqOrdinanceAideLogo className="mx-auto h-20 max-w-[300px]" />
+          <FieldAcqOrdinanceAideLogo className="mx-auto w-full max-w-[300px]" />
           <p className="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-secondary">
             Field intelligence for land and ordinance research
           </p>
