@@ -1,0 +1,337 @@
+[
+  {
+    "county": "Adams",
+    "departmentName": "Office of Planning and Development",
+    "departmentUrl": "https://www.adamscountypa.gov/departments/officeofplanninganddevelopment/zoning"
+  },
+  {
+    "county": "Allegheny",
+    "departmentName": "Allegheny County Economic Development",
+    "departmentUrl": "https://www.alleghenycounty.us/Projects-and-Initiatives/Economic-Development/Land-Use-Planning"
+  },
+  {
+    "county": "Armstrong",
+    "departmentName": "Armstrong County Department of Planning and Development",
+    "departmentUrl": "https://www.co.armstrong.pa.us/index.php/county-government-m/planning-and-development-m"
+  },
+  {
+    "county": "Beaver",
+    "departmentName": "Beaver County Planning Commission",
+    "departmentUrl": "https://www.beavercountypa.gov/departments/planning-commission"
+  },
+  {
+    "county": "Bedford",
+    "departmentName": "Planning Department",
+    "departmentUrl": "https://www.bedfordcountypa.org/departments/planning/index.php"
+  },
+  {
+    "county": "Berks",
+    "departmentName": "Berks County Planning Commission",
+    "departmentUrl": "https://www.berkspa.gov/departments/planning-commission"
+  },
+  {
+    "county": "Blair",
+    "departmentName": "Blair County Planning Commission",
+    "departmentUrl": "https://www.blairplanning.org/"
+  },
+  {
+    "county": "Bradford",
+    "departmentName": "Community Planning & Mapping",
+    "departmentUrl": "https://www.bradfordcountypa.gov/299/Community-Planning-Mapping"
+  },
+  {
+    "county": "Bucks",
+    "departmentName": "Bucks County Planning Commission",
+    "departmentUrl": "https://www.buckscounty.gov/2207/Planning-Commission"
+  },
+  {
+    "county": "Butler",
+    "departmentName": "Planning Commission",
+    "departmentUrl": "https://www.butlercountypa.gov/321/Planning-Commission"
+  },
+  {
+    "county": "Cambria",
+    "departmentName": "Cambria County Planning Commission",
+    "departmentUrl": "https://cambriaplanning.org/"
+  },
+  {
+    "county": "Cameron",
+    "departmentName": "Cameron County Planning Commission",
+    "departmentUrl": "https://www.cameroncountypa.com/resident/planning_commission.php"
+  },
+  {
+    "county": "Carbon",
+    "departmentName": "Carbon County Office of Planning & Development",
+    "departmentUrl": "https://www.carboncountypa.gov/services/planning___development/index.php"
+  },
+  {
+    "county": "Centre",
+    "departmentName": "Centre County Planning and Community Development Office",
+    "departmentUrl": "https://centrecountypa.gov/207/Planning-Community-Development"
+  },
+  {
+    "county": "Chester",
+    "departmentName": "Planning Commission",
+    "departmentUrl": "https://www.chesco.org/planning"
+  },
+  {
+    "county": "Clarion",
+    "departmentName": "Clarion County Planning Department",
+    "departmentUrl": "https://www.co.clarion.pa.us/government/departments/planning/index.php"
+  },
+  {
+    "county": "Clearfield",
+    "departmentName": "Clearfield County Planning Department",
+    "departmentUrl": "https://clearfieldcountypa.gov/217/Planning"
+  },
+  {
+    "county": "Clinton",
+    "departmentName": "Clinton County Planning Department",
+    "departmentUrl": "https://www.clintoncountypa.gov/departments/planning-grants-zoning"
+  },
+  {
+    "county": "Columbia",
+    "departmentName": "Commissioners' Office of Planning and Development",
+    "departmentUrl": "http://columbiapa.org/planning/index.php"
+  },
+  {
+    "county": "Crawford",
+    "departmentName": "Crawford County Planning Commission + Office",
+    "departmentUrl": "https://www.crawfordcountypa.net/Planning/Pages/home.aspx"
+  },
+  {
+    "county": "Cumberland",
+    "departmentName": "Planning Department",
+    "departmentUrl": "https://www.cumberlandcountypa.gov/120/Planning-Department"
+  },
+  {
+    "county": "Dauphin",
+    "departmentName": "Dauphin County Planning Commission",
+    "departmentUrl": "https://www.tcrpc-pa.org/dcpc-about"
+  },
+  {
+    "county": "Delaware",
+    "departmentName": "Planning Department",
+    "departmentUrl": "https://www.delcopa.gov/planning"
+  },
+  {
+    "county": "Elk",
+    "departmentName": "Elk County Planning Department",
+    "departmentUrl": "https://countyofelkpa.gov/elk-county-offices/elk-county-planning-department/"
+  },
+  {
+    "county": "Erie",
+    "departmentName": "Department of Planning and Community Development",
+    "departmentUrl": "https://eriecountypa.gov/departments/planning-and-community-development/"
+  },
+  {
+    "county": "Fayette",
+    "departmentName": "Planning, Zoning & Community Development",
+    "departmentUrl": "https://www.fayettecountypa.org/258/Planning-Zoning-Community-Development"
+  },
+  {
+    "county": "Forest",
+    "departmentName": "Conservation District and Planning Department",
+    "departmentUrl": "https://www.co.forest.pa.us/departments/conservation_district_and_planning.php"
+  },
+  {
+    "county": "Franklin",
+    "departmentName": "Franklin County Planning Department",
+    "departmentUrl": "https://www.franklincountypa.gov/departments/planning/"
+  },
+  {
+    "county": "Fulton",
+    "departmentName": "Planning & Mapping",
+    "departmentUrl": "https://www.co.fulton.pa.us/planning-commission.php"
+  },
+  {
+    "county": "Greene",
+    "departmentName": "Department of Planning and Community Development",
+    "departmentUrl": "https://www.co.greene.pa.us/department-planning-commission"
+  },
+  {
+    "county": "Huntingdon",
+    "departmentName": "Huntingdon County Planning and Development Department",
+    "departmentUrl": "https://www.huntingdoncountypa.gov/departments/planning-and-development/planning-commission"
+  },
+  {
+    "county": "Indiana",
+    "departmentName": "Indiana County Office of Planning & Development",
+    "departmentUrl": "https://www.icopd.org/"
+  },
+  {
+    "county": "Jefferson",
+    "departmentName": "Jefferson County Planning Commission",
+    "departmentUrl": "https://www.jeffersoncountypa.gov/departments/department-of-development/planning/"
+  },
+  {
+    "county": "Juniata",
+    "departmentName": "Planning & Community Development",
+    "departmentUrl": "https://www.juniataco.org/departments/planning/"
+  },
+  {
+    "county": "Lackawanna",
+    "departmentName": "Lackawanna County Department of Planning",
+    "departmentUrl": "https://www.lackawannacounty.org/government/departments/planning.php"
+  },
+  {
+    "county": "Lancaster",
+    "departmentName": "Lancaster County Planning Department",
+    "departmentUrl": "https://lancastercountyplanning.org/"
+  },
+  {
+    "county": "Lawrence",
+    "departmentName": "Lawrence County Department of Planning and Community Development",
+    "departmentUrl": "https://www.lawrencecountypa.gov/departments/planning-community-development"
+  },
+  {
+    "county": "Lebanon",
+    "departmentName": "Lebanon County Planning Department",
+    "departmentUrl": "https://www.lebanoncountypa.gov/departments/planning"
+  },
+  {
+    "county": "Lehigh",
+    "departmentName": "Lehigh Valley Planning Commission",
+    "departmentUrl": "https://lvpc.org/"
+  },
+  {
+    "county": "Luzerne",
+    "departmentName": "Planning & Zoning",
+    "departmentUrl": "https://www.luzernecounty.org/281/Planning-Zoning"
+  },
+  {
+    "county": "Lycoming",
+    "departmentName": "Planning & Community Development",
+    "departmentUrl": "https://lycomingcountypa.gov/government/departments/planning_community_development/zoning.php"
+  },
+  {
+    "county": "McKean",
+    "departmentName": "Planning Commission",
+    "departmentUrl": "https://www.mckeancountypa.gov/departments/planning_commission/index.php"
+  },
+  {
+    "county": "Mercer",
+    "departmentName": "Mercer County Regional Planning Commission",
+    "departmentUrl": "https://www.mcrpc.com/"
+  },
+  {
+    "county": "Mifflin",
+    "departmentName": "Mifflin County Planning and Development Department",
+    "departmentUrl": "https://www.mifflincountypa.gov/planning"
+  },
+  {
+    "county": "Monroe",
+    "departmentName": "Monroe County Planning Commission",
+    "departmentUrl": "https://www.monroecountypa.gov/departments/planning"
+  },
+  {
+    "county": "Montgomery",
+    "departmentName": "Montgomery County Planning Commission",
+    "departmentUrl": "https://www.montgomerycountypa.gov/490/Planning-Commission"
+  },
+  {
+    "county": "Montour",
+    "departmentName": "Office of Zoning",
+    "departmentUrl": "https://www.montourcounty.gov/departments/zoning"
+  },
+  {
+    "county": "Northampton",
+    "departmentName": "Lehigh Valley Planning Commission",
+    "departmentUrl": "https://lvpc.org/"
+  },
+  {
+    "county": "Northumberland",
+    "departmentName": "Northumberland County Department of Economic Development & Planning",
+    "departmentUrl": "https://northumberlandcountypa.gov/planning/"
+  },
+  {
+    "county": "Perry",
+    "departmentName": "Planning Commission",
+    "departmentUrl": "https://perryco.org/departments/planning-commission/"
+  },
+  {
+    "county": "Philadelphia",
+    "departmentName": "Department of Planning and Development",
+    "departmentUrl": "https://www.phila.gov/departments/department-of-planning-and-development/"
+  },
+  {
+    "county": "Pike",
+    "departmentName": "Pike County Planning & Mapping Office",
+    "departmentUrl": "https://www.pikepa.org/living___working/planning_and_mapping/index.php"
+  },
+  {
+    "county": "Potter",
+    "departmentName": "Planning Department",
+    "departmentUrl": "https://pottercountypa.gov/departments/gis_planning_community_development/planning.php"
+  },
+  {
+    "county": "Schuylkill",
+    "departmentName": "Planning & Zoning",
+    "departmentUrl": "https://schuylkillcountypa.gov/departments/planning___zoning/index.php"
+  },
+  {
+    "county": "Snyder",
+    "departmentName": "Planning Commission",
+    "departmentUrl": "https://www.snydercounty.org/departments/planning-commission/"
+  },
+  {
+    "county": "Somerset",
+    "departmentName": "Somerset County Planning Commission",
+    "departmentUrl": "http://www.co.somerset.pa.us/department.asp?deptnum=104"
+  },
+  {
+    "county": "Sullivan",
+    "departmentName": "Sullivan County Planning & Development",
+    "departmentUrl": "https://www.sullivancountypa.gov/offices/planning-development"
+  },
+  {
+    "county": "Susquehanna",
+    "departmentName": "The Susquehanna County Department of Planning and Development",
+    "departmentUrl": "https://www.susqco.com/departments/planning-and-development"
+  },
+  {
+    "county": "Tioga",
+    "departmentName": "Tioga County Planning Commission",
+    "departmentUrl": "https://www.tiogacountypa.us/departments/planning-commission"
+  },
+  {
+    "county": "Union",
+    "departmentName": "Union County Planning and Economic Development",
+    "departmentUrl": "https://unioncountypa.org/planning-commission/"
+  },
+  {
+    "county": "Venango",
+    "departmentName": "Venango County Regional Planning Commission",
+    "departmentUrl": "https://www.venangocountypa.gov/452/Planning-Commission"
+  },
+  {
+    "county": "Warren",
+    "departmentName": "Planning & Zoning",
+    "departmentUrl": "https://warrencountypa.gov/1197/Planning-Zoning"
+  },
+  {
+    "county": "Washington",
+    "departmentName": "Washington County Planning Commission",
+    "departmentUrl": "https://www.washingtoncopa.gov/planning"
+  },
+  {
+    "county": "Wayne",
+    "departmentName": "Wayne County Department of Planning / GIS",
+    "departmentUrl": "https://waynecountypa.gov/328/Subdivision-Zoning"
+  },
+  {
+    "county": "Westmoreland",
+    "departmentName": "Westmoreland County Planning Division",
+    "departmentUrl": "https://www.westmorelandcountypa.gov/3278/Planning"
+  },
+  {
+    "county": "Wyoming",
+    "departmentName": "Wyoming County Office of Community Planning",
+    "departmentUrl": "https://wyomingcountypa.gov/directory/community-planning/"
+  },
+  {
+    "county": "York",
+    "departmentName": "York County Planning Commission",
+    "departmentUrl": "https://www.ycpc.org/"
+  }
+]

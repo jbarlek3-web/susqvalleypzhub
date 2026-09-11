@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Susquehanna Valley Planning Hub",
+      "hasCanvas": false,
+      "bodyTextLen": 2104,
+      "bodyTextHash": "202d854f9cef6e939d15f3e97345add79d4a2fd1b910b78c6c3940a576f88537",
+      "bodyTextPrefix": "Planning Hub HOME MAP DASHBOARD DOCUMENTS ZONING INSIGHTS PRO Si",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Susquehanna Valley Planning Hub",
+      "hasCanvas": false,
+      "bodyTextLen": 2047,
+      "bodyTextHash": "307e1d207fac6dd6966f010eaddeb0254c994eabd77c09a015a5928d2894009b",
+      "bodyTextPrefix": "Planning Hub Preview Mode Active — 5-minute trial The Centralize",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": false,
+  "baselineReasons": []
+}

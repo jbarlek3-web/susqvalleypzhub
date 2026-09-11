@@ -1,0 +1,48 @@
+{
+  "East Earl Township": [
+    {
+      "url": "https://eastearltwp.org/index.php?id=150&itemid=826&option=com_content&view=article",
+      "categories": ["Builder", "Codes", "SALDO", "Zoning"]
+    }
+  ],
+  "Elizabeth Township": [
+    {
+      "url": "https://ecode360.com/26858479",
+      "categories": ["Zoning"]
+    }
+  ],
+  "Lititz Borough": [
+    {
+      "url": "https://lititzborough.org/DocumentCenter/View/785/Zoning-Ordinance",
+      "categories": ["Zoning"]
+    }
+  ],
+  "Mt Joy Township": [
+    {
+      "url": "https://www.mtjoytwp.org/documents/",
+      "categories": ["Builder", "SALDO"]
+    },
+    {
+      "url": "https://ecode360.com/11526470",
+      "categories": ["Zoning"]
+    }
+  ],
+  "New Holland Borough": [
+    {
+      "url": "https://newhollandborough.org/code-of-ordinances/",
+      "categories": ["SALDO", "Zoning"]
+    }
+  ],
+  "Rapho Township": [
+    {
+      "url": "https://www.raphotownship.com/Directory/Home/DepartmentListing?DID=25",
+      "categories": ["Codes", "Zoning"]
+    }
+  ],
+  "West Hempfield Township": [
+    {
+      "url": "https://www.westhempfield.org/subpage.php?link=planning",
+      "categories": ["Zoning"]
+    }
+  ]
+}
