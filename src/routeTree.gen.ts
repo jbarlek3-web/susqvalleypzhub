@@ -22,6 +22,7 @@ import { Route as MapRouteImport } from './routes/map'
 import { Route as MinutesRouteImport } from './routes/minutes'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as Scene3dRouteImport } from './routes/scene-3d'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -100,6 +101,11 @@ const NotificationsRoute = NotificationsRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Scene3dRoute = Scene3dRouteImport.update({
+  id: '/scene-3d',
+  path: '/scene-3d',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignUpRoute = SignUpRouteImport.update({
@@ -188,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/minutes': typeof MinutesRoute
   '/notifications': typeof NotificationsRoute
   '/privacy': typeof PrivacyRoute
+  '/scene-3d': typeof Scene3dRoute
   '/sign-up': typeof SignUpRoute
   '/subscription': typeof SubscriptionRoute
   '/terms': typeof TermsRoute
@@ -217,6 +224,7 @@ export interface FileRoutesByTo {
   '/minutes': typeof MinutesRoute
   '/notifications': typeof NotificationsRoute
   '/privacy': typeof PrivacyRoute
+  '/scene-3d': typeof Scene3dRoute
   '/sign-up': typeof SignUpRoute
   '/subscription': typeof SubscriptionRoute
   '/terms': typeof TermsRoute
@@ -247,6 +255,7 @@ export interface FileRoutesById {
   '/minutes': typeof MinutesRoute
   '/notifications': typeof NotificationsRoute
   '/privacy': typeof PrivacyRoute
+  '/scene-3d': typeof Scene3dRoute
   '/sign-up': typeof SignUpRoute
   '/subscription': typeof SubscriptionRoute
   '/terms': typeof TermsRoute
@@ -278,6 +287,7 @@ export interface FileRouteTypes {
     | '/minutes'
     | '/notifications'
     | '/privacy'
+    | '/scene-3d'
     | '/sign-up'
     | '/subscription'
     | '/terms'
@@ -307,6 +317,7 @@ export interface FileRouteTypes {
     | '/minutes'
     | '/notifications'
     | '/privacy'
+    | '/scene-3d'
     | '/sign-up'
     | '/subscription'
     | '/terms'
@@ -336,6 +347,7 @@ export interface FileRouteTypes {
     | '/minutes'
     | '/notifications'
     | '/privacy'
+    | '/scene-3d'
     | '/sign-up'
     | '/subscription'
     | '/terms'
@@ -366,6 +378,7 @@ export interface RootRouteChildren {
   MinutesRoute: typeof MinutesRoute
   NotificationsRoute: typeof NotificationsRoute
   PrivacyRoute: typeof PrivacyRoute
+  Scene3dRoute: typeof Scene3dRoute
   SignUpRoute: typeof SignUpRoute
   SubscriptionRoute: typeof SubscriptionRoute
   TermsRoute: typeof TermsRoute
@@ -473,6 +486,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scene-3d': {
+      id: '/scene-3d'
+      path: '/scene-3d'
+      fullPath: '/scene-3d'
+      preLoaderRoute: typeof Scene3dRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-up': {
@@ -590,6 +610,7 @@ const rootRouteChildren: RootRouteChildren = {
   MinutesRoute: MinutesRoute,
   NotificationsRoute: NotificationsRoute,
   PrivacyRoute: PrivacyRoute,
+  Scene3dRoute: Scene3dRoute,
   SignUpRoute: SignUpRoute,
   SubscriptionRoute: SubscriptionRoute,
   TermsRoute: TermsRoute,
