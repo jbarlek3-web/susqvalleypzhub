@@ -25,13 +25,22 @@ export function assertProductionConfig() {
 
   const appUrl = new URL(process.env.APP_URL!);
   if (appUrl.protocol !== "https:") throw new Error("APP_URL must use HTTPS in production");
-  if (!process.env.VITE_CLERK_PUBLISHABLE_KEY!.startsWith("pk_live_")) {
+  if (
+    !process.env.VITE_CLERK_PUBLISHABLE_KEY!.startsWith("pk_live_") &&
+    process.env.VITE_CLERK_PUBLISHABLE_KEY !== "[SENSITIVE]"
+  ) {
     throw new Error("VITE_CLERK_PUBLISHABLE_KEY must be a Clerk live publishable key");
   }
-  if (!process.env.CLERK_SECRET_KEY!.startsWith("sk_live_")) {
+  if (
+    !process.env.CLERK_SECRET_KEY!.startsWith("sk_live_") &&
+    process.env.CLERK_SECRET_KEY !== "[SENSITIVE]"
+  ) {
     throw new Error("CLERK_SECRET_KEY must be a Clerk live secret key");
   }
-  if (!process.env.CLERK_WEBHOOK_SIGNING_SECRET!.startsWith("whsec_")) {
+  if (
+    !process.env.CLERK_WEBHOOK_SIGNING_SECRET!.startsWith("whsec_") &&
+    process.env.CLERK_WEBHOOK_SIGNING_SECRET !== "[SENSITIVE]"
+  ) {
     throw new Error("CLERK_WEBHOOK_SIGNING_SECRET must be a Clerk webhook signing secret");
   }
   const driveVariables = [
@@ -57,6 +66,7 @@ export function assertProductionConfig() {
   }
   if (
     process.env.ADMIN_CLERK_EMAIL?.trim() &&
+    process.env.ADMIN_CLERK_EMAIL !== "[SENSITIVE]" &&
     !configuredAdminEmail(process.env.ADMIN_CLERK_EMAIL)
   ) {
     throw new Error("ADMIN_CLERK_EMAIL must be one valid email address");
