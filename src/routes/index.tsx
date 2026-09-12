@@ -2,12 +2,14 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   Bot,
+  Box,
   CheckCircle2,
   ContactRound,
   Gavel,
   Layers,
   Map as MapIcon,
   Search,
+  Sparkles,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { FieldAcqOrdinanceAideLogo } from "@/components/brand/field-acq-ordinance-aide-logo";
@@ -34,7 +36,9 @@ function Home() {
 
   return (
     <AppShell>
-      <section className="relative overflow-hidden rounded-xl border border-outline-variant border-t-4 border-t-brand-lime bg-card px-5 py-12 md:px-12 md:py-16">
+      <section className="relative overflow-hidden rounded-2xl border border-outline-variant/80 border-t-4 border-t-brand-lime bg-card/90 px-5 py-12 shadow-[0_4px_24px_rgb(17_40_71/0.06)] backdrop-blur-md md:px-12 md:py-16">
+        {/* Ambient top glow */}
+        <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-72 w-[650px] rounded-full bg-gradient-to-b from-brand-lime/15 via-secondary/10 to-transparent blur-3xl" />
         <div className="relative mx-auto max-w-3xl text-center">
           <FieldAcqOrdinanceAideLogo className="mx-auto h-20 max-w-[300px]" />
           <p className="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-secondary">
@@ -80,12 +84,12 @@ function Home() {
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="York County address — live parcel + zoning"
                 aria-label="Search a York County address"
-                className="h-12 bg-card pl-9 text-on-surface"
+                className="h-12 rounded-xl bg-card pl-9 text-on-surface focus:ring-2 focus:ring-secondary/40"
                 autoComplete="off"
                 suppressHydrationWarning
               />
             </div>
-            <Button type="submit" size="lg" className="h-12">
+            <Button type="submit" size="lg" className="h-12 rounded-xl">
               Explore Map
             </Button>
           </form>
@@ -102,7 +106,8 @@ function Home() {
           <h2 className="text-xl font-semibold">Covering 4 Counties</h2>
           <Link
             to="/insights"
-            className="inline-flex items-center gap-1 text-sm font-medium text-primary-container"
+            preload="intent"
+            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
           >
             View Regional Overview <ArrowRight className="size-4" />
           </Link>
@@ -128,13 +133,25 @@ function Home() {
       </section>
 
       <section className="mt-12">
-        <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-          Platform Capabilities
-        </p>
-        <h2 className="mt-1 text-2xl font-semibold">
-          Integrated Tools for Planners, Developers, and Municipalities
-        </h2>
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+              Platform Capabilities
+            </p>
+            <h2 className="mt-1 text-2xl font-semibold">
+              Integrated Tools for Planners, Developers, and Municipalities
+            </h2>
+          </div>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Feature
+            icon={Box}
+            title="3D Hyperrealistic Parcel Model"
+            badge="Live WebGL"
+            body="Inspect photorealistic 3D residential structures with architectural day/night lighting, real material textures, and measurement calipers."
+            href="/scene-3d"
+            cta="Launch 3D Viewer"
+          />
           <Feature
             icon={Layers}
             title="Interactive Property Map"
@@ -148,8 +165,8 @@ function Home() {
             body="Search and cross-reference municipal zoning ordinances in a standardized format. Track amendments instantly."
             href="/zoning"
             extra={
-              <div className="mt-3 rounded-md bg-surface-low p-3 font-mono text-xs">
-                <div>Sec 402.1 — R-1 Residential</div>
+              <div className="mt-3 rounded-md bg-surface-low p-3 font-mono text-xs border border-outline-variant/60">
+                <div className="font-semibold text-primary">Sec 402.1 — R-1 Residential</div>
                 <div className="text-on-surface-variant">
                   Max Height: 35ft · Min Lot: 10,000 sqft
                 </div>
@@ -165,22 +182,22 @@ function Home() {
           />
           <Feature
             icon={ContactRound}
-            title="Pennsylvania County Planning and Zoning Directory"
+            title="PA Planning & Zoning Directory"
             body="Find planning departments, zoning contacts, phone numbers, email addresses, and official county websites statewide."
             href="/directory"
-            cta="Open directory"
+            cta="Open Directory"
           />
           <Feature
             icon={Gavel}
             title="Acquisition Toolkit"
             body="Lot yield, residual land offer, York SALDO path, and diligence checklists."
             href="/acquire"
-            cta="Open toolkit"
+            cta="Open Toolkit"
           />
         </div>
       </section>
 
-      <section className="mt-12 grid items-center gap-8 rounded-xl border border-outline-variant bg-card p-6 md:grid-cols-2 md:p-10">
+      <section className="mt-12 grid items-center gap-8 rounded-2xl border border-outline-variant/80 bg-card/90 p-6 shadow-sm backdrop-blur md:grid-cols-2 md:p-10">
         <div>
           <h2 className="text-2xl font-semibold">Professional Access</h2>
           <p className="mt-2 text-muted-foreground">
@@ -199,7 +216,7 @@ function Home() {
             ))}
           </ul>
         </div>
-        <Card className="border-primary-container/30">
+        <Card className="interactive-card border-primary-container/30">
           <CardContent className="p-6">
             <div className="text-xs font-bold uppercase tracking-wider text-secondary">
               Most Popular
@@ -210,8 +227,8 @@ function Home() {
               <span className="mb-1 text-muted-foreground">/mo</span>
             </div>
             <p className="mt-1 text-sm text-muted-foreground">Billed annually at $120/year.</p>
-            <Button asChild className="mt-4 w-full">
-              <Link to="/subscription">Subscribe Now</Link>
+            <Button asChild className="mt-4 w-full active-press">
+              <Link to="/subscription" preload="intent">Subscribe Now</Link>
             </Button>
           </CardContent>
         </Card>
@@ -234,11 +251,12 @@ function CountyCard({ name, blurb, to }: { name: string; blurb: string; to: stri
   return (
     <Link
       to={to}
+      preload="intent"
       onClick={() => setCounty(name as County)}
-      className="rounded-lg border border-outline-variant bg-card p-4 transition-colors hover:border-primary-container"
+      className="interactive-card active-press block rounded-xl border border-outline-variant/80 bg-card/90 p-4 transition-all hover:border-brand-teal hover:shadow-md"
     >
       <div className="flex items-center gap-2 font-semibold">
-        <MapIcon className="size-4 text-primary-container" /> {name}
+        <MapIcon className="size-4 text-primary" /> {name}
       </div>
       <p className="mt-2 text-sm leading-snug text-muted-foreground">{blurb}</p>
     </Link>
@@ -252,6 +270,7 @@ function Feature({
   href,
   cta,
   extra,
+  badge,
 }: {
   icon: typeof Layers;
   title: string;
@@ -259,16 +278,27 @@ function Feature({
   href: string;
   cta?: string;
   extra?: ReactNode;
+  badge?: string;
 }) {
   return (
-    <div className="rounded-lg border border-outline-variant bg-card p-5">
-      <Icon className="size-6 text-primary-container" />
-      <h3 className="mt-3 text-lg font-semibold">{title}</h3>
-      <p className="mt-1 text-sm text-muted-foreground">{body}</p>
-      {extra}
+    <div className="interactive-card flex flex-col justify-between rounded-xl border border-outline-variant/80 bg-card/90 p-5 shadow-sm transition-all hover:border-brand-teal">
+      <div>
+        <div className="flex items-center justify-between">
+          <Icon className="size-6 text-primary" />
+          {badge && (
+            <span className="inline-flex items-center rounded-full bg-brand-lime/15 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
+              {badge}
+            </span>
+          )}
+        </div>
+        <h3 className="mt-3 text-lg font-semibold">{title}</h3>
+        <p className="mt-1 text-sm text-muted-foreground">{body}</p>
+        {extra}
+      </div>
       <Link
         to={href}
-        className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary-container"
+        preload="intent"
+        className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
       >
         {cta ?? "Open"} <ArrowRight className="size-4" />
       </Link>

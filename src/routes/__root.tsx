@@ -4,6 +4,7 @@ import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { SubscriptionAccessGate } from "@/components/auth/subscription-access-gate";
 import { Toaster } from "sonner";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { NavigationProgressBar } from "@/components/layout/navigation-progress-bar";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "Field ACQ Ordinance Aide";
@@ -40,6 +41,7 @@ export const Route = createRootRoute({
         <HeadContent />
       </head>
       <body>
+        <NavigationProgressBar />
         <PreviewHostBridge />
         <AuthProvider>
           <SubscriptionAccessGate>

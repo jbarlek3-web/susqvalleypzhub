@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Bell, BookOpen, Box, ContactRound, FileText, HelpCircle, Menu, Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FieldAcqOrdinanceAideLogo } from "@/components/brand/field-acq-ordinance-aide-logo";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -48,9 +48,27 @@ export function AppShell({
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     void useHub.persist.rehydrate();
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        (e.key === "k" && (e.metaKey || e.ctrlKey)) ||
+        (e.key === "/" && document.activeElement?.tagName !== "INPUT" && document.activeElement?.tagName !== "TEXTAREA")
+      ) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   useEffect(() => {
     if (!user) {
       setPro(false);
@@ -68,6 +86,7 @@ export function AppShell({
       active = false;
     };
   }, [user, setPro]);
+
   const hits = useMemo(() => {
     if (q.trim().length < 2)
       return {
@@ -83,7 +102,7 @@ export function AppShell({
 
   return (
     <div className="min-h-dvh bg-background text-on-surface">
-      <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-outline-variant bg-card/95 text-on-surface shadow-[0_1px_8px_rgb(17_40_71/0.08)] backdrop-blur md:h-20">
+      <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-outline-variant/80 bg-card/85 text-on-surface shadow-[0_2px_16px_rgb(17_40_71/0.06)] backdrop-blur-xl md:h-20 transition-all">
         <div className="mx-auto flex h-full max-w-[1400px] items-center gap-3 px-3 md:px-6">
           <Button
             variant="nav"
@@ -94,32 +113,37 @@ export function AppShell({
           >
             <Menu />
           </Button>
-          <Link to="/" className="flex min-w-0 items-center">
+          <Link to="/" preload="intent" className="flex min-w-0 items-center transition-transform active:scale-95">
             <FieldAcqOrdinanceAideLogo className="h-10 max-w-[150px] md:h-12 md:max-w-[190px]" />
           </Link>
-          <nav className="ml-4 hidden items-center gap-1 lg:flex">
+          <nav className="ml-3 hidden items-center gap-1 rounded-full border border-outline-variant/60 bg-surface-low/70 p-1 backdrop-blur-md lg:flex">
             {NAV.map((n) => {
               const active = n.to === "/" ? pathname === "/" : pathname.startsWith(n.to);
               return (
                 <Link
                   key={n.to}
                   to={n.to}
+                  preload="intent"
                   className={cn(
-                    "rounded-sm px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors",
+                    "relative rounded-full px-3 py-1.5 text-xs font-semibold tracking-wide transition-all duration-150 active:scale-95",
                     active
-                      ? "border-b-2 border-brand-lime pb-0.5 text-primary"
-                      : "text-on-surface-variant hover:text-primary",
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-on-surface-variant hover:bg-surface-high/60 hover:text-on-surface",
                   )}
                 >
                   {n.label}
+                  {active && (
+                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 size-1.5 rounded-full bg-brand-lime shadow-[0_0_6px_var(--color-brand-lime)]" />
+                  )}
                 </Link>
               );
             })}
           </nav>
-          <div className="ml-auto flex items-center gap-1">
+          <div className="ml-auto flex items-center gap-1.5">
             <div className="relative hidden md:block">
               <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-on-surface-variant" />
               <input
+                ref={searchInputRef}
                 id="global-parcel-search"
                 name="globalParcelSearch"
                 type="search"
@@ -133,46 +157,51 @@ export function AppShell({
                 aria-label="Search by address, APN, or owner"
                 autoComplete="off"
                 suppressHydrationWarning
-                className="h-9 w-48 rounded-md border border-outline-variant bg-surface-low pl-8 pr-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:w-64 focus:outline-none focus:ring-2 focus:ring-secondary/30 lg:w-56"
+                className="h-9 w-48 rounded-full border border-outline-variant/70 bg-surface-low/80 pl-8 pr-12 text-sm text-on-surface placeholder:text-on-surface-variant focus:w-64 focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all lg:w-56"
               />
+              <div className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2">
+                <kbd className="hidden sm:inline-flex items-center rounded border border-outline-variant bg-surface px-1.5 py-0.5 text-[10px] font-medium text-on-surface-variant">
+                  ⌘K
+                </kbd>
+              </div>
               {searchOpen && q.trim().length >= 2 && hits && (
-                <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-md border border-outline-variant bg-card p-2 text-on-surface shadow-xl">
+                <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-xl border border-outline-variant bg-card/95 p-2 text-on-surface shadow-2xl backdrop-blur-lg animate-page-enter">
                   <SearchResults hits={hits} onPick={() => setSearchOpen(false)} />
                 </div>
               )}
             </div>
-            <Link to="/guide" className="hidden md:block">
+            <Link to="/guide" preload="intent" className="hidden md:block">
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-primary hover:bg-primary-fixed"
+                className="text-primary hover:bg-primary-fixed active:scale-95 transition-transform"
                 aria-label="Help"
               >
                 <HelpCircle />
               </Button>
             </Link>
-            <Link to="/notifications" className="relative">
+            <Link to="/notifications" preload="intent" className="relative">
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-primary hover:bg-primary-fixed"
+                className="text-primary hover:bg-primary-fixed active:scale-95 transition-transform"
                 aria-label="Notifications"
               >
                 <Bell />
               </Button>
               {unread > 0 && (
-                <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-destructive" />
+                <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-destructive animate-pulse" />
               )}
             </Link>
             <SignedOut>
               <Link to="/login">
-                <Button variant="ghost" size="sm" className="text-primary hover:bg-primary-fixed">
+                <Button variant="ghost" size="sm" className="text-primary hover:bg-primary-fixed active:scale-95">
                   Sign In
                 </Button>
               </Link>
             </SignedOut>
             <SignedIn>
-              <div className="hidden rounded-lg border border-outline-variant bg-surface-low px-2 py-1 text-on-surface sm:block">
+              <div className="hidden rounded-full border border-outline-variant/80 bg-surface-low px-2 py-1 text-on-surface sm:block">
                 <UserButton />
               </div>
             </SignedIn>
@@ -190,8 +219,9 @@ export function AppShell({
               <Link
                 key={n.to}
                 to={n.to}
+                preload="intent"
                 onClick={() => setOpen(false)}
-                className="rounded-md px-3 py-3 text-sm font-medium hover:bg-primary-fixed hover:text-primary"
+                className="rounded-lg px-3 py-3 text-sm font-medium hover:bg-primary-fixed hover:text-primary transition-colors"
               >
                 {n.label}
               </Link>
@@ -215,7 +245,9 @@ export function AppShell({
       </Sheet>
 
       <main
+        key={pathname}
         className={cn(
+          "animate-page-enter",
           fullBleed ? "pt-16 md:pt-20" : "mx-auto max-w-[1400px] px-3 pb-16 pt-20 md:px-6 md:pt-24",
         )}
       >
