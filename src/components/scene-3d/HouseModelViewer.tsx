@@ -1151,13 +1151,19 @@ export function HouseModelViewer({
   useEffect(() => {
     const scene = sceneRef.current;
     if (!scene) return;
+    const updateWireframe = (material: THREE.Material) => {
+      if ("wireframe" in material) {
+        (material as THREE.Material & { wireframe: boolean }).wireframe =
+          wireframeMode;
+      }
+    };
     scene.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         if (Array.isArray(mesh.material)) {
-          mesh.material.forEach((m) => (m.wireframe = wireframeMode));
+          mesh.material.forEach(updateWireframe);
         } else if (mesh.material) {
-          mesh.material.wireframe = wireframeMode;
+          updateWireframe(mesh.material);
         }
       }
     });
