@@ -13,9 +13,10 @@ async function getVerifyWebhook(): Promise<
   if (resolvedVerifyWebhook) return resolvedVerifyWebhook;
   try {
     const backendWebhooks = await import("@clerk/backend/webhooks");
-    if (backendWebhooks?.verifyWebhook) {
-      resolvedVerifyWebhook = backendWebhooks.verifyWebhook;
-      return resolvedVerifyWebhook;
+    const verifyWebhook = backendWebhooks?.verifyWebhook;
+    if (typeof verifyWebhook === "function") {
+      resolvedVerifyWebhook = verifyWebhook;
+      return verifyWebhook;
     }
   } catch {
     try {
@@ -24,16 +25,17 @@ async function getVerifyWebhook(): Promise<
       const require = createRequire(import.meta.url);
       const resolved = require.resolve("@clerk/backend/webhooks");
       const backendWebhooks = await import(pathToFileURL(resolved).href);
-      if (backendWebhooks?.verifyWebhook) {
-        resolvedVerifyWebhook = backendWebhooks.verifyWebhook;
-        return resolvedVerifyWebhook;
+      const verifyWebhook = backendWebhooks?.verifyWebhook;
+      if (typeof verifyWebhook === "function") {
+        resolvedVerifyWebhook = verifyWebhook;
+        return verifyWebhook;
       }
     } catch {
       // Fallback implementation using standard webhooks specification
     }
   }
 
-  resolvedVerifyWebhook = async (
+  const fallbackVerifyWebhook = async (
     request: Request,
     options: { signingSecret: string },
   ): Promise<WebhookEvent> => {
@@ -65,7 +67,8 @@ async function getVerifyWebhook(): Promise<
     }
     return JSON.parse(bodyText) as WebhookEvent;
   };
-  return resolvedVerifyWebhook;
+  resolvedVerifyWebhook = fallbackVerifyWebhook;
+  return fallbackVerifyWebhook;
 }
 
 export const MAX_CLERK_WEBHOOK_BYTES = 1_000_000;
