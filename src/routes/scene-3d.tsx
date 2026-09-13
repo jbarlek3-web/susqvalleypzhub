@@ -40,7 +40,16 @@ import type {
   StudioViewLevel,
 } from "@/lib/subdivision/types";
 
-export const Route = createFileRoute("/scene-3d")({ component: Scene3DPage });
+export interface Scene3DSearch {
+  parcelId?: string;
+}
+
+export const Route = createFileRoute("/scene-3d")({
+  validateSearch: (search: Record<string, unknown>): Scene3DSearch => ({
+    parcelId: typeof search.parcelId === "string" ? search.parcelId : undefined,
+  }),
+  component: Scene3DPage,
+});
 
 type ActiveTab = "Studio3D" | "ZoningRestrictions" | "SpecDesign" | "UnderwritingCost";
 
@@ -54,8 +63,11 @@ function money(n: number) {
 }
 
 function Scene3DPage() {
+  const search = Route.useSearch();
   // 1. Location & Parcel Selection State
-  const [selectedParcelId, setSelectedParcelId] = useState<string>("p-hampden");
+  const [selectedParcelId, setSelectedParcelId] = useState<string>(
+    () => search.parcelId || "p-hampden",
+  );
   const [customAddressQuery, setCustomAddressQuery] = useState<string>("");
 
   const activeProfile = useMemo(() => {

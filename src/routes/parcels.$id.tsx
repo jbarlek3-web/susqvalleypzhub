@@ -55,7 +55,7 @@ function ParcelReport() {
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="default" size="sm" asChild>
-            <Link to="/scene-3d">
+            <Link to="/scene-3d" search={{ parcelId: parcel.id }}>
               <Box className="size-3.5 mr-1" /> 3D Model
             </Link>
           </Button>

@@ -63,15 +63,18 @@ export interface HouseViewerProps {
 
 function disposeHierarchy(obj: THREE.Object3D) {
   obj.traverse((child) => {
-    if ((child as THREE.Mesh).isMesh || (child as THREE.Line).isLine) {
-      const m = child as THREE.Mesh;
-      if (m.geometry) m.geometry.dispose();
-      if (m.material) {
-        if (Array.isArray(m.material)) {
-          m.material.forEach((mat) => mat.dispose());
-        } else {
-          m.material.dispose();
-        }
+    const item = child as {
+      geometry?: THREE.BufferGeometry;
+      material?: THREE.Material | THREE.Material[];
+    };
+    if (item.geometry) {
+      item.geometry.dispose();
+    }
+    if (item.material) {
+      if (Array.isArray(item.material)) {
+        item.material.forEach((mat) => mat?.dispose());
+      } else {
+        item.material.dispose();
       }
     }
   });
@@ -89,6 +92,7 @@ export function HouseModelViewer({
   onSelectLot,
 }: HouseViewerProps) {
   const mountRef = useRef<HTMLDivElement>(null);
+  const canvasMountRef = useRef<HTMLDivElement>(null);
   const onSelectLotRef = useRef(onSelectLot);
   useEffect(() => {
     onSelectLotRef.current = onSelectLot;
@@ -101,6 +105,11 @@ export function HouseModelViewer({
   const [internalMode, setInternalMode] = useState<StudioSceneMode>(sceneMode);
   const [lightingMode, setLightingMode] = useState<LightingMode>("day");
   const [showZoningEnvelope, setShowZoningEnvelope] = useState(true);
+  const showZoningEnvelopeRef = useRef(showZoningEnvelope);
+  useEffect(() => {
+    showZoningEnvelopeRef.current = showZoningEnvelope;
+  }, [showZoningEnvelope]);
+
   const [showContours, setShowContours] = useState(true);
   const showContoursRef = useRef(showContours);
   useEffect(() => {
@@ -108,6 +117,10 @@ export function HouseModelViewer({
   }, [showContours]);
   const [autoRotate, setAutoRotate] = useState(false);
   const [wireframeMode, setWireframeMode] = useState(false);
+  const wireframeModeRef = useRef(wireframeMode);
+  useEffect(() => {
+    wireframeModeRef.current = wireframeMode;
+  }, [wireframeMode]);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -134,7 +147,7 @@ export function HouseModelViewer({
 
   // Initialize Scene, Camera, Renderer, Textures
   useEffect(() => {
-    const container = mountRef.current;
+    const container = canvasMountRef.current;
     if (!container) return;
 
     if (!checkWebGLSupport()) {
@@ -176,6 +189,14 @@ export function HouseModelViewer({
     } catch {
       setWebglError(
         "Failed to initialize WebGL graphics context. Please check your browser hardware acceleration settings.",
+      );
+      return;
+    }
+
+    const glContext = renderer.getContext();
+    if (!glContext || glContext.isContextLost()) {
+      setWebglError(
+        "Failed to initialize WebGL graphics context. Hardware acceleration may be disabled.",
       );
       return;
     }
@@ -298,6 +319,10 @@ export function HouseModelViewer({
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
       if (rendererRef.current && sceneRef.current && cameraRef.current) {
+        const gl = renderer.getContext();
+        if (gl && gl.isContextLost()) {
+          return;
+        }
         const elapsedTime = clock.getElapsedTime();
         controls.update();
         if (animUpdateRef.current) {
@@ -371,9 +396,10 @@ export function HouseModelViewer({
     const contentRoot = contentRootRef.current;
     if (!contentRoot) return;
 
-    // Clean existing children
+    // Clean and dispose existing children to prevent GPU memory leaks
     while (contentRoot.children.length > 0) {
       const child = contentRoot.children[0];
+      disposeHierarchy(child);
       contentRoot.remove(child);
     }
     animUpdateRef.current = null;
@@ -476,7 +502,25 @@ export function HouseModelViewer({
       lotLine.computeLineDistances();
       zoningGroup.add(lotLine);
 
+      zoningGroup.visible = showZoningEnvelopeRef.current;
       contentRoot.add(zoningGroup);
+
+      if (wireframeModeRef.current) {
+        contentRoot.traverse((child) => {
+          if ((child as THREE.Mesh).isMesh) {
+            const mesh = child as THREE.Mesh;
+            if (Array.isArray(mesh.material)) {
+              mesh.material.forEach((m) => {
+                if (m && "wireframe" in m) {
+                  (m as { wireframe: boolean }).wireframe = true;
+                }
+              });
+            } else if (mesh.material && "wireframe" in mesh.material) {
+              (mesh.material as { wireframe: boolean }).wireframe = true;
+            }
+          }
+        });
+      }
 
       // Set camera for house exterior or cutaway level
       if (cameraRef.current && controlsRef.current) {
@@ -677,9 +721,10 @@ export function HouseModelViewer({
 
   // Toggle Fullscreen
   const toggleFullscreen = () => {
-    if (!mountRef.current) return;
+    const el = mountRef.current?.parentElement || mountRef.current;
+    if (!el) return;
     if (!document.fullscreenElement) {
-      void mountRef.current.requestFullscreen?.();
+      void el.requestFullscreen?.();
       setIsFullscreen(true);
     } else {
       void document.exitFullscreen?.();
@@ -692,8 +737,12 @@ export function HouseModelViewer({
       {/* 3D Canvas Mount Point */}
       <div
         ref={mountRef}
-        className="relative flex-1 w-full h-full cursor-grab active:cursor-grabbing"
+        className="relative flex-1 w-full h-full"
       >
+        <div
+          ref={canvasMountRef}
+          className="absolute inset-0 h-full w-full cursor-grab active:cursor-grabbing"
+        />
         {/* WebGL Unsupported Fallback */}
         {webglError && (
           <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-background/95 p-6 text-center backdrop-blur-md">
