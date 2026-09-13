@@ -289,13 +289,13 @@ function Scene3DPage() {
               </div>
 
               {/* Mode Toggle Button */}
-              <div className="flex items-center gap-1 p-1 rounded-lg bg-muted/60 border border-border">
+              <div className="flex items-center gap-1 p-1 rounded-lg bg-white/5 border border-white/10 backdrop-blur-md">
                 <button
                   onClick={() => setSceneMode("subdivision")}
                   className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium transition-all ${
                     sceneMode === "subdivision"
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-white/15 text-foreground shadow-sm border border-white/20 backdrop-blur-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/5"
                   }`}
                 >
                   <Waves className="w-3.5 h-3.5" />
@@ -305,8 +305,8 @@ function Scene3DPage() {
                   onClick={() => setSceneMode("houseStudio")}
                   className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium transition-all ${
                     sceneMode === "houseStudio"
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-white/15 text-foreground shadow-sm border border-white/20 backdrop-blur-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/5"
                   }`}
                 >
                   <Home className="w-3.5 h-3.5" />
@@ -421,8 +421,8 @@ function Scene3DPage() {
                   onClick={() => setActiveTab("Studio3D")}
                   className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                     activeTab === "Studio3D"
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "bg-card text-muted-foreground hover:text-foreground border border-border"
+                      ? "bg-white/15 text-foreground shadow-sm border border-white/20 backdrop-blur-sm"
+                      : "bg-white/5 text-muted-foreground hover:text-foreground border border-white/10"
                   }`}
                 >
                   <Palette className="w-3.5 h-3.5" />
@@ -433,8 +433,8 @@ function Scene3DPage() {
                   onClick={() => setActiveTab("ZoningRestrictions")}
                   className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                     activeTab === "ZoningRestrictions"
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "bg-card text-muted-foreground hover:text-foreground border border-border"
+                      ? "bg-white/15 text-foreground shadow-sm border border-white/20 backdrop-blur-sm"
+                      : "bg-white/5 text-muted-foreground hover:text-foreground border border-white/10"
                   }`}
                 >
                   <ShieldCheck className="w-3.5 h-3.5" />
@@ -445,8 +445,8 @@ function Scene3DPage() {
                   onClick={() => setActiveTab("SpecDesign")}
                   className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                     activeTab === "SpecDesign"
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "bg-card text-muted-foreground hover:text-foreground border border-border"
+                      ? "bg-white/15 text-foreground shadow-sm border border-white/20 backdrop-blur-sm"
+                      : "bg-white/5 text-muted-foreground hover:text-foreground border border-white/10"
                   }`}
                 >
                   <FileText className="w-3.5 h-3.5" />
@@ -457,8 +457,8 @@ function Scene3DPage() {
                   onClick={() => setActiveTab("UnderwritingCost")}
                   className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                     activeTab === "UnderwritingCost"
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "bg-card text-muted-foreground hover:text-foreground border border-border"
+                      ? "bg-white/15 text-foreground shadow-sm border border-white/20 backdrop-blur-sm"
+                      : "bg-white/5 text-muted-foreground hover:text-foreground border border-white/10"
                   }`}
                 >
                   <DollarSign className="w-3.5 h-3.5" />
