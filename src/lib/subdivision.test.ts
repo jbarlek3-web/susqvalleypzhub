@@ -1,16 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import {
-  calculateDevelopmentCost,
-  COUNTY_COST_FACTORS,
-} from "./subdivision/cost-estimator.ts";
+import { calculateDevelopmentCost } from "./subdivision/cost-estimator.ts";
 import {
   createCustomSubdivision,
   parcelToSubdivisionConfig,
   resolveAddressOrParcel,
 } from "./subdivision/address-resolver.ts";
-import type { HouseDesignSpec, SubdivisionConfig } from "./subdivision/types.ts";
-import { getParcel, PARCELS } from "./data/parcels.ts";
+import type { HouseDesignSpec } from "./subdivision/types.ts";
+import { getParcel } from "./data/parcels.ts";
 
 const BASE_SPEC: HouseDesignSpec = {
   stories: 2,
@@ -214,6 +211,7 @@ test("cost estimator respects custom target sale price and land cost overrides",
     customFinishTier: "luxury",
   });
 
+  assert.notEqual(overriddenCost.projectedSalePricePerHome, defaultCost.projectedSalePricePerHome);
   assert.equal(overriddenCost.projectedSalePricePerHome, customTargetPrice);
   assert.equal(overriddenCost.landCostPerAcre, customLandPerAcre);
   assert.equal(

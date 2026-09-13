@@ -14,8 +14,9 @@ async function getVerifyWebhook(): Promise<
   try {
     const backendWebhooks = await import("@clerk/backend/webhooks");
     if (backendWebhooks?.verifyWebhook) {
-      resolvedVerifyWebhook = backendWebhooks.verifyWebhook;
-      return resolvedVerifyWebhook;
+      const fn = backendWebhooks.verifyWebhook;
+      resolvedVerifyWebhook = fn;
+      return fn;
     }
   } catch {
     try {
@@ -25,8 +26,9 @@ async function getVerifyWebhook(): Promise<
       const resolved = require.resolve("@clerk/backend/webhooks");
       const backendWebhooks = await import(pathToFileURL(resolved).href);
       if (backendWebhooks?.verifyWebhook) {
-        resolvedVerifyWebhook = backendWebhooks.verifyWebhook;
-        return resolvedVerifyWebhook;
+        const fn = backendWebhooks.verifyWebhook;
+        resolvedVerifyWebhook = fn;
+        return fn;
       }
     } catch {
       // Fallback implementation using standard webhooks specification

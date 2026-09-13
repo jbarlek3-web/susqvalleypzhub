@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Bot, Gauge, Loader2, Network, Send, ShieldCheck } from "lucide-react";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,13 +31,18 @@ function OrdinanceAide() {
     },
   ]);
 
+  const countyRef = useRef(county);
+  useEffect(() => {
+    countyRef.current = county;
+  }, [county]);
+
   useEffect(() => {
     let current = true;
     void getOrdinanceAgentScope()
       .then((data) => {
         if (!current) return;
         setScope(data);
-        const first = data.counties.find((item) => item.county === county)?.municipalities[0];
+        const first = data.counties.find((item) => item.county === countyRef.current)?.municipalities[0];
         setMunicipality(first ?? "");
       })
       .catch(() => {

@@ -9,7 +9,6 @@ import {
   Layers,
   Map as MapIcon,
   Search,
-  Sparkles,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { FieldAcqOrdinanceAideLogo } from "@/components/brand/field-acq-ordinance-aide-logo";

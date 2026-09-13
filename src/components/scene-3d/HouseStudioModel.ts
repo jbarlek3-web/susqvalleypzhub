@@ -338,14 +338,14 @@ export function buildHouseStudioModel(
 
     // Determine visibility based on Studio View Level
     let isStoryVisible = true;
-    let isStoryCutaway = false;
+    let _isStoryCutaway = false;
 
     if (spec.viewLevel === "story1" && s !== 1) isStoryVisible = false;
     else if (spec.viewLevel === "story2" && s !== 2) isStoryVisible = false;
     else if (spec.viewLevel === "story3" && s !== 3) isStoryVisible = false;
     else if (spec.viewLevel === "story4" && s !== 4) isStoryVisible = false;
     else if (spec.viewLevel === "dollhouse" && s > 1) {
-      isStoryCutaway = true;
+      _isStoryCutaway = true;
     }
 
     if (!isStoryVisible) continue;

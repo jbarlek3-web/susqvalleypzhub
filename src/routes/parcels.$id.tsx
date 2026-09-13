@@ -62,9 +62,15 @@ function ParcelReport() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => {
-              void navigator.clipboard.writeText(window.location.href);
-              toast.success("Link copied");
+            onClick={async () => {
+              try {
+                if (navigator?.clipboard?.writeText) {
+                  await navigator.clipboard.writeText(window.location.href);
+                  toast.success("Link copied");
+                }
+              } catch {
+                toast.error("Could not copy link");
+              }
             }}
           >
             <Share2 className="size-3.5" /> Share

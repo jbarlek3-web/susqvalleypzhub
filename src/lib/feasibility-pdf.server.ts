@@ -310,7 +310,7 @@ export async function renderFeasibilityPdf(report: FeasibilityReport) {
   );
 
   const totalPages = doc.getPageCount();
-  doc.getPages().forEach((item, index) => {
+  doc.getPages().forEach((item: any, index: number) => {
     item.drawLine({
       start: { x: PAGE.margin, y: 38 },
       end: { x: PAGE.width - PAGE.margin, y: 38 },

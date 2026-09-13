@@ -11,15 +11,14 @@ import {
   Minimize2,
   Download,
   Layers,
-  Eye,
   RotateCw,
   Box,
   Compass,
   Info,
   Waves,
   Home,
-  MapPin,
   Mountain,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type {
@@ -28,8 +27,26 @@ import type {
   StudioSceneMode,
   SubdivisionConfig,
 } from "@/lib/subdivision/types";
+import { DEFAULT_HOUSE_SPEC } from "@/lib/subdivision/types";
 import { buildHouseStudioModel, type StudioTextures } from "./HouseStudioModel";
 import { buildSubdivisionMasterPlan } from "./SubdivisionMasterPlan";
+
+export { DEFAULT_HOUSE_SPEC };
+
+function checkWebGLSupport(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const canvas = document.createElement("canvas");
+    return Boolean(
+      window.WebGLRenderingContext &&
+        (canvas.getContext("webgl2") ||
+          canvas.getContext("webgl") ||
+          canvas.getContext("experimental-webgl")),
+    );
+  } catch {
+    return false;
+  }
+}
 
 export interface HouseViewerProps {
   parcelId?: string;
@@ -60,30 +77,6 @@ function disposeHierarchy(obj: THREE.Object3D) {
   });
 }
 
-export const DEFAULT_HOUSE_SPEC: HouseDesignSpec = {
-  stories: 2,
-  style: "craftsman",
-  facadeMaterial: "brick",
-  roofMaterial: "shingle",
-  roofColor: "#334155",
-  trimColor: "#f8fafc",
-  shutterColor: "#1e293b",
-  garageBays: 2,
-  hasPorch: true,
-  hasPatio: true,
-  hasBalcony: true,
-  hasBayTurret: true,
-  footprintWidthFt: 46,
-  footprintDepthFt: 36,
-  sqftPerStory: 1450,
-  totalSqft: 2900,
-  heightFt: 31.2,
-  viewLevel: "exterior",
-  flooring: "oak",
-  wallColor: "greige",
-  furnished: true,
-};
-
 export function HouseModelViewer({
   parcelId = "67-000-04-0112.00-00000",
   address = "482 Country Club Road, York PA 17403",
@@ -96,13 +89,25 @@ export function HouseModelViewer({
   onSelectLot,
 }: HouseViewerProps) {
   const mountRef = useRef<HTMLDivElement>(null);
+  const onSelectLotRef = useRef(onSelectLot);
+  useEffect(() => {
+    onSelectLotRef.current = onSelectLot;
+  }, [onSelectLot]);
+
+  const [webglError, setWebglError] = useState<string | null>(null);
+  const [isContextLost, setIsContextLost] = useState(false);
+  const [renderTrigger, setRenderTrigger] = useState(0);
+
   const [internalMode, setInternalMode] = useState<StudioSceneMode>(sceneMode);
   const [lightingMode, setLightingMode] = useState<LightingMode>("day");
   const [showZoningEnvelope, setShowZoningEnvelope] = useState(true);
   const [showContours, setShowContours] = useState(true);
+  const showContoursRef = useRef(showContours);
+  useEffect(() => {
+    showContoursRef.current = showContours;
+  }, [showContours]);
   const [autoRotate, setAutoRotate] = useState(false);
   const [wireframeMode, setWireframeMode] = useState(false);
-  const [showLandscaping, setShowLandscaping] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -132,6 +137,13 @@ export function HouseModelViewer({
     const container = mountRef.current;
     if (!container) return;
 
+    if (!checkWebGLSupport()) {
+      setWebglError(
+        "WebGL hardware graphics acceleration is not supported or is disabled in your browser.",
+      );
+      return;
+    }
+
     // 1. Scene Setup
     const scene = new THREE.Scene();
     sceneRef.current = scene;
@@ -148,17 +160,26 @@ export function HouseModelViewer({
       45,
       container.clientWidth / container.clientHeight,
       0.1,
-      1000
+      1000,
     );
     camera.position.set(0, 55, 95);
     cameraRef.current = camera;
 
     // 3. Renderer Setup
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      powerPreference: "high-performance",
-      preserveDrawingBuffer: true,
-    });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        powerPreference: "high-performance",
+        preserveDrawingBuffer: true,
+      });
+    } catch {
+      setWebglError(
+        "Failed to initialize WebGL graphics context. Please check your browser hardware acceleration settings.",
+      );
+      return;
+    }
+
     rendererRef.current = renderer;
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -167,6 +188,23 @@ export function HouseModelViewer({
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
+
+    const canvas = renderer.domElement;
+
+    // WebGL Context Loss Handlers
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      setIsContextLost(true);
+    };
+
+    const handleContextRestored = () => {
+      setIsContextLost(false);
+      setRenderTrigger((prev) => prev + 1);
+    };
+
+    canvas.addEventListener("webglcontextlost", handleContextLost, false);
+    canvas.addEventListener("webglcontextrestored", handleContextRestored, false);
 
     // 4. OrbitControls
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -217,9 +255,24 @@ export function HouseModelViewer({
     }, 2500);
 
     const loadPBR = (name: string, repX: number, repY: number) => {
-      const diff = textureLoader.load(`/textures/house/${name}_diff.jpg`, advanceLoad, undefined, advanceLoad);
-      const nor = textureLoader.load(`/textures/house/${name}_nor.jpg`, advanceLoad, undefined, advanceLoad);
-      const rough = textureLoader.load(`/textures/house/${name}_rough.jpg`, advanceLoad, undefined, advanceLoad);
+      const diff = textureLoader.load(
+        `/textures/house/${name}_diff.jpg`,
+        advanceLoad,
+        undefined,
+        advanceLoad,
+      );
+      const nor = textureLoader.load(
+        `/textures/house/${name}_nor.jpg`,
+        advanceLoad,
+        undefined,
+        advanceLoad,
+      );
+      const rough = textureLoader.load(
+        `/textures/house/${name}_rough.jpg`,
+        advanceLoad,
+        undefined,
+        advanceLoad,
+      );
 
       [diff, nor, rough].forEach((t) => {
         t.wrapS = THREE.RepeatWrapping;
@@ -244,12 +297,18 @@ export function HouseModelViewer({
     const clock = new THREE.Clock();
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
-      const elapsedTime = clock.getElapsedTime();
-      controls.update();
-      if (animUpdateRef.current) {
-        animUpdateRef.current(elapsedTime);
+      if (rendererRef.current && sceneRef.current && cameraRef.current) {
+        const elapsedTime = clock.getElapsedTime();
+        controls.update();
+        if (animUpdateRef.current) {
+          animUpdateRef.current(elapsedTime);
+        }
+        try {
+          renderer.render(scene, camera);
+        } catch {
+          // Ignore render exceptions during WebGL context resets
+        }
       }
-      renderer.render(scene, camera);
     };
     animate();
 
@@ -270,7 +329,7 @@ export function HouseModelViewer({
           let curr: THREE.Object3D | null = hit.object;
           while (curr && curr !== contentRootRef.current) {
             if (curr.userData && typeof curr.userData.lotNumber === "number") {
-              onSelectLot?.(curr.userData.lotNumber);
+              onSelectLotRef.current?.(curr.userData.lotNumber);
               return;
             }
             curr = curr.parent;
@@ -278,7 +337,7 @@ export function HouseModelViewer({
         }
       }
     };
-    renderer.domElement.addEventListener("click", handleCanvasClick);
+    canvas.addEventListener("click", handleCanvasClick);
 
     // 9. Resize Handler
     const handleResize = () => {
@@ -293,17 +352,19 @@ export function HouseModelViewer({
       clearTimeout(safetyTimer);
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener("resize", handleResize);
-      renderer.domElement.removeEventListener("click", handleCanvasClick);
+      canvas.removeEventListener("webglcontextlost", handleContextLost);
+      canvas.removeEventListener("webglcontextrestored", handleContextRestored);
+      canvas.removeEventListener("click", handleCanvasClick);
       controls.dispose();
       renderer.dispose();
       if (contentRootRef.current) {
         disposeHierarchy(contentRootRef.current);
       }
-      if (container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
+      if (container.contains(canvas)) {
+        container.removeChild(canvas);
       }
     };
-  }, []);
+  }, [renderTrigger]);
 
   // Rebuild 3D Model when Scene Mode, Subdivision Config, or House Spec changes
   useEffect(() => {
@@ -350,11 +411,11 @@ export function HouseModelViewer({
         },
       };
 
-      const subScene = buildSubdivisionMasterPlan(subConfig, textures, onSelectLot);
+      const subScene = buildSubdivisionMasterPlan(subConfig, textures, onSelectLotRef.current);
       contentRoot.add(subScene.group);
       animUpdateRef.current = subScene.updateAnimation;
       contourGroupRef.current = subScene.contourGroup;
-      subScene.contourGroup.visible = showContours;
+      subScene.contourGroup.visible = showContoursRef.current;
 
       // Adjust camera for subdivision overview
       if (cameraRef.current && controlsRef.current) {
@@ -391,26 +452,37 @@ export function HouseModelViewer({
       envLine.position.set(0, maxHMeters / 2, 0);
       zoningGroup.add(envLine);
 
-      // Front Setback Line
-      const frontSetbackMeters = (subdivisionConfig?.setbacks.front || 25) * 0.3048;
-      const frontLineGeo = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(-14, 0.08, envDepth / 2 - frontSetbackMeters),
-        new THREE.Vector3(14, 0.08, envDepth / 2 - frontSetbackMeters),
-      ]);
-      const frontLine = new THREE.Line(
-        frontLineGeo,
-        new THREE.LineDashedMaterial({ color: 0xf59e0b, dashSize: 0.8, gapSize: 0.4 })
+      // Lot Boundary / Footprint Perimeter Line
+      const lotGeo = new THREE.BufferGeometry();
+      const hw = (houseSpec.footprintWidthFt * 0.3048) / 2 + 1.2;
+      const hd = (houseSpec.footprintDepthFt * 0.3048) / 2 + 1.2;
+      const pts = [
+        new THREE.Vector3(-hw, 0.05, -hd),
+        new THREE.Vector3(hw, 0.05, -hd),
+        new THREE.Vector3(hw, 0.05, hd),
+        new THREE.Vector3(-hw, 0.05, hd),
+        new THREE.Vector3(-hw, 0.05, -hd),
+      ];
+      lotGeo.setFromPoints(pts);
+      const lotLine = new THREE.Line(
+        lotGeo,
+        new THREE.LineDashedMaterial({
+          color: 0x38bdf8,
+          dashSize: 0.5,
+          gapSize: 0.25,
+          linewidth: 2,
+        })
       );
-      frontLine.computeLineDistances();
-      zoningGroup.add(frontLine);
+      lotLine.computeLineDistances();
+      zoningGroup.add(lotLine);
 
       contentRoot.add(zoningGroup);
 
-      // Adjust camera for house studio
+      // Set camera for house exterior or cutaway level
       if (cameraRef.current && controlsRef.current) {
         if (houseSpec.viewLevel === "dollhouse") {
-          cameraRef.current.position.set(16, 22, 22);
-          controlsRef.current.target.set(0, 4, 0);
+          cameraRef.current.position.set(0, 32, 28);
+          controlsRef.current.target.set(0, 3, 0);
         } else if (houseSpec.viewLevel === "story1") {
           cameraRef.current.position.set(0, 1.8, 4.5);
           controlsRef.current.target.set(0, 1.6, -1.0);
@@ -424,7 +496,7 @@ export function HouseModelViewer({
         controlsRef.current.update();
       }
     }
-  }, [currentMode, subdivisionConfig, houseSpec, parcelId, address, zoningDistrict]);
+  }, [currentMode, subdivisionConfig, houseSpec, parcelId, address, zoningDistrict, renderTrigger]);
 
   // Lighting Mode Updates
   useEffect(() => {
@@ -446,25 +518,26 @@ export function HouseModelViewer({
         if (obj.name === "interiorGlow") obj.visible = false;
       });
     } else if (lightingMode === "sunset") {
-      scene.background = new THREE.Color(0xdd8c6b);
-      scene.fog = new THREE.FogExp2(0xd67a54, 0.009);
-      sun.position.set(55, 22, 35);
-      sun.color.setHex(0xff8d47);
+      scene.background = new THREE.Color(0xd97757);
+      scene.fog = new THREE.FogExp2(0xd98264, 0.005);
+      sun.position.set(85, 18, -35);
+      sun.color.setHex(0xff7733);
       sun.intensity = 2.8;
-      hemi.color.setHex(0xffc299);
-      hemi.groundColor.setHex(0x5a3120);
-      hemi.intensity = 0.9;
+      hemi.color.setHex(0xffaa77);
+      hemi.groundColor.setHex(0x332211);
+      hemi.intensity = 0.85;
       scene.traverse((obj) => {
         if (obj.name === "interiorGlow") obj.visible = true;
       });
-    } else if (lightingMode === "night") {
-      scene.background = new THREE.Color(0x0a111c);
-      scene.fog = new THREE.FogExp2(0x0a111c, 0.012);
-      sun.position.set(-25, 45, -30);
-      sun.color.setHex(0x7c98c7);
-      sun.intensity = 0.4;
-      hemi.color.setHex(0x22334d);
-      hemi.groundColor.setHex(0x111620);
+    } else {
+      // Night / Dark Blue Twilight with glowing windows
+      scene.background = new THREE.Color(0x0a101d);
+      scene.fog = new THREE.FogExp2(0x0e172a, 0.008);
+      sun.position.set(-30, 40, -40);
+      sun.color.setHex(0x4b6cb7);
+      sun.intensity = 0.35;
+      hemi.color.setHex(0x1e293b);
+      hemi.groundColor.setHex(0x020617);
       hemi.intensity = 0.45;
       scene.traverse((obj) => {
         if (obj.name === "interiorGlow") obj.visible = true;
@@ -488,9 +561,13 @@ export function HouseModelViewer({
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         if (Array.isArray(mesh.material)) {
-          mesh.material.forEach((m) => (m.wireframe = wireframeMode));
-        } else if (mesh.material) {
-          mesh.material.wireframe = wireframeMode;
+          mesh.material.forEach((m) => {
+            if (m && "wireframe" in m) {
+              (m as { wireframe: boolean }).wireframe = wireframeMode;
+            }
+          });
+        } else if (mesh.material && "wireframe" in mesh.material) {
+          (mesh.material as { wireframe: boolean }).wireframe = wireframeMode;
         }
       }
     });
@@ -617,8 +694,56 @@ export function HouseModelViewer({
         ref={mountRef}
         className="relative flex-1 w-full h-full cursor-grab active:cursor-grabbing"
       >
+        {/* WebGL Unsupported Fallback */}
+        {webglError && (
+          <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-background/95 p-6 text-center backdrop-blur-md">
+            <div className="rounded-full bg-destructive/10 p-3 text-destructive mb-3">
+              <AlertTriangle className="size-8" />
+            </div>
+            <h3 className="text-base font-semibold text-foreground">3D Graphics Unavailable</h3>
+            <p className="max-w-md text-xs text-muted-foreground mt-1 mb-4">
+              {webglError}
+            </p>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                setWebglError(null);
+                setRenderTrigger((k) => k + 1);
+              }}
+              className="gap-1.5 text-xs"
+            >
+              <RotateCw className="size-3.5" /> Retry Initialization
+            </Button>
+          </div>
+        )}
+
+        {/* WebGL Context Loss Recovery Banner */}
+        {isContextLost && (
+          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-background/90 backdrop-blur-sm p-6 text-center">
+            <div className="rounded-full bg-amber-500/10 p-3 text-amber-500 mb-3">
+              <AlertTriangle className="size-8" />
+            </div>
+            <h3 className="text-base font-semibold text-foreground">3D Graphics Context Interrupted</h3>
+            <p className="max-w-md text-xs text-muted-foreground mt-1 mb-4">
+              The WebGL hardware graphics context was temporarily lost. Click below to restore the 3D scene.
+            </p>
+            <Button
+              size="sm"
+              variant="default"
+              onClick={() => {
+                setIsContextLost(false);
+                setRenderTrigger((k) => k + 1);
+              }}
+              className="gap-1.5 text-xs"
+            >
+              <RotateCw className="size-3.5" /> Restore 3D Scene
+            </Button>
+          </div>
+        )}
+
         {/* Loading Overlay */}
-        {!isLoaded && (
+        {!isLoaded && !webglError && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/90 backdrop-blur-sm">
             <div className="flex flex-col items-center gap-3 p-6 rounded-xl border border-border bg-card/80 shadow-lg text-center max-w-sm">
               <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />

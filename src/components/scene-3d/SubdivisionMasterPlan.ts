@@ -14,7 +14,7 @@ export interface SubdivisionSceneRefs {
 export function buildSubdivisionMasterPlan(
   config: SubdivisionConfig,
   textures?: StudioTextures,
-  onSelectLot?: (lotNumber: number) => void
+  _onSelectLot?: (lotNumber: number) => void
 ): SubdivisionSceneRefs {
   const root = new THREE.Group();
   root.name = "SubdivisionMasterPlanRoot";

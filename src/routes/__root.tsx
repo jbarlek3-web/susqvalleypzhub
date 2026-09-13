@@ -5,11 +5,14 @@ import { SubscriptionAccessGate } from "@/components/auth/subscription-access-ga
 import { Toaster } from "sonner";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { NavigationProgressBar } from "@/components/layout/navigation-progress-bar";
+import { AppErrorComponent, AppNotFoundComponent } from "@/lib/error-component";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "Field ACQ Ordinance Aide";
 
 export const Route = createRootRoute({
+  errorComponent: AppErrorComponent,
+  notFoundComponent: AppNotFoundComponent,
   head: () => ({
     meta: [
       { charSet: "utf-8" },

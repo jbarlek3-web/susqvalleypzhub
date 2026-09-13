@@ -1,30 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/layout/app-shell";
 import { HouseModelViewer, DEFAULT_HOUSE_SPEC } from "@/components/scene-3d/HouseModelViewer";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import {
   Building2,
   CheckCircle2,
   AlertTriangle,
-  Ruler,
   ShieldCheck,
-  Sparkles,
-  Layers,
   MapPin,
   Waves,
   Home,
   DollarSign,
-  TrendingUp,
   FileText,
   Download,
   Mountain,
   Droplets,
   HardHat,
-  Compass,
   Palette,
-  Eye,
   Sliders,
-  Check,
-  ChevronRight,
+  RotateCcw,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,14 +26,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useMemo, useState } from "react";
 import { PARCELS } from "@/lib/data/parcels";
-import {
-  calculateDevelopmentCost,
-  COUNTY_COST_FACTORS,
-} from "@/lib/subdivision/cost-estimator";
-import {
-  parcelToSubdivisionConfig,
-  resolveAddressOrParcel,
-} from "@/lib/subdivision/address-resolver";
+import { calculateDevelopmentCost } from "@/lib/subdivision/cost-estimator";
+import { resolveAddressOrParcel } from "@/lib/subdivision/address-resolver";
 import type {
   ArchitectureStyle,
   CostBreakdown,
@@ -50,13 +38,11 @@ import type {
   RoofMaterial,
   StudioSceneMode,
   StudioViewLevel,
-  SubdivisionConfig,
 } from "@/lib/subdivision/types";
 
 export const Route = createFileRoute("/scene-3d")({ component: Scene3DPage });
 
-const TABS = ["Studio3D", "ZoningRestrictions", "SpecDesign", "UnderwritingCost"] as const;
-type ActiveTab = (typeof TABS)[number];
+type ActiveTab = "Studio3D" | "ZoningRestrictions" | "SpecDesign" | "UnderwritingCost";
 
 function money(n: number) {
   if (!Number.isFinite(n)) return "—";
@@ -369,21 +355,50 @@ function Scene3DPage() {
 
         {/* Main Workspace Area */}
         <div className="flex-1 p-3 md:p-6 flex flex-col gap-6">
-          {/* 3D Canvas Host Container */}
+          {/* 3D Canvas Host Container with Error Boundary */}
           <div className="w-full h-[660px]">
-            <HouseModelViewer
-              parcelId={subdivisionConfig.parcelId}
-              address={subdivisionConfig.address}
-              zoningDistrict={subdivisionConfig.zoningName}
-              subdivisionConfig={subdivisionConfig}
-              houseSpec={houseSpec}
-              onHouseSpecChange={setHouseSpec}
-              sceneMode={sceneMode}
-              onSceneModeChange={setSceneMode}
-              onSelectLot={(lotNum) => {
-                setSceneMode("houseStudio");
-              }}
-            />
+            <ErrorBoundary
+              fallback={({ reset }) => (
+                <div className="flex h-full w-full flex-col items-center justify-center rounded-xl border border-border bg-card p-8 text-center shadow-lg">
+                  <div className="rounded-full bg-destructive/10 p-3 text-destructive mb-3">
+                    <AlertTriangle className="size-8" />
+                  </div>
+                  <h3 className="text-base font-semibold text-foreground">
+                    3D Scene Engine Interrupted
+                  </h3>
+                  <p className="max-w-md text-xs text-muted-foreground mt-1 mb-4">
+                    An unexpected graphics or WebGL issue occurred while rendering the 3D model. You can retry loading the scene or continue using the Spec Design Sheet and Underwriting Cost Estimator tabs below.
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" variant="outline" onClick={reset} className="gap-1.5 text-xs">
+                      <RotateCcw className="size-3.5" /> Retry 3D Scene
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="default"
+                      onClick={() => setActiveTab("SpecDesign")}
+                      className="text-xs"
+                    >
+                      View Spec Design Sheet
+                    </Button>
+                  </div>
+                </div>
+              )}
+            >
+              <HouseModelViewer
+                parcelId={subdivisionConfig.parcelId}
+                address={subdivisionConfig.address}
+                zoningDistrict={subdivisionConfig.zoningName}
+                subdivisionConfig={subdivisionConfig}
+                houseSpec={houseSpec}
+                onHouseSpecChange={setHouseSpec}
+                sceneMode={sceneMode}
+                onSceneModeChange={setSceneMode}
+                onSelectLot={(_lotNum) => {
+                  setSceneMode("houseStudio");
+                }}
+              />
+            </ErrorBoundary>
           </div>
 
           {/* Sub-Workspaces & Tools Tabs */}
@@ -874,7 +889,11 @@ function Scene3DPage() {
                         <span className="text-muted-foreground">Max Lot Coverage:</span>
                         <div className="flex items-center gap-1.5 font-semibold">
                           <span>{subdivisionConfig.maxLotCoverage}%</span>
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                          {isCoverageCompliant ? (
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                          ) : (
+                            <AlertTriangle className="w-3.5 h-3.5 text-red-500" />
+                          )}
                         </div>
                       </div>
                     </div>

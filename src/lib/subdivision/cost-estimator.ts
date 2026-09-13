@@ -168,7 +168,7 @@ export function calculateDevelopmentCost(
   const balconyCost = spec.hasBalcony && spec.stories >= 2 ? 9_500 : 0;
   const turretCost = spec.hasBayTurret ? 16_000 : 0;
 
-  const netSqftRate = Math.round((baseSqftCost + facadeAdder + roofAdder + interiorAdder) * loc);
+  const _netSqftRate = Math.round((baseSqftCost + facadeAdder + roofAdder + interiorAdder) * loc);
 
   const singleHomeFoundationCost = Math.round(
     (spec.sqftPerStory * 38 + (spec.stories > 2 ? 8_000 : 0)) * loc

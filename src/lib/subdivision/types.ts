@@ -104,3 +104,27 @@ export interface CostBreakdown {
   equityMultiple: number;
   breakevenPricePerHome: number;
 }
+
+export const DEFAULT_HOUSE_SPEC: HouseDesignSpec = {
+  stories: 2,
+  style: "craftsman",
+  facadeMaterial: "brick",
+  roofMaterial: "shingle",
+  roofColor: "#334155",
+  trimColor: "#f8fafc",
+  shutterColor: "#1e293b",
+  garageBays: 2,
+  hasPorch: true,
+  hasPatio: true,
+  hasBalcony: true,
+  hasBayTurret: true,
+  footprintWidthFt: 46,
+  footprintDepthFt: 36,
+  sqftPerStory: 1450,
+  totalSqft: 2900,
+  heightFt: 31.2,
+  viewLevel: "exterior",
+  flooring: "oak",
+  wallColor: "greige",
+  furnished: true,
+};
