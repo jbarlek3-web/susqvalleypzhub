@@ -45,6 +45,10 @@ export function buildSubdivisionMasterPlan(
     color: 0x242426,
     roughness: 0.85,
     metalness: 0.05,
+    polygonOffset: true,
+    polygonOffsetFactor: -1.0,
+    polygonOffsetUnits: -1.0,
+    side: THREE.DoubleSide,
   });
 
   const concreteMat = textures
@@ -148,9 +152,28 @@ export function buildSubdivisionMasterPlan(
     metalness: 0.6,
   });
 
-  const curbMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.6 });
-  const roadStripeYellowMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
-  const crosswalkMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const curbMat = new THREE.MeshStandardMaterial({
+    color: 0xf1f5f9,
+    roughness: 0.6,
+    polygonOffset: true,
+    polygonOffsetFactor: -1.0,
+    polygonOffsetUnits: -1.0,
+    side: THREE.DoubleSide,
+  });
+  const roadStripeYellowMat = new THREE.MeshBasicMaterial({
+    color: 0xfacc15,
+    polygonOffset: true,
+    polygonOffsetFactor: -2.0,
+    polygonOffsetUnits: -2.0,
+    side: THREE.DoubleSide,
+  });
+  const crosswalkMat = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    polygonOffset: true,
+    polygonOffsetFactor: -2.0,
+    polygonOffsetUnits: -2.0,
+    side: THREE.DoubleSide,
+  });
   const stopSignMat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.3 });
   const signGreenMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.4 });
   const metalPoleMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.8, roughness: 0.3 });
@@ -169,19 +192,37 @@ export function buildSubdivisionMasterPlan(
   const terrainSegments = 64;
   const terrainGeo = new THREE.PlaneGeometry(terrainSize, terrainSize, terrainSegments, terrainSegments);
 
-  // Apply subtle elevation deformation based on slope %
+  // Apply civil-engineered subdivision grading:
+  // - Retention pond basin depression at the center (r < 36m)
+  // - Development plateau terrace (36m <= r <= 112m) graded flat to 0.0 elevation
+  // - South Main Entrance Boulevard corridor (r > 112m, |x| < 14) graded flat to 0.0
+  // - Outer perimeter buffer (r > 112m) slopes gently into surrounding topography
   const posAttr = terrainGeo.attributes.position;
   const slopeFactor = (config.slopePct / 100) * 0.4;
   for (let i = 0; i < posAttr.count; i++) {
     const x = posAttr.getX(i);
     const y = posAttr.getY(i);
-    // Slope rises along diagonal + rolling mound hills
+    // Note: terrainMesh is rotated -Math.PI / 2 around X axis.
+    // Local coords (x, y) map to world (x, -y) horizontal plane.
     const distFromCenter = Math.sqrt(x * x + y * y);
-    let zElevation = (x * 0.08 + y * 0.05) * slopeFactor * 12;
-    // Lower center depression for the retention pond basin
-    if (distFromCenter < 45) {
-      const depression = Math.cos((distFromCenter / 45) * (Math.PI / 2)) * 3.5;
-      zElevation -= depression;
+    let zElevation = 0;
+
+    if (distFromCenter < 36) {
+      // Basin depression for stormwater retention pond (center at -2.4m, pond water at -1.8m)
+      const t = distFromCenter / 36;
+      zElevation = -(1.0 - Math.sin(t * (Math.PI / 2))) * 2.4;
+    } else if (distFromCenter <= 112) {
+      // Subdivision development terrace: completely graded flat to 0.0 elevation
+      // for all roads, curbs, sidewalks, and residential building pads
+      zElevation = 0;
+    } else {
+      // Beyond outer perimeter boulevard (r > 112m):
+      // South entrance avenue corridor (local y < -108, |x| < 14m) remains graded at 0.0
+      const isSouthCorridor = y < -108 && Math.abs(x) < 14;
+      if (!isSouthCorridor) {
+        const outerRatio = Math.min(1.0, (distFromCenter - 112) / 20.0);
+        zElevation = (x * 0.06 - y * 0.04) * slopeFactor * 8 * outerRatio;
+      }
     }
     posAttr.setZ(i, zElevation);
   }
@@ -331,7 +372,7 @@ export function buildSubdivisionMasterPlan(
     asphaltMat
   );
   innerRoadMesh.rotation.x = -Math.PI / 2;
-  innerRoadMesh.position.set(0, 0.05, 0);
+  innerRoadMesh.position.set(0, 0.10, 0);
   innerRoadMesh.receiveShadow = true;
   root.add(innerRoadMesh);
 
@@ -342,7 +383,7 @@ export function buildSubdivisionMasterPlan(
     roadStripeYellowMat
   );
   innerStripeMesh.rotation.x = -Math.PI / 2;
-  innerStripeMesh.position.set(0, 0.06, 0);
+  innerStripeMesh.position.set(0, 0.12, 0);
   root.add(innerStripeMesh);
 
   // Inner Road Curbs
@@ -351,7 +392,7 @@ export function buildSubdivisionMasterPlan(
     curbMat
   );
   innerCurbInner.rotation.x = -Math.PI / 2;
-  innerCurbInner.position.set(0, 0.1, 0);
+  innerCurbInner.position.set(0, 0.20, 0);
   root.add(innerCurbInner);
 
   const innerCurbOuter = new THREE.Mesh(
@@ -359,7 +400,7 @@ export function buildSubdivisionMasterPlan(
     curbMat
   );
   innerCurbOuter.rotation.x = -Math.PI / 2;
-  innerCurbOuter.position.set(0, 0.1, 0);
+  innerCurbOuter.position.set(0, 0.20, 0);
   root.add(innerCurbOuter);
 
   // Inner Pedestrian Sidewalk
@@ -370,7 +411,7 @@ export function buildSubdivisionMasterPlan(
     concreteMat
   );
   innerSidewalk.rotation.x = -Math.PI / 2;
-  innerSidewalk.position.set(0, 0.08, 0);
+  innerSidewalk.position.set(0, 0.15, 0);
   root.add(innerSidewalk);
 
   // B. OUTER PERIMETER BOULEVARD LOOP (Circling the entire subdivision perimeter)
@@ -381,7 +422,7 @@ export function buildSubdivisionMasterPlan(
     asphaltMat
   );
   outerRoadMesh.rotation.x = -Math.PI / 2;
-  outerRoadMesh.position.set(0, 0.05, 0);
+  outerRoadMesh.position.set(0, 0.10, 0);
   outerRoadMesh.receiveShadow = true;
   root.add(outerRoadMesh);
 
@@ -392,7 +433,7 @@ export function buildSubdivisionMasterPlan(
     roadStripeYellowMat
   );
   outerStripeMesh.rotation.x = -Math.PI / 2;
-  outerStripeMesh.position.set(0, 0.06, 0);
+  outerStripeMesh.position.set(0, 0.12, 0);
   root.add(outerStripeMesh);
 
   // Outer Road Curbs
@@ -401,7 +442,7 @@ export function buildSubdivisionMasterPlan(
     curbMat
   );
   outerCurbInner.rotation.x = -Math.PI / 2;
-  outerCurbInner.position.set(0, 0.1, 0);
+  outerCurbInner.position.set(0, 0.20, 0);
   root.add(outerCurbInner);
 
   const outerCurbOuter = new THREE.Mesh(
@@ -409,7 +450,7 @@ export function buildSubdivisionMasterPlan(
     curbMat
   );
   outerCurbOuter.rotation.x = -Math.PI / 2;
-  outerCurbOuter.position.set(0, 0.1, 0);
+  outerCurbOuter.position.set(0, 0.20, 0);
   root.add(outerCurbOuter);
 
   // Outer Sidewalk along inner edge of outer road
@@ -418,7 +459,7 @@ export function buildSubdivisionMasterPlan(
     concreteMat
   );
   outerSidewalk.rotation.x = -Math.PI / 2;
-  outerSidewalk.position.set(0, 0.08, 0);
+  outerSidewalk.position.set(0, 0.15, 0);
   root.add(outerSidewalk);
 
   // C. FOUR CONNECTING CROSS-AVENUES (North, South, East, West)
@@ -428,19 +469,19 @@ export function buildSubdivisionMasterPlan(
   const southAvenueZ = innerRoadR2 + southAvenueLength / 2;
   const southAvenue = new THREE.Mesh(new THREE.PlaneGeometry(roadWidth, southAvenueLength), asphaltMat);
   southAvenue.rotation.x = -Math.PI / 2;
-  southAvenue.position.set(0, 0.05, southAvenueZ);
+  southAvenue.position.set(0, 0.10, southAvenueZ);
   southAvenue.receiveShadow = true;
   root.add(southAvenue);
 
   // South Entrance Boulevard Centerline Yellow Stripe
   const southStripe = new THREE.Mesh(new THREE.PlaneGeometry(0.16, southAvenueLength), roadStripeYellowMat);
   southStripe.rotation.x = -Math.PI / 2;
-  southStripe.position.set(0, 0.06, southAvenueZ);
+  southStripe.position.set(0, 0.12, southAvenueZ);
   root.add(southStripe);
 
   // South Entrance Boulevard Median Island
   const southMedian = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.2, 45), grassMat);
-  southMedian.position.set(0, 0.15, 95);
+  southMedian.position.set(0, 0.22, 95);
   root.add(southMedian);
 
   // South Entrance Monument Sign Wall
@@ -459,13 +500,13 @@ export function buildSubdivisionMasterPlan(
   const northAvenueZ = -(innerRoadR2 + northAvenueLength / 2);
   const northAvenue = new THREE.Mesh(new THREE.PlaneGeometry(roadWidth, northAvenueLength), asphaltMat);
   northAvenue.rotation.x = -Math.PI / 2;
-  northAvenue.position.set(0, 0.05, northAvenueZ);
+  northAvenue.position.set(0, 0.10, northAvenueZ);
   northAvenue.receiveShadow = true;
   root.add(northAvenue);
 
   const northStripe = new THREE.Mesh(new THREE.PlaneGeometry(0.16, northAvenueLength), roadStripeYellowMat);
   northStripe.rotation.x = -Math.PI / 2;
-  northStripe.position.set(0, 0.06, northAvenueZ);
+  northStripe.position.set(0, 0.12, northAvenueZ);
   root.add(northStripe);
 
   // 3. East Ridge Drive (Connecting Inner Loop X=53.5 to Outer Loop X=104.5)
@@ -473,13 +514,13 @@ export function buildSubdivisionMasterPlan(
   const eastAvenueX = innerRoadR2 + eastAvenueLength / 2;
   const eastAvenue = new THREE.Mesh(new THREE.PlaneGeometry(eastAvenueLength, roadWidth), asphaltMat);
   eastAvenue.rotation.x = -Math.PI / 2;
-  eastAvenue.position.set(eastAvenueX, 0.05, 0);
+  eastAvenue.position.set(eastAvenueX, 0.10, 0);
   eastAvenue.receiveShadow = true;
   root.add(eastAvenue);
 
   const eastStripe = new THREE.Mesh(new THREE.PlaneGeometry(eastAvenueLength, 0.16), roadStripeYellowMat);
   eastStripe.rotation.x = -Math.PI / 2;
-  eastStripe.position.set(eastAvenueX, 0.06, 0);
+  eastStripe.position.set(eastAvenueX, 0.12, 0);
   root.add(eastStripe);
 
   // 4. West Valley Court / Drive (Connecting Inner Loop X=-53.5 to Outer Loop X=-104.5)
@@ -487,19 +528,19 @@ export function buildSubdivisionMasterPlan(
   const westAvenueX = -(innerRoadR2 + westAvenueLength / 2);
   const westAvenue = new THREE.Mesh(new THREE.PlaneGeometry(westAvenueLength, roadWidth), asphaltMat);
   westAvenue.rotation.x = -Math.PI / 2;
-  westAvenue.position.set(westAvenueX, 0.05, 0);
+  westAvenue.position.set(westAvenueX, 0.10, 0);
   westAvenue.receiveShadow = true;
   root.add(westAvenue);
 
   const westStripe = new THREE.Mesh(new THREE.PlaneGeometry(westAvenueLength, 0.16), roadStripeYellowMat);
   westStripe.rotation.x = -Math.PI / 2;
-  westStripe.position.set(westAvenueX, 0.06, 0);
+  westStripe.position.set(westAvenueX, 0.12, 0);
   root.add(westStripe);
 
   // D. PAINTED PEDESTRIAN CROSSWALKS AT INTERSECTIONS (High-Visibility White Zebra Bars)
   const createCrosswalkZebra = (x: number, z: number, rotationY: number) => {
     const cwGroup = new THREE.Group();
-    cwGroup.position.set(x, 0.07, z);
+    cwGroup.position.set(x, 0.13, z);
     cwGroup.rotation.y = rotationY;
 
     for (let b = -3; b <= 3; b++) {
