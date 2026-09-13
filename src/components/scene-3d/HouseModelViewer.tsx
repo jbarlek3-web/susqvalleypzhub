@@ -445,7 +445,7 @@ export function HouseModelViewer({
 
       // Adjust camera for subdivision overview
       if (cameraRef.current && controlsRef.current) {
-        cameraRef.current.position.set(0, 65, 105);
+        cameraRef.current.position.set(0, 80, 135);
         controlsRef.current.target.set(0, 2, 0);
         controlsRef.current.update();
       }
@@ -642,7 +642,7 @@ export function HouseModelViewer({
     if (currentMode === "subdivision") {
       switch (preset) {
         case "aerial":
-          camera.position.set(0, 75, 115);
+          camera.position.set(0, 95, 140);
           controls.target.set(0, 2, 0);
           break;
         case "pond":
@@ -651,14 +651,14 @@ export function HouseModelViewer({
           controls.target.set(0, 1.5, 0);
           break;
         case "entrance":
-          // Main entrance boulevard view
-          camera.position.set(0, 6, 95);
-          controls.target.set(0, 2, 40);
+          // Main entrance boulevard view looking into neighborhood
+          camera.position.set(0, 7, 125);
+          controls.target.set(0, 3, 50);
           break;
         case "street":
           // Residential loop street view
-          camera.position.set(45, 8, 45);
-          controls.target.set(30, 4, 15);
+          camera.position.set(65, 9, 65);
+          controls.target.set(45, 4, 35);
           break;
       }
     } else {
