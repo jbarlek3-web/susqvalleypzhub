@@ -48,10 +48,13 @@ function secure(response: Response, isHttps: boolean) {
   headers.set("cache-control", "no-store");
   headers.set("content-security-policy", contentSecurityPolicy());
   headers.set("cross-origin-opener-policy", "same-origin-allow-popups");
+  headers.set("cross-origin-resource-policy", "same-origin");
   headers.set("permissions-policy", "camera=(), microphone=(), geolocation=(), payment=(self)");
   headers.set("referrer-policy", "strict-origin-when-cross-origin");
   headers.set("x-content-type-options", "nosniff");
+  headers.set("x-dns-prefetch-control", "off");
   headers.set("x-frame-options", "SAMEORIGIN");
+  headers.set("x-permitted-cross-domain-policies", "none");
   if (isHttps) headers.set("strict-transport-security", "max-age=31536000; includeSubDomains");
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }

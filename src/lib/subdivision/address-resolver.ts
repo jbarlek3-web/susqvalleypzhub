@@ -132,8 +132,19 @@ export function getAllAvailableParcels(): Parcel[] {
 }
 
 export function resolveAddressOrParcel(idOrAddress: string): ResolvedLocationProfile {
+  // Security: Sanitize input, remove control chars/HTML tags, cap length
+  const sanitizedInput = Array.from(idOrAddress || "")
+    .filter((char) => {
+      const code = char.charCodeAt(0);
+      return code >= 32 || code === 10 || code === 13 || code === 9;
+    })
+    .join("")
+    .replace(/<[^>]*>/g, "")
+    .trim()
+    .slice(0, 120);
+
   // Check exact parcel id first
-  const existing = getParcel(idOrAddress);
+  const existing = getParcel(sanitizedInput);
   if (existing) {
     return {
       parcel: existing,
@@ -142,7 +153,7 @@ export function resolveAddressOrParcel(idOrAddress: string): ResolvedLocationPro
   }
 
   // Check matching address query if query is non-empty
-  const query = idOrAddress.trim().toLowerCase();
+  const query = sanitizedInput.toLowerCase();
   if (query.length > 0) {
     const match = PARCELS.find(
       (p) =>
@@ -162,18 +173,18 @@ export function resolveAddressOrParcel(idOrAddress: string): ResolvedLocationPro
 
   // Fallback to custom subdivision with intelligent county guessing
   let detectedCounty: County = "York";
-  if (/cumberland|camp hill|carlisle|mechanicsburg|hampden|silver spring|upper allen|lower allen|east pennsboro|shippensburg/i.test(idOrAddress)) {
+  if (/cumberland|camp hill|carlisle|mechanicsburg|hampden|silver spring|upper allen|lower allen|east pennsboro|shippensburg/i.test(sanitizedInput)) {
     detectedCounty = "Cumberland";
-  } else if (/dauphin|harrisburg|derry|hershey|swatara|lower paxton|susquehanna|middletown|hummelstown/i.test(idOrAddress)) {
+  } else if (/dauphin|harrisburg|derry|hershey|swatara|lower paxton|susquehanna|middletown|hummelstown/i.test(sanitizedInput)) {
     detectedCounty = "Dauphin";
-  } else if (/lancaster|manheim|ephrata|lititz|east hempfield|mount joy|millersville|columbia/i.test(idOrAddress)) {
+  } else if (/lancaster|manheim|ephrata|lititz|east hempfield|mount joy|millersville|columbia/i.test(sanitizedInput)) {
     detectedCounty = "Lancaster";
-  } else if (/york|springettsbury|spring garden|manchester|dover|fairview|hanover|red lion|dallastown|shrewsbury/i.test(idOrAddress)) {
+  } else if (/york|springettsbury|spring garden|manchester|dover|fairview|hanover|red lion|dallastown|shrewsbury/i.test(sanitizedInput)) {
     detectedCounty = "York";
   }
 
   const custom = createCustomSubdivision(
-    idOrAddress,
+    sanitizedInput,
     detectedCounty,
     `${detectedCounty} Township`,
     12.0
