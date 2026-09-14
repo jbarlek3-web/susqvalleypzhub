@@ -102,6 +102,12 @@ export function AppShell({
 
   return (
     <div className="min-h-dvh bg-background text-on-surface">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:shadow-lg focus:ring-2 focus:ring-ring focus:outline-none"
+      >
+        Skip to main content
+      </a>
       <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-outline-variant/80 bg-card/85 text-on-surface shadow-[0_2px_16px_rgb(17_40_71/0.06)] backdrop-blur-xl md:h-20 transition-all">
         <div className="mx-auto flex h-full max-w-[1400px] items-center gap-3 px-3 md:px-6">
           <Button
@@ -245,6 +251,7 @@ export function AppShell({
       </Sheet>
 
       <main
+        id="main-content"
         key={pathname}
         className={cn(
           "animate-page-enter",

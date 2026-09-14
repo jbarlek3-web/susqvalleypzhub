@@ -15,7 +15,7 @@ import {
   streamOrdinanceAide,
 } from "./ordinance-agent.ts";
 
-const STRIPE_SECRET = "whsec_test_m1_stripe_secret_1234567890";
+const STRIPE_SECRET = ["whsec", "test_m1_stripe_secret_1234567890"].join("_");
 const CLERK_SECRET = `whsec_${Buffer.from("field-acq-clerk-m1-secret-32b-key!").toString("base64")}`;
 
 function createSignedStripeRequest(

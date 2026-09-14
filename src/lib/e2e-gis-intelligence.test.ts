@@ -39,7 +39,7 @@ const municipalitiesData = JSON.parse(
 
 const planningDirectory = JSON.parse(
   readFileSync(new URL("./data/pa-county-planning-directory.json", import.meta.url), "utf8"),
-) as Array<{ county: string; planningDepartment: string; website: string; phone: string }>;
+) as Array<{ county: string; departmentName: string; departmentUrl: string }>;
 
 const _zoningSourceUrls = JSON.parse(
   readFileSync(new URL("./data/pa-county-zoning-source-urls.json", import.meta.url), "utf8"),
@@ -810,8 +810,8 @@ test("R3-T4-5: Complete Full-Stack Due Diligence Report: Query parcel -> Check P
   // Step 2: Check county planning contact from official 67-county planning directory
   const countyPlan = planningDirectory.find((c) => c.county === p.county);
   assert.ok(countyPlan !== undefined);
-  assert.ok(countyPlan.planningDepartment.length > 0);
-  assert.ok(countyPlan.website.startsWith("http"));
+  assert.ok(countyPlan.departmentName.length > 0);
+  assert.ok(countyPlan.departmentUrl.startsWith("http"));
 
   // Check Pro directory contact details
   const proCounty = countiesData.records.find((c) => c.county === p.county);

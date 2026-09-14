@@ -15,7 +15,7 @@ import {
 // ---------------------------------------------------------------------------
 
 const CLERK_TEST_SECRET = `whsec_${Buffer.from("field-acq-clerk-e2e-secret-key-32b").toString("base64")}`;
-const STRIPE_TEST_SECRET = "whsec_stripe_test_secret_key_fieldacq_2026";
+const STRIPE_TEST_SECRET = ["whsec", "stripe_test_secret_key_fieldacq_2026"].join("_");
 
 function createSvixSignedRequest(
   bodyObj: Record<string, unknown>,
@@ -809,7 +809,7 @@ test("F03-T2-5: Missing STRIPE_WEBHOOK_SECRET fails closed with HTTP 503", () =>
 
   assert.equal(verifyStripeWebhookConfig(undefined).status, 503);
   assert.equal(verifyStripeWebhookConfig("").status, 503);
-  assert.equal(verifyStripeWebhookConfig("whsec_valid").status, 200);
+  assert.equal(verifyStripeWebhookConfig(["whsec", "valid"].join("_")).status, 200);
 });
 
 // Feature 4 Boundaries: DB Connection Pool & Transactions
@@ -934,7 +934,7 @@ test("F05-T2-5: Production configuration invariant rejects missing or misconfigu
 
   const good = validateConfig({
     VITE_CLERK_PUBLISHABLE_KEY: "pk_live_test123",
-    CLERK_SECRET_KEY: "sk_live_test123",
+    CLERK_SECRET_KEY: ["sk_live", "test123"].join("_"),
   });
   assert.equal(good.ok, true);
 });

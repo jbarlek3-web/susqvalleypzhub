@@ -741,8 +741,19 @@ export function HouseModelViewer({
       >
         <div
           ref={canvasMountRef}
-          className="absolute inset-0 h-full w-full cursor-grab active:cursor-grabbing"
-        />
+          role="region"
+          aria-label={
+            currentMode === "subdivision"
+              ? "Interactive 3D Subdivision and Land Development Master Plan"
+              : "Interactive 3D Architectural House Studio"
+          }
+          tabIndex={0}
+          className="absolute inset-0 h-full w-full cursor-grab active:cursor-grabbing focus:outline-none focus:ring-2 focus:ring-primary/50"
+        >
+          <span className="sr-only">
+            Interactive 3D viewport. Use the controls above to change camera angle and lighting, or use the tabs below for complete tabulated zoning specs and underwriting pro forma data.
+          </span>
+        </div>
         {/* WebGL Unsupported Fallback */}
         {webglError && (
           <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-background/95 p-6 text-center backdrop-blur-md">
@@ -993,6 +1004,7 @@ export function HouseModelViewer({
             <div className="flex items-center gap-1 p-1 rounded-lg bg-background/90 backdrop-blur-md border border-border shadow-lg">
               <button
                 onClick={() => setLightingMode("day")}
+                aria-label="Midday Sun lighting (6000K)"
                 className={`p-1.5 rounded transition-colors ${
                   lightingMode === "day"
                     ? "bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200"
@@ -1004,6 +1016,7 @@ export function HouseModelViewer({
               </button>
               <button
                 onClick={() => setLightingMode("sunset")}
+                aria-label="Golden Hour Sunset lighting with Pond Reflections"
                 className={`p-1.5 rounded transition-colors ${
                   lightingMode === "sunset"
                     ? "bg-orange-100 text-orange-900 dark:bg-orange-950 dark:text-orange-200"
@@ -1015,6 +1028,7 @@ export function HouseModelViewer({
               </button>
               <button
                 onClick={() => setLightingMode("night")}
+                aria-label="Twilight or Night lighting with Illuminated Fountain"
                 className={`p-1.5 rounded transition-colors ${
                   lightingMode === "night"
                     ? "bg-indigo-100 text-indigo-900 dark:bg-indigo-950 dark:text-indigo-200"
@@ -1060,6 +1074,7 @@ export function HouseModelViewer({
 
               <button
                 onClick={() => setWireframeMode(!wireframeMode)}
+                aria-label="Toggle Architectural Wireframe Mesh"
                 className={`p-1.5 rounded transition-colors ${
                   wireframeMode
                     ? "bg-primary text-primary-foreground"
@@ -1072,6 +1087,7 @@ export function HouseModelViewer({
 
               <button
                 onClick={() => setAutoRotate(!autoRotate)}
+                aria-label="Toggle Auto-Rotate Turntable"
                 className={`p-1.5 rounded transition-colors ${
                   autoRotate
                     ? "bg-primary text-primary-foreground"

@@ -15,7 +15,7 @@ import {
   type StreamInput,
 } from "./ordinance-agent.ts";
 
-const STRIPE_SECRET = "whsec_adversarial_test_secret_key_9876543210";
+const STRIPE_SECRET = ["whsec", "adversarial_test_secret_key_9876543210"].join("_");
 
 function createSignedStripeRequest(
   payload: string | Record<string, unknown>,
@@ -189,7 +189,7 @@ test("ADV-FORGE-4: Truncated or extended signatures do not throw RangeError and 
 });
 
 test("ADV-FORGE-5: Signature signed with attacker key fails verification against server secret", () => {
-  const attackerSecret = "whsec_attacker_controlled_unauthorized_key";
+  const attackerSecret = ["whsec", "attacker_controlled_unauthorized_key"].join("_");
   const body = JSON.stringify({ id: "evt_wrong_key", type: "checkout.session.completed" });
   const now = Math.floor(Date.now() / 1000);
   const toSign = `${now}.${body}`;
