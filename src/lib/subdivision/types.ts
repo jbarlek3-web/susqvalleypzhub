@@ -1,6 +1,6 @@
 import type { County } from "../types.ts";
 
-export type ArchitectureStyle = "craftsman" | "colonial" | "modernFarmhouse" | "contemporary";
+export type ArchitectureStyle = "craftsman" | "colonial" | "modernFarmhouse" | "contemporary" | "european";
 export type FacadeMaterial = "brick" | "stone" | "siding" | "boardAndBatten" | "stucco";
 export type RoofMaterial = "shingle" | "slate" | "standingSeam";
 export type InteriorFlooring = "oak" | "herringbone" | "walnut" | "tile" | "lvp";
@@ -9,8 +9,23 @@ export type StudioViewLevel = "exterior" | "dollhouse" | "story1" | "story2" | "
 export type StudioSceneMode = "subdivision" | "houseStudio";
 export type LightingMode = "day" | "sunset" | "night";
 
+export interface LotInspectionDetails {
+  lotNumber: number;
+  widthFt: number;
+  depthFt: number;
+  areaSqFt: number;
+  grossAcres: number;
+  setbacks: { front: number; rear: number; side: number };
+  buildableEnvelopeWidthFt: number;
+  buildableEnvelopeDepthFt: number;
+  buildableEnvelopeSqFt: number;
+  style: ArchitectureStyle;
+  styleName: string;
+  storyCount: number;
+}
+
 export interface HouseDesignSpec {
-  stories: 1 | 2 | 3 | 4;
+  stories: 1 | 2 | 3 | 4 | number;
   style: ArchitectureStyle;
   facadeMaterial: FacadeMaterial;
   roofMaterial: RoofMaterial;

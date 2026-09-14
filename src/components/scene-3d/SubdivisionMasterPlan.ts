@@ -1150,7 +1150,7 @@ export function buildSubdivisionMasterPlan(
   // =========================================================================
   // 6. ALLOCATE RESIDENTIAL LOTS SAFELY ACROSS THE 4 QUADRANTS
   // =========================================================================
-  const numLots = Math.min(24, Math.max(12, config.totalLots));
+  const numLots = Math.min(36, Math.max(8, config.totalLots));
   const lotRadius = 75.0; // Midway between inner road (53.5) and outer road (96.0)
 
   // Divide lots evenly across the 4 quadrant sectors (leaving clean clearings for the 4 avenues)
@@ -1182,7 +1182,22 @@ export function buildSubdivisionMasterPlan(
       lotContainer.position.set(lotX, 0, lotZ);
       // Face inward towards the Inner Loop and pond
       lotContainer.rotation.y = -angle - Math.PI / 2;
-      lotContainer.userData = { lotNumber: lotIndex + 1 };
+      lotContainer.userData = { lotNumber: lotIndex + 1, styleIdx: lotIndex % 4 };
+
+      // Pickable Ground Parcel Mesh (Flat lawn plane with userData.lotNumber for instant raycast picking anywhere on parcel)
+      const parcelLawnGeo = new THREE.PlaneGeometry(24, 33.5);
+      const parcelLawnMat = new THREE.MeshStandardMaterial({
+        color: 0x3d7032,
+        roughness: 0.88,
+        metalness: 0.05,
+      });
+      const parcelMesh = new THREE.Mesh(parcelLawnGeo, parcelLawnMat);
+      parcelMesh.name = `ParcelGroundMesh_${lotIndex + 1}`;
+      parcelMesh.rotation.x = -Math.PI / 2;
+      parcelMesh.position.set(0, 0.03, 1.75); // Centered: (-15 + 18.5) / 2 = 1.75, slightly above terrain
+      parcelMesh.userData = { lotNumber: lotIndex + 1, styleIdx: lotIndex % 4 };
+      parcelMesh.receiveShadow = true;
+      lotContainer.add(parcelMesh);
 
       // Lot Boundary Lines (Dashed parcel line)
       const lotBoundsGeo = new THREE.BufferGeometry().setFromPoints([
@@ -1197,11 +1212,12 @@ export function buildSubdivisionMasterPlan(
         new THREE.LineDashedMaterial({ color: 0x38bdf8, dashSize: 0.8, gapSize: 0.4 })
       );
       lotBounds.computeLineDistances();
+      lotBounds.userData = { lotNumber: lotIndex + 1, styleIdx: lotIndex % 4 };
       lotContainer.add(lotBounds);
 
       // Add Completely Finished Architectural House
       const house = buildCompleteNeighborhoodHouse(lotIndex, lotIndex + 1);
-      house.userData = { lotNumber: lotIndex + 1 };
+      house.userData = { lotNumber: lotIndex + 1, styleIdx: lotIndex % 4 };
       lotContainer.add(house);
 
       lotsGroup.add(lotContainer);

@@ -36,7 +36,9 @@ import { Route as ApiGoogleDriveExportRouteImport } from './routes/api/google-dr
 import { Route as ApiGoogleDriveStartRouteImport } from './routes/api/google-drive/start'
 import { Route as ApiGoogleDriveStatusRouteImport } from './routes/api/google-drive/status'
 import { Route as ApiGoogleDriveUploadRouteImport } from './routes/api/google-drive/upload'
+import { Route as ApiOrdinanceStreamRouteImport } from './routes/api/ordinance/stream'
 import { Route as ApiWebhooksClerkRouteImport } from './routes/api/webhooks/clerk'
+import { Route as ApiWebhooksStripeRouteImport } from './routes/api/webhooks/stripe'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -174,9 +176,19 @@ const ApiGoogleDriveUploadRoute = ApiGoogleDriveUploadRouteImport.update({
   path: '/api/google-drive/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOrdinanceStreamRoute = ApiOrdinanceStreamRouteImport.update({
+  id: '/api/ordinance/stream',
+  path: '/api/ordinance/stream',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiWebhooksClerkRoute = ApiWebhooksClerkRouteImport.update({
   id: '/api/webhooks/clerk',
   path: '/api/webhooks/clerk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWebhooksStripeRoute = ApiWebhooksStripeRouteImport.update({
+  id: '/api/webhooks/stripe',
+  path: '/api/webhooks/stripe',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -208,7 +220,9 @@ export interface FileRoutesByFullPath {
   '/api/google-drive/start': typeof ApiGoogleDriveStartRoute
   '/api/google-drive/status': typeof ApiGoogleDriveStatusRoute
   '/api/google-drive/upload': typeof ApiGoogleDriveUploadRoute
+  '/api/ordinance/stream': typeof ApiOrdinanceStreamRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
+  '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -238,7 +252,9 @@ export interface FileRoutesByTo {
   '/api/google-drive/start': typeof ApiGoogleDriveStartRoute
   '/api/google-drive/status': typeof ApiGoogleDriveStatusRoute
   '/api/google-drive/upload': typeof ApiGoogleDriveUploadRoute
+  '/api/ordinance/stream': typeof ApiOrdinanceStreamRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
+  '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -269,7 +285,9 @@ export interface FileRoutesById {
   '/api/google-drive/start': typeof ApiGoogleDriveStartRoute
   '/api/google-drive/status': typeof ApiGoogleDriveStatusRoute
   '/api/google-drive/upload': typeof ApiGoogleDriveUploadRoute
+  '/api/ordinance/stream': typeof ApiOrdinanceStreamRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
+  '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -301,7 +319,9 @@ export interface FileRouteTypes {
     | '/api/google-drive/start'
     | '/api/google-drive/status'
     | '/api/google-drive/upload'
+    | '/api/ordinance/stream'
     | '/api/webhooks/clerk'
+    | '/api/webhooks/stripe'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -331,7 +351,9 @@ export interface FileRouteTypes {
     | '/api/google-drive/start'
     | '/api/google-drive/status'
     | '/api/google-drive/upload'
+    | '/api/ordinance/stream'
     | '/api/webhooks/clerk'
+    | '/api/webhooks/stripe'
   id:
     | '__root__'
     | '/'
@@ -361,7 +383,9 @@ export interface FileRouteTypes {
     | '/api/google-drive/start'
     | '/api/google-drive/status'
     | '/api/google-drive/upload'
+    | '/api/ordinance/stream'
     | '/api/webhooks/clerk'
+    | '/api/webhooks/stripe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -392,7 +416,9 @@ export interface RootRouteChildren {
   ApiGoogleDriveStartRoute: typeof ApiGoogleDriveStartRoute
   ApiGoogleDriveStatusRoute: typeof ApiGoogleDriveStatusRoute
   ApiGoogleDriveUploadRoute: typeof ApiGoogleDriveUploadRoute
+  ApiOrdinanceStreamRoute: typeof ApiOrdinanceStreamRoute
   ApiWebhooksClerkRoute: typeof ApiWebhooksClerkRoute
+  ApiWebhooksStripeRoute: typeof ApiWebhooksStripeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -586,11 +612,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGoogleDriveUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ordinance/stream': {
+      id: '/api/ordinance/stream'
+      path: '/api/ordinance/stream'
+      fullPath: '/api/ordinance/stream'
+      preLoaderRoute: typeof ApiOrdinanceStreamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/webhooks/clerk': {
       id: '/api/webhooks/clerk'
       path: '/api/webhooks/clerk'
       fullPath: '/api/webhooks/clerk'
       preLoaderRoute: typeof ApiWebhooksClerkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/webhooks/stripe': {
+      id: '/api/webhooks/stripe'
+      path: '/api/webhooks/stripe'
+      fullPath: '/api/webhooks/stripe'
+      preLoaderRoute: typeof ApiWebhooksStripeRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -624,7 +664,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGoogleDriveStartRoute: ApiGoogleDriveStartRoute,
   ApiGoogleDriveStatusRoute: ApiGoogleDriveStatusRoute,
   ApiGoogleDriveUploadRoute: ApiGoogleDriveUploadRoute,
+  ApiOrdinanceStreamRoute: ApiOrdinanceStreamRoute,
   ApiWebhooksClerkRoute: ApiWebhooksClerkRoute,
+  ApiWebhooksStripeRoute: ApiWebhooksStripeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

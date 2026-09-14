@@ -35,6 +35,9 @@ export interface Sql {
     text: string,
     params?: unknown[],
   ): Promise<T[]>;
+  transaction<R>(
+    callback: (tx: Sql) => Promise<R>
+  ): Promise<R>;
 }
 
 /**
@@ -69,8 +72,11 @@ const identity = (v: string) => v;
 
 type Run = <T>(text: string, params: unknown[]) => Promise<T[]>;
 
-/** Wrap a query runner in the tagged-template + `.query()` `Sql` surface. */
-function toSql(run: Run): Sql {
+/** Wrap a query runner in the tagged-template + `.query()` + `.transaction()` `Sql` surface. */
+function toSql(
+  run: Run,
+  transaction?: <R>(callback: (tx: Sql) => Promise<R>) => Promise<R>,
+): Sql {
   const sql = (async <T = Record<string, unknown>>(
     strings: TemplateStringsArray,
     ...values: unknown[]
@@ -82,6 +88,11 @@ function toSql(run: Run): Sql {
   }) as unknown as Sql;
   sql.query = <T = Record<string, unknown>>(text: string, params: unknown[] = []) =>
     run<T>(text, params);
+  sql.transaction =
+    transaction ??
+    (async <R>(callback: (tx: Sql) => Promise<R>): Promise<R> => {
+      return callback(sql);
+    });
   return sql;
 }
 
@@ -100,10 +111,36 @@ function createNeonSql(): Promise<Sql> {
       connectionTimeoutMillis: 5_000,
       allowExitOnIdle: true,
     });
-    return toSql(async <T>(text: string, params: unknown[]) => {
-      const res = await pool.query(text, params);
-      return res.rows as T[];
-    });
+    const runNeonTransaction = async <R>(callback: (tx: Sql) => Promise<R>): Promise<R> => {
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+        const txRun: Run = async <T>(text: string, params: unknown[]) => {
+          const res = await client.query(text, params);
+          return res.rows as T[];
+        };
+        const txSql = toSql(txRun, async (nestedCb) => nestedCb(txSql));
+        const result = await callback(txSql);
+        await client.query("COMMIT");
+        return result;
+      } catch (err) {
+        try {
+          await client.query("ROLLBACK");
+        } catch {
+          // ignore rollback error if client was disconnected
+        }
+        throw err;
+      } finally {
+        client.release();
+      }
+    };
+    return toSql(
+      async <T>(text: string, params: unknown[]) => {
+        const res = await pool.query(text, params);
+        return res.rows as T[];
+      },
+      runNeonTransaction,
+    );
   })().catch((err) => {
     globalRef.__pgSqlPromise__ = undefined;
     throw err;
@@ -143,11 +180,26 @@ async function createPgliteSql(): Promise<Sql> {
   // passes serialized on a global chain so concurrent callers never
   // double-apply.
   const migrate = async (): Promise<void> => {
-    const migrations = import.meta.glob("/migrations/*.sql", {
-      query: "?raw",
-      import: "default",
-      eager: true,
-    }) as Record<string, string>;
+    let migrations: Record<string, string> = {};
+    if (typeof (import.meta as any).glob === "function") {
+      migrations = (import.meta as any).glob("/migrations/*.sql", {
+        query: "?raw",
+        import: "default",
+        eager: true,
+      }) as Record<string, string>;
+    } else {
+      const { readdirSync, readFileSync } = await import("node:fs");
+      const { join } = await import("node:path");
+      const migrationsDir = join(process.cwd(), "migrations");
+      try {
+        const files = readdirSync(migrationsDir).filter((f) => f.endsWith(".sql"));
+        for (const file of files) {
+          migrations[`/migrations/${file}`] = readFileSync(join(migrationsDir, file), "utf8");
+        }
+      } catch {
+        // no migrations directory
+      }
+    }
     const doneRows = await pg.query<{ name: string }>(
       "select name from _migrations",
     );
@@ -167,10 +219,24 @@ async function createPgliteSql(): Promise<Sql> {
   globalRef.__pgliteMigrateChain__ = pass;
   await pass;
 
-  return toSql(async <T>(text: string, params: unknown[]) => {
-    const result = await pg.query<T>(text, params);
-    return result.rows;
-  });
+  const runPgliteTransaction = async <R>(callback: (tx: Sql) => Promise<R>): Promise<R> => {
+    return await pg.transaction(async (tx) => {
+      const txRun: Run = async <T>(text: string, params: unknown[]) => {
+        const result = await tx.query<T>(text, params);
+        return result.rows;
+      };
+      const txSql = toSql(txRun, async (nestedCb) => nestedCb(txSql));
+      return await callback(txSql);
+    });
+  };
+
+  return toSql(
+    async <T>(text: string, params: unknown[]) => {
+      const result = await pg.query<T>(text, params);
+      return result.rows;
+    },
+    runPgliteTransaction,
+  );
 }
 
 let sqlPromise: Promise<Sql> | null = null;

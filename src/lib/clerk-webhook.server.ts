@@ -156,6 +156,41 @@ async function recordReceipt(receipt: ClerkWebhookReceipt): Promise<void> {
   `;
 }
 
+export type ClerkWebhookUserData = {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  image: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type ClerkWebhookUserSyncer = (userData: ClerkWebhookUserData) => Promise<void>;
+
+async function syncUserData(userData: ClerkWebhookUserData): Promise<void> {
+  const { getSql } = await import("./db.ts");
+  const sql = await getSql();
+  await sql`
+    insert into "user" ("id", "name", "email", "emailVerified", "image", "createdAt", "updatedAt")
+    values (
+      ${userData.id},
+      ${userData.name},
+      ${userData.email},
+      ${userData.emailVerified},
+      ${userData.image},
+      ${userData.createdAt},
+      ${userData.updatedAt}
+    )
+    on conflict ("id") do update set
+      "name" = excluded."name",
+      "email" = excluded."email",
+      "emailVerified" = excluded."emailVerified",
+      "image" = excluded."image",
+      "updatedAt" = excluded."updatedAt"
+  `;
+}
+
 export type ClerkWebhookUserPurger = (userId: string) => Promise<void>;
 
 async function purgeUserData(userId: string): Promise<void> {
@@ -187,6 +222,7 @@ export async function handleClerkWebhook(
   request: Request,
   storeReceipt: ClerkWebhookReceiptStore = recordReceipt,
   purgeUser: ClerkWebhookUserPurger = purgeUserData,
+  syncUser: ClerkWebhookUserSyncer = syncUserData,
 ): Promise<Response> {
   const signingSecret = process.env.CLERK_WEBHOOK_SIGNING_SECRET?.trim();
   if (!signingSecret) return json({ error: "Webhook receiver is not configured" }, 503);
@@ -220,6 +256,58 @@ export async function handleClerkWebhook(
       eventType: event.type,
     });
     return json({ error: "Webhook processing failed" }, 500);
+  }
+
+  if (
+    (event.type === "user.created" || event.type === "user.updated") &&
+    typeof event.data?.id === "string" &&
+    event.data.id.trim()
+  ) {
+    const d = event.data as unknown as Record<string, unknown>;
+    const emailAddresses = Array.isArray(d.email_addresses)
+      ? (d.email_addresses as Array<Record<string, unknown>>)
+      : [];
+    const primaryId = typeof d.primary_email_address_id === "string" ? d.primary_email_address_id : null;
+    const primaryEmailObj = emailAddresses.find((e) => e.id === primaryId) ?? emailAddresses[0];
+    const emailAddress = typeof primaryEmailObj?.email_address === "string" ? primaryEmailObj.email_address.trim() : "";
+    const email = emailAddress || `${event.data.id.trim()}@user.clerk.internal`;
+
+    const verificationObj = primaryEmailObj?.verification as Record<string, unknown> | undefined;
+    const verificationStatus = typeof verificationObj?.status === "string" ? verificationObj.status : "";
+    const emailVerified = verificationStatus === "verified" || verificationStatus === "transfer_verified";
+
+    const firstName = typeof d.first_name === "string" ? d.first_name.trim() : "";
+    const lastName = typeof d.last_name === "string" ? d.last_name.trim() : "";
+    const name = [firstName, lastName].filter(Boolean).join(" ") || email.split("@")[0] || "User";
+
+    const image =
+      typeof d.image_url === "string" && d.image_url.trim()
+        ? d.image_url.trim()
+        : typeof d.profile_image_url === "string" && d.profile_image_url.trim()
+          ? d.profile_image_url.trim()
+          : null;
+
+    const createdAt = typeof d.created_at === "number" ? new Date(d.created_at) : new Date();
+    const updatedAt = typeof d.updated_at === "number" ? new Date(d.updated_at) : new Date();
+
+    try {
+      await syncUser({
+        id: event.data.id.trim(),
+        name,
+        email,
+        emailVerified,
+        image,
+        createdAt,
+        updatedAt,
+      });
+    } catch (err) {
+      console.error("[clerk-webhook] failed to sync user data", {
+        eventId,
+        userId: event.data.id,
+        err,
+      });
+      return json({ error: "User sync failed" }, 500);
+    }
   }
 
   if (event.type === "user.deleted" && typeof event.data?.id === "string" && event.data.id.trim()) {

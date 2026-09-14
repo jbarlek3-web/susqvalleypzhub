@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  askOrdinanceAide,
   getOrdinanceAgentScope,
   type OrdinanceAgentScope,
 } from "@/lib/ordinance-agent";
@@ -76,34 +75,101 @@ function OrdinanceAide() {
     event.preventDefault();
     const prompt = question.trim();
     if (!prompt || !municipality || busy) return;
-    const id = Date.now();
-    setMessages((current) => [...current, { id, role: "user", text: prompt }]);
+    const userMsgId = Date.now();
+    const assistantMsgId = userMsgId + 1;
+
+    const conversation = messages
+      .filter((m) => m.id !== 1 && m.text.trim().length > 0)
+      .map((m) => ({ role: m.role, content: m.text }));
+    conversation.push({ role: "user", content: prompt });
+
+    setMessages((current) => [
+      ...current,
+      { id: userMsgId, role: "user", text: prompt },
+      { id: assistantMsgId, role: "assistant", text: "" },
+    ]);
     setQuestion("");
     setBusy(true);
+
     try {
-      const result = await askOrdinanceAide({ data: { county, municipality, question: prompt } });
-      if ("usage" in result && result.usage) {
-        setScope((current) => (current ? { ...current, usage: result.usage } : current));
+      const response = await fetch("/api/ordinance/stream", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          county,
+          municipality,
+          messages: conversation,
+        }),
+      });
+
+      if (!response.ok) {
+        let errorMessage = "The Ordinance Aide could not complete that request.";
+        try {
+          const errData = (await response.json()) as { error?: string };
+          if (errData?.error) errorMessage = errData.error;
+        } catch {
+          // ignore
+        }
+        setMessages((current) =>
+          current.map((m) => (m.id === assistantMsgId ? { ...m, text: errorMessage } : m)),
+        );
+        return;
       }
-      setMessages((current) => [
-        ...current,
-        {
-          id: id + 1,
-          role: "assistant",
-          text: result.ok ? result.answer : result.error,
-        },
-      ]);
+
+      if (!response.body) {
+        throw new Error("No response body from stream");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = "";
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith("data:")) continue;
+          const payload = trimmed.replace(/^data:\s*/, "");
+          if (payload === "[DONE]") break;
+          try {
+            const data = JSON.parse(payload) as { text?: string; error?: string };
+            if (data.text) {
+              accumulated += data.text;
+              setMessages((current) =>
+                current.map((m) => (m.id === assistantMsgId ? { ...m, text: accumulated } : m)),
+              );
+            } else if (data.error) {
+              accumulated = data.error;
+              setMessages((current) =>
+                current.map((m) => (m.id === assistantMsgId ? { ...m, text: accumulated } : m)),
+              );
+            }
+          } catch {
+            // ignore partial JSON parse
+          }
+        }
+      }
     } catch {
-      setMessages((current) => [
-        ...current,
-        {
-          id: id + 1,
-          role: "assistant",
-          text: "The Ordinance Aide could not complete that request. Please try again.",
-        },
-      ]);
+      setMessages((current) =>
+        current.map((m) =>
+          m.id === assistantMsgId && !m.text
+            ? { ...m, text: "The Ordinance Aide could not complete that request. Please try again." }
+            : m,
+        ),
+      );
     } finally {
       setBusy(false);
+      void getOrdinanceAgentScope()
+        .then((data) => {
+          setScope(data);
+        })
+        .catch(() => undefined);
     }
   }
 
@@ -216,19 +282,24 @@ function OrdinanceAide() {
               aria-live="polite"
               aria-label="Ordinance Aide conversation"
             >
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={
-                    message.role === "user"
-                      ? "ml-auto max-w-[85%] rounded-xl bg-primary-container px-4 py-3 text-sm text-on-primary"
-                      : "max-w-[92%] whitespace-pre-wrap rounded-xl bg-surface-low px-4 py-3 text-sm leading-relaxed"
-                  }
-                >
-                  {message.text}
-                </div>
-              ))}
-              {busy ? (
+              {messages.map((message) => {
+                if (!message.text && message.role === "assistant" && busy) {
+                  return null;
+                }
+                return (
+                  <div
+                    key={message.id}
+                    className={
+                      message.role === "user"
+                        ? "ml-auto max-w-[85%] rounded-xl bg-primary-container px-4 py-3 text-sm text-on-primary"
+                        : "max-w-[92%] whitespace-pre-wrap rounded-xl bg-surface-low px-4 py-3 text-sm leading-relaxed"
+                    }
+                  >
+                    {message.text}
+                  </div>
+                );
+              })}
+              {busy && (!messages[messages.length - 1]?.text || messages[messages.length - 1]?.role === "user") ? (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Loader2 className="size-4 animate-spin" /> Searching the private corpus…
                 </div>
