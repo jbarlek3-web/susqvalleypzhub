@@ -154,7 +154,7 @@ export async function processStripeEvent(
           : typeof obj.customer?.id === "string"
             ? obj.customer.id
             : null;
-      let organizationId =
+      const organizationId =
         typeof obj.metadata?.organizationId === "string" && obj.metadata.organizationId.trim()
           ? obj.metadata.organizationId.trim()
           : null;
