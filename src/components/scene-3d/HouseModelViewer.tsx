@@ -385,6 +385,13 @@ export function HouseModelViewer({
       if (contentRootRef.current) {
         disposeHierarchy(contentRootRef.current);
       }
+      if (texturesRef.current) {
+        Object.values(texturesRef.current).forEach(({ diff, nor, rough }) => {
+          diff?.dispose();
+          nor?.dispose();
+          rough?.dispose();
+        });
+      }
       if (container.contains(canvas)) {
         container.removeChild(canvas);
       }
