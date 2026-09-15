@@ -302,8 +302,8 @@ test("F02-T1-3: User deletion event triggers comprehensive data purge across sub
   const response = await handleClerkWebhook(
     req,
     async () => undefined,
-    async (userId) => {
-      purgedUsers.push(userId);
+    async (organizationId) => {
+      purgedUsers.push(organizationId);
     },
   );
 
@@ -364,7 +364,7 @@ test("F03-T1-2: customer.subscription.created/updated syncs active status and pe
   await db.waitReady;
   await db.exec(`
     create table if not exists stripe_entitlements (
-      user_id text primary key,
+      organization_id text primary key,
       customer_id text not null,
       subscription_id text not null,
       status text not null,
@@ -378,19 +378,19 @@ test("F03-T1-2: customer.subscription.created/updated syncs active status and pe
     customer: "cus_mock_99",
     status: "active",
     current_period_end: Math.floor(Date.now() / 1000) + 30 * 86400,
-    metadata: { userId: "user_developer_1" },
+    metadata: { organizationId: "user_developer_1" },
   };
 
   await db.query(
-    `insert into stripe_entitlements (user_id, customer_id, subscription_id, status, current_period_end)
+    `insert into stripe_entitlements (organization_id, customer_id, subscription_id, status, current_period_end)
      values ($1, $2, $3, $4, to_timestamp($5))
-     on conflict (user_id) do update set
+     on conflict (organization_id) do update set
        subscription_id = excluded.subscription_id,
        status = excluded.status,
        current_period_end = excluded.current_period_end,
        updated_at = now()`,
     [
-      subscriptionPayload.metadata.userId,
+      subscriptionPayload.metadata.organizationId,
       subscriptionPayload.customer,
       subscriptionPayload.id,
       subscriptionPayload.status,
@@ -398,8 +398,8 @@ test("F03-T1-2: customer.subscription.created/updated syncs active status and pe
     ],
   );
 
-  const res = await db.query<{ user_id: string; status: string; customer_id: string }>(
-    "select user_id, status, customer_id from stripe_entitlements where user_id = $1",
+  const res = await db.query<{ organization_id: string; status: string; customer_id: string }>(
+    "select organization_id, status, customer_id from stripe_entitlements where organization_id = $1",
     ["user_developer_1"],
   );
   assert.equal(res.rows.length, 1);
@@ -413,14 +413,14 @@ test("F03-T1-3: customer.subscription.deleted sets subscription state to cancele
   await db.waitReady;
   await db.exec(`
     create table if not exists stripe_entitlements (
-      user_id text primary key,
+      organization_id text primary key,
       customer_id text not null,
       subscription_id text not null,
       status text not null,
       current_period_end timestamptz not null,
       updated_at timestamptz not null default now()
     );
-    insert into stripe_entitlements (user_id, customer_id, subscription_id, status, current_period_end)
+    insert into stripe_entitlements (organization_id, customer_id, subscription_id, status, current_period_end)
     values ('user_canceled_1', 'cus_1', 'sub_1', 'active', now() + interval '10 days');
   `);
 
@@ -430,7 +430,7 @@ test("F03-T1-3: customer.subscription.deleted sets subscription state to cancele
   );
 
   const res = await db.query<{ status: string }>(
-    "select status from stripe_entitlements where user_id = 'user_canceled_1'",
+    "select status from stripe_entitlements where organization_id = 'user_canceled_1'",
   );
   assert.equal(res.rows[0].status, "canceled");
   await db.close();
@@ -945,15 +945,15 @@ test("F05-T2-5: Production configuration invariant rejects missing or misconfigu
 
 test("R1-T3-1: Rate limiter combined with Grok SSE streaming prevents resource exhaustion before model dispatch", () => {
   let rateLimitHits = 0;
-  const mockRateLimiter = (_userId: string) => {
+  const mockRateLimiter = (_organizationId: string) => {
     rateLimitHits++;
     if (rateLimitHits > 3) throw new Error("RATE_LIMIT_EXCEEDED");
     return { remaining: 3 - rateLimitHits };
   };
 
   let sseCalls = 0;
-  const mockSseEndpoint = (_userId: string) => {
-    mockRateLimiter(_userId);
+  const mockSseEndpoint = (_organizationId: string) => {
+    mockRateLimiter(_organizationId);
     sseCalls++;
     return formatSseChunk({ text: "Streaming answer chunk" });
   };
@@ -970,17 +970,17 @@ test("R1-T3-2: Stripe subscription webhook event updates entitlement, unblocking
   await db.waitReady;
   await db.exec(`
     create table if not exists stripe_entitlements (
-      user_id text primary key,
+      organization_id text primary key,
       status text not null,
       current_period_end timestamptz not null
     );
   `);
 
   // User starts locked
-  const checkPro = async (userId: string): Promise<boolean> => {
+  const checkPro = async (organizationId: string): Promise<boolean> => {
     const res = await db.query<{ status: string }>(
-      "select status from stripe_entitlements where user_id = $1 and status = 'active'",
-      [userId],
+      "select status from stripe_entitlements where organization_id = $1 and status = 'active'",
+      [organizationId],
     );
     return res.rows.length > 0;
   };
@@ -989,7 +989,7 @@ test("R1-T3-2: Stripe subscription webhook event updates entitlement, unblocking
 
   // Stripe webhook arrives with customer.subscription.created
   await db.query(
-    "insert into stripe_entitlements (user_id, status, current_period_end) values ($1, 'active', now() + interval '30 days')",
+    "insert into stripe_entitlements (organization_id, status, current_period_end) values ($1, 'active', now() + interval '30 days')",
     ["user_sub_tester"],
   );
 
@@ -1002,8 +1002,8 @@ test("R1-T3-3: Clerk user.deleted webhook cascades atomic deletion across entitl
   const db = new PGlite();
   await db.waitReady;
   await db.exec(`
-    create table if not exists stripe_entitlements (user_id text primary key);
-    create table if not exists ai_credit_accounts (user_id text primary key, balance int);
+    create table if not exists stripe_entitlements (organization_id text primary key);
+    create table if not exists ai_credit_accounts (organization_id text primary key, balance int);
     create table if not exists clerk_webhook_events (id text primary key, event_type text);
 
     insert into stripe_entitlements values ('user_purge_atomic');
@@ -1012,13 +1012,13 @@ test("R1-T3-3: Clerk user.deleted webhook cascades atomic deletion across entitl
 
   // Perform atomic purge inside transaction
   await db.transaction(async (tx) => {
-    await tx.query("delete from stripe_entitlements where user_id = $1", ["user_purge_atomic"]);
-    await tx.query("delete from ai_credit_accounts where user_id = $1", ["user_purge_atomic"]);
+    await tx.query("delete from stripe_entitlements where organization_id = $1", ["user_purge_atomic"]);
+    await tx.query("delete from ai_credit_accounts where organization_id = $1", ["user_purge_atomic"]);
     await tx.query("insert into clerk_webhook_events values ($1, 'user.deleted')", ["evt_del_atomic"]);
   });
 
-  const entRes = await db.query("select * from stripe_entitlements where user_id = 'user_purge_atomic'");
-  const aiRes = await db.query("select * from ai_credit_accounts where user_id = 'user_purge_atomic'");
+  const entRes = await db.query("select * from stripe_entitlements where organization_id = 'user_purge_atomic'");
+  const aiRes = await db.query("select * from ai_credit_accounts where organization_id = 'user_purge_atomic'");
   const evtRes = await db.query("select * from clerk_webhook_events where id = 'evt_del_atomic'");
 
   assert.equal(entRes.rows.length, 0);
@@ -1058,19 +1058,19 @@ test("R1-T4-1: End-to-end user lifecycle: Signup webhook -> Stripe Checkout -> P
   await db.waitReady;
   await db.exec(`
     create table if not exists users (id text primary key, email text);
-    create table if not exists stripe_entitlements (user_id text primary key, status text, customer_id text);
-    create table if not exists ai_usage (user_id text primary key, questions_used int);
+    create table if not exists stripe_entitlements (organization_id text primary key, status text, customer_id text);
+    create table if not exists ai_usage (organization_id text primary key, questions_used int);
   `);
 
   // Step 1: User created via Clerk webhook
-  const userId = "usr_e2e_journey_1";
-  await db.query("insert into users values ($1, 'developer@landacq.com')", [userId]);
+  const organizationId = "usr_e2e_journey_1";
+  await db.query("insert into users values ($1, 'developer@landacq.com')", [organizationId]);
 
   // Step 2: Stripe checkout completed webhook
-  await db.query("insert into stripe_entitlements values ($1, 'active', 'cus_journey_1')", [userId]);
+  await db.query("insert into stripe_entitlements values ($1, 'active', 'cus_journey_1')", [organizationId]);
 
   // Step 3: Verify Pro entitlement before starting Grok dialogue
-  const proUser = await db.query("select * from stripe_entitlements where user_id = $1 and status = 'active'", [userId]);
+  const proUser = await db.query("select * from stripe_entitlements where organization_id = $1 and status = 'active'", [organizationId]);
   assert.equal(proUser.rows.length, 1);
 
   // Step 4: Stream Grok-4.5 response chunks
@@ -1092,11 +1092,11 @@ test("R1-T4-1: End-to-end user lifecycle: Signup webhook -> Stripe Checkout -> P
 
   // Step 5: Debit AI question usage
   await db.query(
-    "insert into ai_usage values ($1, 1) on conflict (user_id) do update set questions_used = ai_usage.questions_used + 1",
-    [userId],
+    "insert into ai_usage values ($1, 1) on conflict (organization_id) do update set questions_used = ai_usage.questions_used + 1",
+    [organizationId],
   );
 
-  const usage = await db.query<{ questions_used: number }>("select questions_used from ai_usage where user_id = $1", [userId]);
+  const usage = await db.query<{ questions_used: number }>("select questions_used from ai_usage where organization_id = $1", [organizationId]);
   assert.equal(usage.rows[0].questions_used, 1);
   await db.close();
 });
@@ -1105,25 +1105,25 @@ test("R1-T4-2: Resilient error recovery: Transient stream failure triggers autom
   const db = new PGlite();
   await db.waitReady;
   await db.exec(`
-    create table if not exists ai_credits (user_id text primary key, balance int);
+    create table if not exists ai_credits (organization_id text primary key, balance int);
     insert into ai_credits values ('usr_resilience_1', 10);
   `);
 
-  const userId = "usr_resilience_1";
+  const organizationId = "usr_resilience_1";
 
   // Simulate debit
-  await db.query("update ai_credits set balance = balance - 1 where user_id = $1", [userId]);
-  let bal = await db.query<{ balance: number }>("select balance from ai_credits where user_id = $1", [userId]);
+  await db.query("update ai_credits set balance = balance - 1 where organization_id = $1", [organizationId]);
+  let bal = await db.query<{ balance: number }>("select balance from ai_credits where organization_id = $1", [organizationId]);
   assert.equal(bal.rows[0].balance, 9);
 
   // Stream failure occurs upstream
   const streamFailed = true;
   if (streamFailed) {
     // Refund credit
-    await db.query("update ai_credits set balance = balance + 1 where user_id = $1", [userId]);
+    await db.query("update ai_credits set balance = balance + 1 where organization_id = $1", [organizationId]);
   }
 
-  bal = await db.query<{ balance: number }>("select balance from ai_credits where user_id = $1", [userId]);
+  bal = await db.query<{ balance: number }>("select balance from ai_credits where organization_id = $1", [organizationId]);
   assert.equal(bal.rows[0].balance, 10); // Fully refunded
   await db.close();
 });

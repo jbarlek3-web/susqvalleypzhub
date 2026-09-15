@@ -50,9 +50,9 @@ export const analyzeParcel = createServerFn({ method: "POST" })
       };
     }
 
-    const usage = await consumeAiQuestion(context.userId);
+    const usage = await consumeAiQuestion(context);
     if (!usage) {
-      const currentUsage = await getAiUsage(context.userId);
+      const currentUsage = await getAiUsage(context);
       return {
         ok: false as const,
         code: "AI_ALLOWANCE_EXHAUSTED" as const,
@@ -106,8 +106,8 @@ Return:
         throw new Error("Empty completion from provider");
       }
     } catch {
-      await refundAiQuestion(context.userId, usage.debitedSource);
-      const refundedUsage = await getAiUsage(context.userId);
+      await refundAiQuestion(context, usage.debitedSource);
+      const refundedUsage = await getAiUsage(context);
       return {
         ok: false as const,
         error: "The source-grounded brief could not be completed.",

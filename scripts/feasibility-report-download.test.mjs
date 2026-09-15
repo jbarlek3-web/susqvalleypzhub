@@ -42,7 +42,7 @@ test("the legacy parcel brief now resolves parcel facts server-side and uses the
   const source = await readProjectFile("src/lib/grok-analyze.ts");
   assert.match(source, /parcelId/);
   assert.match(source, /getParcel\(data\.parcelId\)/);
-  assert.match(source, /consumeAiQuestion\(context\.userId\)/);
+  assert.match(source, /consumeAiQuestion\(context\)/);
   assert.match(source, /if \(!referenceContext\)/);
   assert.doesNotMatch(source, /address: z\.string|municipality: z\.string|xAI API error/);
 });

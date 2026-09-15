@@ -42,7 +42,7 @@ export const getOrdinanceAgentScope = createServerFn({ method: "GET" })
       windowSeconds: 60,
     });
     const { getAiReferenceScope } = await import("@/lib/ai-reference.server");
-    const [scope, usage] = await Promise.all([getAiReferenceScope(), getAiUsage(context.userId)]);
+    const [scope, usage] = await Promise.all([getAiReferenceScope(), getAiUsage(context)]);
     return { ...scope, usage };
   });
 
@@ -82,9 +82,9 @@ export const askOrdinanceAide = createServerFn({ method: "POST" })
       };
     }
 
-    const usage = await consumeAiQuestion(context.userId);
+    const usage = await consumeAiQuestion(context);
     if (!usage) {
-      const currentUsage = await getAiUsage(context.userId);
+      const currentUsage = await getAiUsage(context);
       return {
         ok: false as const,
         code: "AI_ALLOWANCE_EXHAUSTED" as const,
@@ -179,8 +179,8 @@ Respond with:
         answer = rawContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
       } catch {
         if (attempts >= maxAttempts) {
-          await refundAiQuestion(context.userId, usage.debitedSource);
-          const refundedUsage = await getAiUsage(context.userId);
+          await refundAiQuestion(context, usage.debitedSource);
+          const refundedUsage = await getAiUsage(context);
           return {
             ok: false as const,
             error: "The Ordinance Aide could not complete that request.",
@@ -191,8 +191,8 @@ Respond with:
       }
     }
     if (!answer) {
-      await refundAiQuestion(context.userId, usage.debitedSource);
-      const refundedUsage = await getAiUsage(context.userId);
+      await refundAiQuestion(context, usage.debitedSource);
+      const refundedUsage = await getAiUsage(context);
       return {
         ok: false as const,
         error: "The Ordinance Aide could not complete that request.",
@@ -223,7 +223,7 @@ export type StreamInput = z.infer<typeof StreamInputSchema>;
 
 export async function streamOrdinanceAide(
   input: StreamInput,
-  userId: string,
+  account: { userId: string; orgId: string | null },
 ): Promise<Response> {
   const apiKey = process.env.XAI_API_KEY?.trim();
   if (!apiKey) {
@@ -233,12 +233,13 @@ export async function streamOrdinanceAide(
     );
   }
 
+  const aiAccount = { userId: account.userId, organizationId: account.orgId || undefined };
   const { consumeRateLimit } = await import("./rate-limit.server.ts");
   const { consumeAiQuestion, getAiUsage, refundAiQuestion } = await import("./ai-credits.server.ts");
 
   await consumeRateLimit({
     action: "ordinance-agent-stream",
-    subject: userId,
+    subject: account.userId,
     max: 30,
     windowSeconds: 3_600,
   });
@@ -277,9 +278,9 @@ export async function streamOrdinanceAide(
     );
   }
 
-  const usage = await consumeAiQuestion(userId);
+  const usage = await consumeAiQuestion(account);
   if (!usage) {
-    const currentUsage = await getAiUsage(userId);
+    const currentUsage = await getAiUsage(account);
     return Response.json(
       {
         ok: false,
@@ -377,7 +378,7 @@ Respond with:
         signal: AbortSignal.timeout(30_000),
       });
     } catch {
-      await refundAiQuestion(userId, usage.debitedSource);
+      await refundAiQuestion(account, usage.debitedSource);
       return Response.json(
         { ok: false, error: "The Ordinance Aide could not complete that request." },
         { status: 502, headers: { "Cache-Control": "no-store" } },
@@ -385,11 +386,11 @@ Respond with:
     }
   }
 
-  if (!upstreamResponse.ok || !upstreamResponse.body) {
-    await refundAiQuestion(userId, usage.debitedSource);
+  if (!upstreamResponse || !upstreamResponse.ok || !upstreamResponse.body) {
+    await refundAiQuestion(account, usage.debitedSource);
     return Response.json(
       { ok: false, error: "The Ordinance Aide could not complete that request." },
-      { status: upstreamResponse.status >= 500 ? 502 : 400, headers: { "Cache-Control": "no-store" } },
+      { status: upstreamResponse ? (upstreamResponse.status >= 500 ? 502 : 400) : 502, headers: { "Cache-Control": "no-store" } },
     );
   }
 
@@ -437,7 +438,7 @@ Respond with:
         }
 
         if (!hasEmittedChunk) {
-          await refundAiQuestion(userId, usage.debitedSource);
+          await refundAiQuestion(account, usage.debitedSource);
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify({ error: "Empty completion from provider" })}\n\n`),
           );
@@ -446,7 +447,7 @@ Respond with:
         controller.close();
       } catch {
         if (!hasEmittedChunk) {
-          await refundAiQuestion(userId, usage.debitedSource);
+          await refundAiQuestion(account, usage.debitedSource);
         }
         try {
           controller.enqueue(

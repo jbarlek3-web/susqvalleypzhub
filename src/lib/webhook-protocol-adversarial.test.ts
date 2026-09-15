@@ -233,7 +233,7 @@ test("ADV-IDEMP-1: High-concurrency duplicate burst: 12 parallel identical event
         id: subId,
         customer: "cus_adv_concurrent",
         status: "active",
-        metadata: { userId: "usr_concurrent_1" },
+        metadata: { organizationId: "usr_concurrent_1" },
       },
     },
   };
@@ -274,7 +274,7 @@ test("ADV-IDEMP-2: Duplicate deliveries across full subscription lifecycle (crea
         id: subId,
         customer: "cus_adv_lifecycle",
         status: "active",
-        metadata: { userId: "usr_adv_lifecycle" },
+        metadata: { organizationId: "usr_adv_lifecycle" },
       },
     },
   };
@@ -406,7 +406,7 @@ test("ADV-SSE-2: Empirical Proof of Runtime Defect: streamOrdinanceAide with XAI
     // because Node ESM does not resolve the Vite-specific "@/lib/db" path alias.
     await assert.rejects(
       async () => {
-        await streamOrdinanceAide(input, "test_user_empirical");
+        await streamOrdinanceAide(input, { userId: "test_user_empirical", orgId: null });
       },
       (err: unknown) => {
         const error = err as { code?: string; message?: string };

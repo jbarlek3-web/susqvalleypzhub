@@ -37,9 +37,9 @@ export const generateFeasibilityReport = createServerFn({ method: "POST" })
       };
     }
 
-    const usage = await consumeAiQuestion(context.userId);
+    const usage = await consumeAiQuestion(context);
     if (!usage) {
-      const currentUsage = await getAiUsage(context.userId);
+      const currentUsage = await getAiUsage(context);
       return {
         ok: false as const,
         code: "AI_ALLOWANCE_EXHAUSTED" as const,
@@ -59,8 +59,8 @@ export const generateFeasibilityReport = createServerFn({ method: "POST" })
         usage,
       };
     } catch (error) {
-      await refundAiQuestion(context.userId, usage.debitedSource);
-      const refundedUsage = await getAiUsage(context.userId);
+      await refundAiQuestion(context, usage.debitedSource);
+      const refundedUsage = await getAiUsage(context);
       const message =
         error instanceof Error && error.message === "NO_SOURCE_EVIDENCE"
           ? "No source-backed material was found for this parcel's jurisdiction."

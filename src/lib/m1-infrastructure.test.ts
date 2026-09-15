@@ -209,7 +209,7 @@ test("M1-Stripe-5: Oversized body exceeding 1MB returns HTTP 413", async () => {
 test("M1-Stripe-6: customer.subscription.created synchronizes entitlement", async () => {
   const sql = await getSql();
   const subId = "sub_m1_test_" + Date.now();
-  const userId = "user_m1_sub_" + Date.now();
+  const organizationId = "user_m1_sub_" + Date.now();
   const periodEnd = Math.floor(Date.now() / 1000) + 30 * 86400;
 
   const event: StripeEvent = {
@@ -221,7 +221,7 @@ test("M1-Stripe-6: customer.subscription.created synchronizes entitlement", asyn
         customer: "cus_m1_test_99",
         status: "active",
         current_period_end: periodEnd,
-        metadata: { userId },
+        metadata: { organizationId },
       },
     },
   };
@@ -230,18 +230,19 @@ test("M1-Stripe-6: customer.subscription.created synchronizes entitlement", asyn
   const res = await handleStripeWebhook(req, { secret: STRIPE_SECRET });
   assert.equal(res.status, 200);
 
-  const rows = await sql<{ subscription_id: string; status: string; user_id: string }>`
-    select subscription_id, status, user_id from stripe_entitlements where subscription_id = ${subId}
+  const rows = await sql<{ subscription_id: string; status: string; organization_id: string }>`
+    select subscription_id, status, organization_id from stripe_entitlements where subscription_id = ${subId}
   `;
   assert.equal(rows.length, 1);
   assert.equal(rows[0].status, "active");
-  assert.equal(rows[0].user_id, userId);
+  assert.equal(rows[0].organization_id, organizationId);
 });
 
 test("M1-Stripe-7: Duplicate delivery with same event ID is idempotent", async () => {
   const sql = await getSql();
   const eventId = "evt_m1_dup_" + Date.now();
   const subId = "sub_m1_dup_" + Date.now();
+  const userId = "user_m1_dup_" + Date.now();
 
   const event: StripeEvent = {
     id: eventId,
@@ -251,6 +252,7 @@ test("M1-Stripe-7: Duplicate delivery with same event ID is idempotent", async (
         id: subId,
         customer: "cus_dup",
         status: "active",
+        metadata: { userId },
       },
     },
   };
@@ -270,11 +272,12 @@ test("M1-Stripe-7: Duplicate delivery with same event ID is idempotent", async (
 test("M1-Stripe-8: customer.subscription.deleted marks entitlement canceled", async () => {
   const sql = await getSql();
   const subId = "sub_m1_del_" + Date.now();
+  const userId = "user_m1_del_" + Date.now();
 
   // Seed active subscription
   await sql`
-    insert into stripe_entitlements (subscription_id, customer_id, status, updated_at)
-    values (${subId}, 'cus_to_del', 'active', now())
+    insert into stripe_entitlements (user_id, subscription_id, customer_id, status, updated_at)
+    values (${userId}, ${subId}, 'cus_to_del', 'active', now())
   `;
 
   const deleteEvent: StripeEvent = {
@@ -299,10 +302,10 @@ test("M1-Stripe-8: customer.subscription.deleted marks entitlement canceled", as
   assert.equal(rows[0].status, "canceled");
 });
 
-test("M1-Stripe-9: checkout.session.completed updates entitlement with user_id and session_id", async () => {
+test("M1-Stripe-9: checkout.session.completed updates entitlement with organization_id and session_id", async () => {
   const sql = await getSql();
   const sessionId = "cs_m1_checkout_" + Date.now();
-  const userId = "user_m1_chk_" + Date.now();
+  const organizationId = "org_m1_chk_" + Date.now();
 
   const checkoutEvent: StripeEvent = {
     id: "evt_chk_" + Date.now(),
@@ -311,7 +314,7 @@ test("M1-Stripe-9: checkout.session.completed updates entitlement with user_id a
       object: {
         id: sessionId,
         customer: "cus_chk_1",
-        client_reference_id: userId,
+        client_reference_id: organizationId,
         payment_status: "paid",
       },
     },
@@ -320,12 +323,45 @@ test("M1-Stripe-9: checkout.session.completed updates entitlement with user_id a
   const res = await processStripeEvent(checkoutEvent);
   assert.equal(res.processed, true);
 
-  const rows = await sql<{ user_id: string; checkout_session_id: string; status: string }>`
-    select user_id, checkout_session_id, status from stripe_entitlements where checkout_session_id = ${sessionId}
+  const rows = await sql<{ organization_id: string; checkout_session_id: string; status: string }>`
+    select organization_id, checkout_session_id, status from stripe_entitlements where checkout_session_id = ${sessionId}
+  `;
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].organization_id, organizationId);
+  assert.equal(rows[0].status, "active");
+});
+
+test("M1-Stripe-10: checkout.session.completed enforces mutual exclusivity of user_id and organization_id", async () => {
+  const sql = await getSql();
+  const sessionId = "cs_m1_checkout_mix_" + Date.now();
+  const organizationId = "org_m1_chk_mix_" + Date.now();
+  const userId = "user_m1_chk_mix_" + Date.now();
+
+  const checkoutEvent: StripeEvent = {
+    id: "evt_chk_mix_" + Date.now(),
+    type: "checkout.session.completed",
+    data: {
+      object: {
+        id: sessionId,
+        customer: "cus_chk_mix",
+        client_reference_id: userId,
+        payment_status: "paid",
+        metadata: {
+          organizationId,
+        }
+      },
+    },
+  };
+
+  const res = await processStripeEvent(checkoutEvent);
+  assert.equal(res.processed, true);
+
+  const rows = await sql<{ organization_id: string | null; user_id: string | null; checkout_session_id: string }>`
+    select organization_id, user_id, checkout_session_id from stripe_entitlements where checkout_session_id = ${sessionId}
   `;
   assert.equal(rows.length, 1);
   assert.equal(rows[0].user_id, userId);
-  assert.equal(rows[0].status, "active");
+  assert.equal(rows[0].organization_id, null, "organizationId should be cleared when client_reference_id points to a user");
 });
 
 // ===========================================================================
@@ -335,11 +371,11 @@ test("M1-Stripe-9: checkout.session.completed updates entitlement with user_id a
 test("M1-Clerk-1: user.created syncs user profile into database", async () => {
   process.env.CLERK_WEBHOOK_SIGNING_SECRET = CLERK_SECRET;
   const sql = await getSql();
-  const userId = "user_m1_sync_" + Date.now();
+  const organizationId = "user_m1_sync_" + Date.now();
 
   const req = createSignedClerkRequest(
     {
-      id: userId,
+      id: organizationId,
       first_name: "James",
       last_name: "Barlek",
       email_addresses: [
@@ -354,7 +390,7 @@ test("M1-Clerk-1: user.created syncs user profile into database", async () => {
   assert.equal(res.status, 200);
 
   const users = await sql<{ id: string; name: string; email: string; emailVerified: boolean }>`
-    select "id", "name", "email", "emailVerified" from "user" where "id" = ${userId}
+    select "id", "name", "email", "emailVerified" from "user" where "id" = ${organizationId}
   `;
   assert.equal(users.length, 1);
   assert.equal(users[0].name, "James Barlek");
@@ -365,12 +401,12 @@ test("M1-Clerk-1: user.created syncs user profile into database", async () => {
 test("M1-Clerk-2: user.updated updates existing user record", async () => {
   process.env.CLERK_WEBHOOK_SIGNING_SECRET = CLERK_SECRET;
   const sql = await getSql();
-  const userId = "user_m1_update_" + Date.now();
+  const organizationId = "user_m1_update_" + Date.now();
 
   // Create initial user
   const reqCreate = createSignedClerkRequest(
     {
-      id: userId,
+      id: organizationId,
       first_name: "Initial",
       last_name: "Name",
       email_addresses: [{ id: "em_init", email_address: "init@example.org", verification: { status: "verified" } }],
@@ -383,7 +419,7 @@ test("M1-Clerk-2: user.updated updates existing user record", async () => {
   // Update user
   const reqUpdate = createSignedClerkRequest(
     {
-      id: userId,
+      id: organizationId,
       first_name: "Updated",
       last_name: "Name",
       email_addresses: [{ id: "em_up", email_address: "updated@example.org", verification: { status: "verified" } }],
@@ -395,7 +431,7 @@ test("M1-Clerk-2: user.updated updates existing user record", async () => {
   assert.equal(res.status, 200);
 
   const updatedUsers = await sql<{ name: string; email: string }>`
-    select "name", "email" from "user" where "id" = ${userId}
+    select "name", "email" from "user" where "id" = ${organizationId}
   `;
   assert.equal(updatedUsers.length, 1);
   assert.equal(updatedUsers[0].name, "Updated Name");
@@ -435,7 +471,7 @@ test("M1-SSE-2: streamOrdinanceAide rejects when XAI_API_KEY is missing", async 
         municipality: "York City",
         messages: [{ role: "user", content: "What are the setbacks?" }],
       },
-      "user_sse_test",
+      { userId: "user_sse_test", orgId: null },
     );
     assert.equal(res.status, 503);
     const body = (await res.json()) as { ok: boolean; error: string };

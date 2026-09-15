@@ -98,15 +98,26 @@ export async function processStripeEvent(
           : typeof obj.subscription?.id === "string"
             ? obj.subscription.id
             : null;
-      const userId =
-        (typeof obj.client_reference_id === "string" && obj.client_reference_id.trim()) ||
-        (typeof obj.metadata?.userId === "string" && obj.metadata.userId.trim()) ||
-        null;
+      const clientRefId = typeof obj.client_reference_id === "string" ? obj.client_reference_id.trim() : null;
+      let organizationId = typeof obj.metadata?.organizationId === "string" && obj.metadata.organizationId.trim() ? obj.metadata.organizationId.trim() : null;
+      let userId = typeof obj.metadata?.userId === "string" && obj.metadata.userId.trim() ? obj.metadata.userId.trim() : null;
+      
+      if (clientRefId) {
+        if (clientRefId.startsWith("org_")) {
+          organizationId = organizationId || clientRefId;
+          userId = null;
+        } else {
+          userId = userId || clientRefId;
+          organizationId = null;
+        }
+      }
+
       const status = obj.payment_status === "paid" ? "active" : (obj.status ?? "active");
 
       const existing = await tx<{ id: number }>`
         select id from stripe_entitlements
-        where (${userId}::text is not null and user_id = ${userId})
+        where (${organizationId}::text is not null and organization_id = ${organizationId})
+           or (${userId}::text is not null and user_id = ${userId})
            or (${subscriptionId}::text is not null and subscription_id = ${subscriptionId})
            or (${sessionId}::text is not null and checkout_session_id = ${sessionId})
         limit 1
@@ -115,7 +126,8 @@ export async function processStripeEvent(
       if (existing.length > 0) {
         await tx`
           update stripe_entitlements
-          set user_id = coalesce(${userId}, user_id),
+          set organization_id = case when ${organizationId}::text is not null then ${organizationId} when ${userId}::text is not null then null else organization_id end,
+              user_id = case when ${userId}::text is not null then ${userId} when ${organizationId}::text is not null then null else user_id end,
               subscription_id = coalesce(${subscriptionId}, subscription_id),
               customer_id = coalesce(${customerId}, customer_id),
               checkout_session_id = coalesce(${sessionId}, checkout_session_id),
@@ -126,9 +138,9 @@ export async function processStripeEvent(
       } else {
         await tx`
           insert into stripe_entitlements
-            (user_id, subscription_id, customer_id, checkout_session_id, status, updated_at)
+            (organization_id, user_id, subscription_id, customer_id, checkout_session_id, status, updated_at)
           values
-            (${userId}, ${subscriptionId}, ${customerId}, ${sessionId}, ${status}, now())
+            (${organizationId}, ${userId}, ${subscriptionId}, ${customerId}, ${sessionId}, ${status}, now())
         `;
       }
     } else if (
@@ -142,10 +154,21 @@ export async function processStripeEvent(
           : typeof obj.customer?.id === "string"
             ? obj.customer.id
             : null;
-      const userId =
+      let organizationId =
+        typeof obj.metadata?.organizationId === "string" && obj.metadata.organizationId.trim()
+          ? obj.metadata.organizationId.trim()
+          : null;
+      let userId =
         typeof obj.metadata?.userId === "string" && obj.metadata.userId.trim()
           ? obj.metadata.userId.trim()
           : null;
+
+      if (organizationId && userId) {
+        // If both are present in metadata (which shouldn't normally happen unless tracking),
+        // we fallback to ensuring we don't store both. In Clerk billing, the subscriber
+        // type is usually indicated by which ID is primary.
+        userId = null; // Default to org if both are passed
+      }
       const status = typeof obj.status === "string" ? obj.status : "active";
       const currentPeriodEnd =
         typeof obj.current_period_end === "number"
@@ -159,6 +182,7 @@ export async function processStripeEvent(
       const existing = await tx<{ id: number }>`
         select id from stripe_entitlements
         where (${subscriptionId}::text is not null and subscription_id = ${subscriptionId})
+           or (${organizationId}::text is not null and organization_id = ${organizationId})
            or (${userId}::text is not null and user_id = ${userId})
            or (${customerId}::text is not null and customer_id = ${customerId})
         limit 1
@@ -167,7 +191,8 @@ export async function processStripeEvent(
       if (existing.length > 0) {
         await tx`
           update stripe_entitlements
-          set user_id = coalesce(${userId}, user_id),
+          set organization_id = case when ${organizationId}::text is not null then ${organizationId} when ${userId}::text is not null then null else organization_id end,
+              user_id = case when ${userId}::text is not null then ${userId} when ${organizationId}::text is not null then null else user_id end,
               subscription_id = coalesce(${subscriptionId}, subscription_id),
               customer_id = coalesce(${customerId}, customer_id),
               product_id = coalesce(${productId}, product_id),
@@ -179,9 +204,9 @@ export async function processStripeEvent(
       } else {
         await tx`
           insert into stripe_entitlements
-            (user_id, subscription_id, customer_id, product_id, status, current_period_end, updated_at)
+            (organization_id, user_id, subscription_id, customer_id, product_id, status, current_period_end, updated_at)
           values
-            (${userId}, ${subscriptionId}, ${customerId}, ${productId}, ${status}, ${currentPeriodEnd}, now())
+            (${organizationId}, ${userId}, ${subscriptionId}, ${customerId}, ${productId}, ${status}, ${currentPeriodEnd}, now())
         `;
       }
     } else if (event.type === "customer.subscription.deleted") {

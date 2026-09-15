@@ -39,7 +39,7 @@ export class UnauthorizedError extends Error {
   }
 }
 
-export type VerifiedUser = { id: string; email: string | null };
+export type VerifiedUser = { id: string; email: string | null; orgId: string | null };
 
 /**
  * Resolve the signed-in user from the current request, or `null` when auth isn't
@@ -51,21 +51,14 @@ export async function getSessionUser(): Promise<VerifiedUser | null> {
   if (!authConfigured) return null;
   const session = await auth();
   if (!session.userId) return null;
-  return { id: session.userId, email: null };
+  return { id: session.userId, email: null, orgId: session.orgId ?? null };
 }
 
 /**
  * Resolve the current user id for a server function, or throw when unauthorized.
  * Prefer `authMiddleware` (`./middleware`), which calls this for you.
- * - Auth enabled -> the verified session user id; throws
- *   `UnauthorizedError` when signed out. Works in the sandbox preview too (real
- *   sign-in via the baked preview client).
- * - Clerk unavailable + `DATABASE_URL` set -> throw (fail
- *   closed): one shared dev user on a real database would let every visitor
- *   read/write everyone's rows.
- * - Auth disabled + no database -> the shared dev user id.
  */
-export async function requireUserId(): Promise<string> {
+export async function requireUser(): Promise<{ userId: string; orgId: string | null }> {
   if (!authConfigured) {
     if (databaseConfigured) {
       throw new Error(
@@ -73,9 +66,14 @@ export async function requireUserId(): Promise<string> {
           "refusing to fall back to the shared dev user against a real database.",
       );
     }
-    return DEV_USER_ID;
+    return { userId: DEV_USER_ID, orgId: null };
   }
   const user = await getSessionUser();
   if (!user) throw new UnauthorizedError();
-  return user.id;
+  return { userId: user.id, orgId: user.orgId };
+}
+
+export async function requireUserId(): Promise<string> {
+  const { userId } = await requireUser();
+  return userId;
 }

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { assertSameSiteRequest } from "@/lib/auth/isolation.server";
-import { requireUserId } from "@/lib/auth/verify.server";
+import { requireUser } from "@/lib/auth/verify.server";
 import { requirePro } from "@/lib/entitlement.server";
 import { StreamInputSchema, streamOrdinanceAide } from "@/lib/ordinance-agent";
 
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/api/ordinance/stream")({
       POST: async ({ request }) => {
         try {
           assertSameSiteRequest(request);
-          const userId = await requireUserId();
+          const account = await requireUser();
           await requirePro();
 
           const rawBody = (await request.json()) as unknown;
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/api/ordinance/stream")({
             );
           }
 
-          return await streamOrdinanceAide(parsed.data, userId);
+          return await streamOrdinanceAide(parsed.data, account);
         } catch (error: unknown) {
           const err = error as { status?: number; name?: string; message?: string; retryAfterSeconds?: number };
           if (err?.status === 401 || err?.name === "UnauthorizedError") {
