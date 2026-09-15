@@ -847,13 +847,13 @@ export function HouseModelViewer({
                 setMode("subdivision");
                 setCameraPreset("aerial");
               }}
-              className={`flex-1 flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-medium transition-all ${
+              className={`flex-1 flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-semibold transition-all ${
                 currentMode === "subdivision"
-                  ? "bg-primary text-primary-foreground shadow-sm"
+                  ? "bg-orange-500/30 text-orange-300 border border-orange-500/50 backdrop-blur-md shadow-[0_0_12px_rgba(249,115,22,0.35)]"
                   : "bg-muted/60 text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Waves className="w-3.5 h-3.5" />
+              <Waves className="w-3.5 h-3.5 text-orange-400" />
               <span>Subdivision & Pond</span>
             </button>
             <button
@@ -861,13 +861,13 @@ export function HouseModelViewer({
                 setMode("houseStudio");
                 setCameraPreset("front");
               }}
-              className={`flex-1 flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-medium transition-all ${
+              className={`flex-1 flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-semibold transition-all ${
                 currentMode === "houseStudio"
-                  ? "bg-primary text-primary-foreground shadow-sm"
+                  ? "bg-orange-500/30 text-orange-300 border border-orange-500/50 backdrop-blur-md shadow-[0_0_12px_rgba(249,115,22,0.35)]"
                   : "bg-muted/60 text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Home className="w-3.5 h-3.5" />
+              <Home className="w-3.5 h-3.5 text-orange-400" />
               <span>House 3D Studio</span>
             </button>
           </div>
@@ -913,9 +913,9 @@ export function HouseModelViewer({
               <>
                 <button
                   onClick={() => setCameraPreset("aerial")}
-                  className={`px-2.5 py-1 text-xs rounded font-medium transition-colors ${
+                  className={`px-2.5 py-1 text-xs rounded font-semibold transition-all ${
                     activeCameraView === "aerial"
-                      ? "bg-primary text-primary-foreground shadow-sm"
+                      ? "bg-orange-500/30 text-orange-300 border border-orange-500/50 backdrop-blur-md shadow-[0_0_12px_rgba(249,115,22,0.35)]"
                       : "hover:bg-muted text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -923,9 +923,9 @@ export function HouseModelViewer({
                 </button>
                 <button
                   onClick={() => setCameraPreset("pond")}
-                  className={`px-2.5 py-1 text-xs rounded font-medium transition-colors ${
+                  className={`px-2.5 py-1 text-xs rounded font-semibold transition-all ${
                     activeCameraView === "pond"
-                      ? "bg-primary text-primary-foreground shadow-sm"
+                      ? "bg-orange-500/30 text-orange-300 border border-orange-500/50 backdrop-blur-md shadow-[0_0_12px_rgba(249,115,22,0.35)]"
                       : "hover:bg-muted text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -933,9 +933,9 @@ export function HouseModelViewer({
                 </button>
                 <button
                   onClick={() => setCameraPreset("entrance")}
-                  className={`px-2.5 py-1 text-xs rounded font-medium transition-colors ${
+                  className={`px-2.5 py-1 text-xs rounded font-semibold transition-all ${
                     activeCameraView === "entrance"
-                      ? "bg-primary text-primary-foreground shadow-sm"
+                      ? "bg-orange-500/30 text-orange-300 border border-orange-500/50 backdrop-blur-md shadow-[0_0_12px_rgba(249,115,22,0.35)]"
                       : "hover:bg-muted text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -943,9 +943,9 @@ export function HouseModelViewer({
                 </button>
                 <button
                   onClick={() => setCameraPreset("street")}
-                  className={`px-2.5 py-1 text-xs rounded font-medium transition-colors ${
+                  className={`px-2.5 py-1 text-xs rounded font-semibold transition-all ${
                     activeCameraView === "street"
-                      ? "bg-primary text-primary-foreground shadow-sm"
+                      ? "bg-orange-500/30 text-orange-300 border border-orange-500/50 backdrop-blur-md shadow-[0_0_12px_rgba(249,115,22,0.35)]"
                       : "hover:bg-muted text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -956,9 +956,9 @@ export function HouseModelViewer({
               <>
                 <button
                   onClick={() => setCameraPreset("front")}
-                  className={`px-2.5 py-1 text-xs rounded font-medium transition-colors ${
+                  className={`px-2.5 py-1 text-xs rounded font-semibold transition-all ${
                     activeCameraView === "front"
-                      ? "bg-primary text-primary-foreground shadow-sm"
+                      ? "bg-orange-500/30 text-orange-300 border border-orange-500/50 backdrop-blur-md shadow-[0_0_12px_rgba(249,115,22,0.35)]"
                       : "hover:bg-muted text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -966,9 +966,9 @@ export function HouseModelViewer({
                 </button>
                 <button
                   onClick={() => setCameraPreset("street")}
-                  className={`px-2.5 py-1 text-xs rounded font-medium transition-colors ${
+                  className={`px-2.5 py-1 text-xs rounded font-semibold transition-all ${
                     activeCameraView === "street"
-                      ? "bg-primary text-primary-foreground shadow-sm"
+                      ? "bg-orange-500/30 text-orange-300 border border-orange-500/50 backdrop-blur-md shadow-[0_0_12px_rgba(249,115,22,0.35)]"
                       : "hover:bg-muted text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -976,9 +976,9 @@ export function HouseModelViewer({
                 </button>
                 <button
                   onClick={() => setCameraPreset("patio")}
-                  className={`px-2.5 py-1 text-xs rounded font-medium transition-colors ${
+                  className={`px-2.5 py-1 text-xs rounded font-semibold transition-all ${
                     activeCameraView === "patio"
-                      ? "bg-primary text-primary-foreground shadow-sm"
+                      ? "bg-orange-500/30 text-orange-300 border border-orange-500/50 backdrop-blur-md shadow-[0_0_12px_rgba(249,115,22,0.35)]"
                       : "hover:bg-muted text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -986,9 +986,9 @@ export function HouseModelViewer({
                 </button>
                 <button
                   onClick={() => setCameraPreset("dollhouse")}
-                  className={`px-2.5 py-1 text-xs rounded font-medium transition-colors ${
+                  className={`px-2.5 py-1 text-xs rounded font-semibold transition-all ${
                     activeCameraView === "dollhouse"
-                      ? "bg-primary text-primary-foreground shadow-sm"
+                      ? "bg-orange-500/30 text-orange-300 border border-orange-500/50 backdrop-blur-md shadow-[0_0_12px_rgba(249,115,22,0.35)]"
                       : "hover:bg-muted text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -1075,9 +1075,9 @@ export function HouseModelViewer({
               <button
                 onClick={() => setWireframeMode(!wireframeMode)}
                 aria-label="Toggle Architectural Wireframe Mesh"
-                className={`p-1.5 rounded transition-colors ${
+                className={`p-1.5 rounded transition-all ${
                   wireframeMode
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-orange-500/30 text-orange-300 border border-orange-500/50 backdrop-blur-md shadow-[0_0_12px_rgba(249,115,22,0.35)]"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
                 title="Toggle Architectural Wireframe Mesh"
@@ -1088,9 +1088,9 @@ export function HouseModelViewer({
               <button
                 onClick={() => setAutoRotate(!autoRotate)}
                 aria-label="Toggle Auto-Rotate Turntable"
-                className={`p-1.5 rounded transition-colors ${
+                className={`p-1.5 rounded transition-all ${
                   autoRotate
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-orange-500/30 text-orange-300 border border-orange-500/50 backdrop-blur-md shadow-[0_0_12px_rgba(249,115,22,0.35)]"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
                 title="Toggle Auto-Rotate Turntable"

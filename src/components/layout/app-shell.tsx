@@ -133,13 +133,13 @@ export function AppShell({
                   className={cn(
                     "relative rounded-full px-3 py-1.5 text-xs font-semibold tracking-wide transition-all duration-150 active:scale-95",
                     active
-                      ? "bg-primary text-primary-foreground shadow-sm"
+                      ? "bg-orange-500/30 text-orange-300 border border-orange-500/50 backdrop-blur-md shadow-[0_0_12px_rgba(249,115,22,0.35)]"
                       : "text-on-surface-variant hover:bg-surface-high/60 hover:text-on-surface",
                   )}
                 >
                   {n.label}
                   {active && (
-                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 size-1.5 rounded-full bg-brand-lime shadow-[0_0_6px_var(--color-brand-lime)]" />
+                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 size-1.5 rounded-full bg-orange-400 shadow-[0_0_6px_var(--color-orange-500)]" />
                   )}
                 </Link>
               );

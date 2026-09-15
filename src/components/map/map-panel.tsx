@@ -488,18 +488,18 @@ export function MapToolbar() {
         className={cn(
           "flex items-center gap-1 rounded-sm px-2 py-1.5 text-xs font-semibold",
           !satellite
-            ? "border border-primary/30 bg-primary-fixed text-primary"
+            ? "border border-orange-500/50 bg-orange-500/30 text-orange-300 backdrop-blur-md shadow-[0_0_8px_rgba(249,115,22,0.3)]"
             : "hover:bg-surface-low",
         )}
       >
-        <Grid3x3 className="size-3.5" /> Base
+        <Grid3x3 className="size-3.5 text-orange-400" /> Base
       </button>
       <button
         onClick={() => setSatellite(true)}
         className={cn(
           "flex items-center gap-1 rounded-sm px-2 py-1.5 text-xs font-semibold",
           satellite
-            ? "border border-primary/30 bg-primary-fixed text-primary"
+            ? "border border-orange-500/50 bg-orange-500/30 text-orange-300 backdrop-blur-md shadow-[0_0_8px_rgba(249,115,22,0.3)]"
             : "hover:bg-surface-low",
         )}
       >
@@ -510,7 +510,7 @@ export function MapToolbar() {
         className={cn(
           "flex items-center gap-1 rounded-sm px-2 py-1.5 text-xs font-semibold",
           (layers.parcels ?? layers.yorkParcels) !== false
-            ? "border border-secondary/30 bg-secondary-container text-secondary"
+            ? "border border-orange-500/50 bg-orange-500/30 text-orange-300 backdrop-blur-md shadow-[0_0_8px_rgba(249,115,22,0.3)]"
             : "hover:bg-surface-low",
         )}
       >
@@ -521,7 +521,7 @@ export function MapToolbar() {
         className={cn(
           "flex items-center gap-1 rounded-sm px-2 py-1.5 text-xs font-semibold",
           layers.yorkZoning !== false
-            ? "border border-primary/30 bg-primary-fixed text-primary"
+            ? "border border-orange-500/50 bg-orange-500/30 text-orange-300 backdrop-blur-md shadow-[0_0_8px_rgba(249,115,22,0.3)]"
             : "hover:bg-surface-low",
         )}
       >
@@ -532,7 +532,7 @@ export function MapToolbar() {
         className={cn(
           "flex items-center gap-1 rounded-sm px-2 py-1.5 text-xs font-semibold",
           layers.zoning
-            ? "border border-primary/30 bg-primary-fixed text-primary"
+            ? "border border-orange-500/50 bg-orange-500/30 text-orange-300 backdrop-blur-md shadow-[0_0_8px_rgba(249,115,22,0.3)]"
             : "hover:bg-surface-low",
         )}
       >
