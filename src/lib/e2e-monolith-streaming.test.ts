@@ -333,7 +333,7 @@ test("F02-T1-4: Solo-user billing events (subscriptionItem.*) are marked process
   }
 });
 
-test("F02-T1-5: Organization events are acknowledged with 200 OK and marked ignored", async () => {
+test("F02-T1-5: Organization events are acknowledged with 200 OK and marked processed", async () => {
   process.env.CLERK_WEBHOOK_SIGNING_SECRET = CLERK_TEST_SECRET;
   const orgEvents = ["organization.created", "organization.updated", "organizationMembership.created"];
   for (const eventType of orgEvents) {
@@ -343,7 +343,7 @@ test("F02-T1-5: Organization events are acknowledged with 200 OK and marked igno
       capturedDisposition = r.disposition;
     });
     assert.equal(res.status, 200);
-    assert.equal(capturedDisposition, "ignored");
+    assert.equal(capturedDisposition, "processed");
   }
 });
 

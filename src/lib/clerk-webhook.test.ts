@@ -124,7 +124,7 @@ test("user.deleted events return 500 when purge fails to prompt webhook retry", 
   assert.deepEqual(await response.json(), { error: "User purge failed" });
 });
 
-test("verified organization events are acknowledged but ignored", async () => {
+test("verified organization events are processed", async () => {
   process.env.CLERK_WEBHOOK_SIGNING_SECRET = signingSecret;
   const receipts: ClerkWebhookReceipt[] = [];
   const response = await handleClerkWebhook(signedRequest("organization.created"), async (r) => {
@@ -132,8 +132,8 @@ test("verified organization events are acknowledged but ignored", async () => {
   });
 
   assert.equal(response.status, 200);
-  assert.deepEqual(await response.json(), { received: true, disposition: "ignored" });
-  assert.equal(receipts[0]?.disposition, "ignored");
+  assert.deepEqual(await response.json(), { received: true, disposition: "processed" });
+  assert.equal(receipts[0]?.disposition, "processed");
 });
 
 test("invalid signatures fail closed before persistence", async () => {

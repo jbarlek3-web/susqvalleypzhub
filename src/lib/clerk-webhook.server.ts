@@ -138,6 +138,14 @@ export const SOLO_USER_WEBHOOK_EVENTS = new Set<WebhookEvent["type"]>([
   "paymentAttempt.updated",
 ]);
 
+export const ORG_WEBHOOK_EVENTS = new Set<WebhookEvent["type"]>([
+  "organization.created",
+  "organization.updated",
+  "organizationMembership.created",
+  "organizationMembership.deleted",
+  "organizationMembership.updated"
+]);
+
 export type ClerkWebhookReceipt = {
   id: string;
   eventType: WebhookEvent["type"];
@@ -247,7 +255,10 @@ export async function handleClerkWebhook(
   const eventId = request.headers.get("svix-id")?.trim();
   if (!eventId) return json({ error: "Webhook verification failed" }, 400);
 
-  const disposition = SOLO_USER_WEBHOOK_EVENTS.has(event.type) ? "processed" : "ignored";
+  const disposition =
+    SOLO_USER_WEBHOOK_EVENTS.has(event.type) || ORG_WEBHOOK_EVENTS.has(event.type)
+      ? "processed"
+      : "ignored";
   try {
     await storeReceipt({ id: eventId, eventType: event.type, disposition });
   } catch {
@@ -320,6 +331,70 @@ export async function handleClerkWebhook(
         err,
       });
       return json({ error: "User purge failed" }, 500);
+    }
+  }
+
+  if (event.type === "organization.created" || event.type === "organization.updated") {
+    const org = event.data as unknown as Record<string, unknown>;
+    if (typeof org.id === "string") {
+      try {
+        const { getSql } = await import("./db.ts");
+        const sql = await getSql();
+        const createdAt = typeof org.created_at === "number" ? new Date(org.created_at) : new Date();
+        await sql`
+          insert into organizations (id, name, created_at)
+          values (${org.id}, ${org.name as string}, ${createdAt})
+          on conflict (id) do update set
+            name = excluded.name
+        `;
+      } catch (err) {
+        console.error("[clerk-webhook] failed to sync organization data", err);
+        return json({ error: "Organization sync failed" }, 500);
+      }
+    }
+  }
+
+  if (event.type === "organizationMembership.created" || event.type === "organizationMembership.updated") {
+    const mem = event.data as unknown as Record<string, unknown>;
+    const orgObj = mem.organization as Record<string, unknown> | undefined;
+    const puData = mem.public_user_data as Record<string, unknown> | undefined;
+    const orgId = typeof mem.organization?.id === "string" ? mem.organization.id : typeof orgObj?.id === "string" ? orgObj.id : typeof mem.organization_id === "string" ? mem.organization_id : null;
+    const userId = typeof puData?.user_id === "string" ? puData.user_id : null;
+    if (orgId && userId) {
+      try {
+        const { getSql } = await import("./db.ts");
+        const sql = await getSql();
+        const createdAt = typeof mem.created_at === "number" ? new Date(mem.created_at) : new Date();
+        await sql`
+          insert into organization_memberships (user_id, organization_id, role, created_at)
+          values (${userId}, ${orgId}, ${mem.role as string}, ${createdAt})
+          on conflict (user_id, organization_id) do update set
+            role = excluded.role
+        `;
+      } catch (err) {
+        console.error("[clerk-webhook] failed to sync organization membership data", err);
+        return json({ error: "Organization membership sync failed" }, 500);
+      }
+    }
+  }
+
+  if (event.type === "organizationMembership.deleted") {
+    const mem = event.data as unknown as Record<string, unknown>;
+    const orgObj = mem.organization as Record<string, unknown> | undefined;
+    const puData = mem.public_user_data as Record<string, unknown> | undefined;
+    const orgId = typeof mem.organization?.id === "string" ? mem.organization.id : typeof orgObj?.id === "string" ? orgObj.id : typeof mem.organization_id === "string" ? mem.organization_id : null;
+    const userId = typeof puData?.user_id === "string" ? puData.user_id : null;
+    if (orgId && userId) {
+      try {
+        const { getSql } = await import("./db.ts");
+        const sql = await getSql();
+        await sql`
+          delete from organization_memberships where user_id = ${userId} and organization_id = ${orgId}
+        `;
+      } catch (err) {
+        console.error("[clerk-webhook] failed to delete organization membership data", err);
+        return json({ error: "Organization membership delete failed" }, 500);
+      }
     }
   }
 

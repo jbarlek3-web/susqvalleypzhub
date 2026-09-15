@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Navigate } from "@tanstack/react-router";
-import { UserButton as ClerkUserButton } from "@clerk/tanstack-react-start";
+import { UserButton as ClerkUserButton, OrganizationSwitcher as ClerkOrganizationSwitcher } from "@clerk/tanstack-react-start";
 import { useCurrentUserState } from "./use-current-user";
 
 /**
@@ -49,4 +49,8 @@ export function RedirectToSignIn({ to = SIGN_IN_PATH }: { to?: string }) {
  */
 export function UserButton() {
   return <ClerkUserButton />;
+}
+
+export function OrganizationSwitcher() {
+  return <ClerkOrganizationSwitcher hidePersonal={false} />;
 }

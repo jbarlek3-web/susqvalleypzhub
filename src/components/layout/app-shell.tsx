@@ -11,7 +11,7 @@ import { useHub } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { getEntitlement } from "@/lib/billing";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
-import { SignedIn, SignedOut, UserButton } from "@/lib/auth/gates";
+import { SignedIn, SignedOut, UserButton, OrganizationSwitcher } from "@/lib/auth/gates";
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -207,7 +207,8 @@ export function AppShell({
               </Link>
             </SignedOut>
             <SignedIn>
-              <div className="hidden rounded-full border border-outline-variant/80 bg-surface-low px-2 py-1 text-on-surface sm:block">
+              <div className="hidden items-center gap-2 rounded-full border border-outline-variant/80 bg-surface-low px-2 py-1 text-on-surface sm:flex">
+                <OrganizationSwitcher />
                 <UserButton />
               </div>
             </SignedIn>
@@ -242,8 +243,13 @@ export function AppShell({
               </Button>
             </SignedOut>
             <SignedIn>
-              <div className="flex items-center justify-center rounded-lg border border-outline-variant bg-surface-low p-2 text-on-surface">
-                <UserButton />
+              <div className="flex flex-col gap-2 rounded-lg border border-outline-variant bg-surface-low p-2 text-on-surface">
+                <div className="flex items-center justify-center">
+                  <OrganizationSwitcher />
+                </div>
+                <div className="flex items-center justify-center border-t border-outline-variant pt-2">
+                  <UserButton />
+                </div>
               </div>
             </SignedIn>
           </div>
