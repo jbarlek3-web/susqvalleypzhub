@@ -368,7 +368,7 @@ function Scene3DPage() {
         {/* Main Workspace Area */}
         <div className="flex-1 p-3 md:p-6 flex flex-col gap-6">
           {/* 3D Canvas Host Container with Error Boundary */}
-          <div className="w-full h-[660px]">
+          <div className="relative w-full h-[580px] md:h-[640px] rounded-xl overflow-hidden shadow-lg border border-border">
             <ErrorBoundary
               fallback={({ reset }) => (
                 <div className="flex h-full w-full flex-col items-center justify-center rounded-xl border border-border bg-card p-8 text-center shadow-lg">

@@ -733,7 +733,7 @@ export function HouseModelViewer({
   };
 
   return (
-    <div className="relative flex flex-col w-full h-full min-h-[700px] rounded-xl overflow-hidden border border-border bg-card shadow-2xl">
+    <div className="relative flex flex-col w-full h-full min-h-[500px] rounded-xl overflow-hidden border border-border bg-card shadow-xl">
       {/* 3D Canvas Mount Point */}
       <div
         ref={mountRef}
